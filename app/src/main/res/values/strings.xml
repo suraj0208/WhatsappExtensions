@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">WhatsApp Extensions</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_change_password">Change Password</string>
+
+    <string-array name="minutelist">
+        <item>Immediate</item>
+        <item>1 Minute</item>
+        <item>3 Minute</item>
+        <item>5 Minute</item>
+        <item>10 Minute</item>
+
+    </string-array>
+</resources>
