@@ -9,6 +9,13 @@
         <item>3 Minute</item>
         <item>5 Minute</item>
         <item>10 Minute</item>
-
     </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Minutes</item>
+        <item>30 Minute</item>
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+    </string-array>
+
 </resources>

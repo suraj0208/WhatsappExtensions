@@ -30,13 +30,19 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <receiver android:name=".BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".ReminderReceiver">
+            <intent-filter>
+                <action android:name="com.suraj.waext.ReminderIntent" />
             </intent-filter>
         </receiver>
 
@@ -47,11 +53,14 @@
         <activity
             android:name=".LockActivity"
             android:exported="true"
-            android:windowSoftInputMode="stateHidden"></activity>
-
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".ChangePasswordActivity"
             android:label="@string/title_activity_change_password" />
+        <activity
+            android:name=".ReminderActivity"
+            android:exported="true"
+            ></activity>
     </application>
 
 </manifest>

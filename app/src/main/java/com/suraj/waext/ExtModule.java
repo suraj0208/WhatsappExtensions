@@ -32,19 +32,17 @@ public class ExtModule implements IXposedHookLoadPackage {
 
     private static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
     private static final String PACKAGE_NAME = "com.suraj.waext";
-
-    private String contactNumber;
-    private XSharedPreferences sharedPreferences;
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
-
     private static boolean showLockScreen = false;
     private static boolean firstTime = true;
 
+    private String contactNumber;
+    private XSharedPreferences sharedPreferences;
     private UnlockReceiver unlockReceiver;
-    private int lockAfter;
     private Thread thread;
 
+    private int lockAfter;
 
     public ExtModule() {
 
@@ -81,15 +79,12 @@ public class ExtModule implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         //XposedBridge.log("com.suraj.waext Loaded: " + loadPackageParam.packageName);
 
-
         if (!loadPackageParam.packageName.equals("com.whatsapp"))
             return;
 
         XposedBridge.log("com.suraj.waext Loaded: " + loadPackageParam.packageName);
 
-
         sharedPreferences = new XSharedPreferences(ExtModule.PACKAGE_NAME, "myprefs");
-
 
         hookConversationMethods(loadPackageParam);
         hookInitialStage(loadPackageParam);
@@ -141,6 +136,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                 ExtModule.showLockScreen = false;
                 ExtModule.firstTime = true;
 
+
                 (new Handler(Looper.getMainLooper())).post(new Runnable() {
                     @Override
                     public void run() {
@@ -148,18 +144,10 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                         if (result != null) {
                             if (result.contains("@")) {
-
                                 contactNumber = result.split("@")[0];
                                 if (templockedContacts.contains(contactNumber)) {
                                     ExtModule.showLockScreen = true;
                                     ExtModule.firstTime = false;
-
-
-                                    //Tutorial.this.showToast(result);
-
-                                    //sharedPreferences.reload();
-                                    //sharedPreferences.makeWorldReadable();
-                                    //lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
 
                                     Intent intent = new Intent();
                                     intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
@@ -184,6 +172,8 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
 
 
+                //XposedBridge.log(((AppCompatActivity)param.thisObject).getSupportActionBar().getTitle().toString());
+
                 XposedBridge.log("onResume");
 
                 if (ExtModule.showLockScreen && !firstTime) {
@@ -203,10 +193,12 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 XposedBridge.log("onCreateOptionMenu");
 
-                MenuItem callMenuItem = ((Menu) param.args[0]).add("Call");
 
-                callMenuItem.setIcon(android.R.drawable.ic_menu_search);
-                callMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                if (!contactNumber.contains("-")) {
+                    MenuItem callMenuItem = ((Menu) param.args[0]).add("Call");
+                    callMenuItem.setIcon(android.R.drawable.ic_menu_search);
+                    callMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                }
 
                 MenuItem lock;
                 MenuItem unlock;
@@ -221,6 +213,10 @@ public class ExtModule implements IXposedHookLoadPackage {
                     unlock.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 }
 
+                MenuItem reminderMenuItem = ((Menu) param.args[0]).add("Add Reminder");
+                reminderMenuItem.setIcon(android.R.drawable.ic_menu_search);
+                reminderMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+
 
             }
 
@@ -232,10 +228,11 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
                 XposedBridge.log("onCreate");
 
-
-                //XposedBridge.log(Integer.toString(lockedContacts.size()));
-
                 ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.PACKAGE_NAME + ".Unlock_Intent"));
+
+
+                //XposedBridge.log(((Activity) param.thisObject).getIntent().getData().toString());
+
             }
 
         });
@@ -287,9 +284,11 @@ public class ExtModule implements IXposedHookLoadPackage {
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Call") {
+
+
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    callIntent.setData(Uri.parse("tel:" + contactNumber));
+                    callIntent.setData(Uri.parse("tel:" + contactNumber.replaceAll(" ", "")));
 
                     try {
                         AndroidAppHelper.currentApplication().startActivity(callIntent);
@@ -298,12 +297,21 @@ public class ExtModule implements IXposedHookLoadPackage {
                         ex.printStackTrace();
                     }
 
+
                     param.setResult(false);
 
+                } else if (menuItem.getTitle().toString().equals("Add Reminder")) {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.ReminderActivity"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("contactNumber", contactNumber);
+                    AndroidAppHelper.currentApplication().startActivity(intent);
+                    param.setResult(false);
                 }
             }
 
         });
+
     }
 
 

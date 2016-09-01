@@ -5,9 +5,17 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -56,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         );
+
+
 
     }
 
