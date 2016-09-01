@@ -170,7 +170,6 @@ public class ReminderActivity extends Activity {
             }
 
             //for (String S : hashMap.keySet())
-            Log.i("hashsize", hashMap.get("919850789530"));
 
 
         } catch (InterruptedException e) {
