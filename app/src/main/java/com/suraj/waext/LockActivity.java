@@ -116,6 +116,8 @@ public class LockActivity extends AppCompatActivity {
         });
     }
 
+
+    //send broadcast to ExtModule's unLockReceiver
     private void unLock() {
         Intent intent = new Intent();
         intent.setAction(LockActivity.PACKAGE_NAME + ".Unlock_Intent");

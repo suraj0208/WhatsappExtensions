@@ -45,8 +45,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private void setEditTextListeners() {
 
-        final Toast lengthGreatertoast = Toast.makeText(getApplicationContext(), "Length cannot be more than 4.", Toast.LENGTH_SHORT);
+        final Toast lengthGreaterToast = Toast.makeText(getApplicationContext(), "Length cannot be more than 4.", Toast.LENGTH_SHORT);
 
+        //limit pin length to 4 digits
         etpassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -56,7 +57,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 4) {
                     etpassword.setText(s.subSequence(0, 4));
-                    lengthGreatertoast.show();
+                    lengthGreaterToast.show();
                 }
             }
 
@@ -90,7 +91,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 Toast doNotMatchToast = Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT);
                 Toast confirmationToast = Toast.makeText(getApplicationContext(), "Incorrect Password", Toast.LENGTH_SHORT);
 
-
+                //count 0 : current password, count 1: new password, count 2: confirm password
                 if (count == 0) {
                     if(etpassword.getText().toString().equals(decodedString)){
                         tvdefaultpassword.setText("Enter New Password");

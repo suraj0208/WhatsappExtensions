@@ -16,6 +16,7 @@
         android:id="@+id/tvlockprefs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:text="Lock Preferences"
         android:textSize="22sp" />
 
@@ -23,8 +24,8 @@
         android:id="@+id/tvlockafter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvlockprefs"
         android:layout_below="@id/tvlockprefs"
-        android:layout_margin="10dp"
         android:text="Lock After" />
 
     <Spinner
@@ -42,4 +43,22 @@
         android:layout_below="@id/tvlockafter"
         android:layout_margin="10dp"
         android:text="Change Password" />
+
+
+    <TextView
+        android:id="@+id/tvservicestatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btnchangepass"
+        android:layout_margin="10dp"
+        android:text="Reminder Preferences"
+        android:textSize="22sp" />
+
+    <CheckBox
+        android:id="@+id/chkboxservicestate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvservicestatus"
+        android:text="Enable reminder service" />
+
 </RelativeLayout>

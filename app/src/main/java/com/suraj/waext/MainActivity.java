@@ -5,17 +5,10 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.Spinner;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
-import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -64,9 +57,27 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         );
+        final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxservicestate));
+
+        if (startService(new Intent(MainActivity.this, ReminderService.class)) != null) {
+            checkBox.setChecked(true);
+        } else {
+            checkBox.setChecked(false);
+        }
 
 
-
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    startService(new Intent(MainActivity.this, ReminderService.class));
+                } else {
+                    Intent stopIntent = new Intent(MainActivity.this, ReminderService.class);
+                    stopIntent.putExtra("stopService", true);
+                    startService(stopIntent);
+                }
+            }
+        });
     }
 
 

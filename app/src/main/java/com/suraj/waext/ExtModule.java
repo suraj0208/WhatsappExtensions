@@ -48,9 +48,11 @@ public class ExtModule implements IXposedHookLoadPackage {
 
     }
 
+    //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
     class UnlockReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
+            //set boolean values so that onResume does not close activity. see beforeHook - onResume
             ExtModule.showLockScreen = intent.getBooleanExtra("showLockScreen", false);
             ExtModule.firstTime = intent.getBooleanExtra("firstTime", true);
 
@@ -59,13 +61,16 @@ public class ExtModule implements IXposedHookLoadPackage {
 
             lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
 
+            //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
             if (lockAfter != 0) {
                 templockedContacts.remove(contactNumber);
-                ExtModule.this.showToast("Unlocked for next " + lockAfter + " minutes.");
+                ExtModule.this.showToast("Unlocked for " + lockAfter + " minutes.");
 
+                //if thread is not running start it.
                 if (thread != null && !thread.isAlive())
                     startDaemon();
             } else {
+                //if contact is to be locked immediately, stop the thread, no use of it.
                 if (thread != null && thread.isAlive())
                     thread.interrupt();
             }
@@ -94,12 +99,14 @@ public class ExtModule implements IXposedHookLoadPackage {
         templockedContacts = new HashSet<>();
         templockedContacts.addAll(lockedContacts);
 
+        //value of timer after which contact is to locked
         lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
 
         if (lockAfter != 0)
             startDaemon();
     }
 
+    //daemon thread to lock contacts periodically
     private void startDaemon() {
         thread = new Thread() {
             @Override
@@ -172,14 +179,11 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
 
 
-                //XposedBridge.log(((AppCompatActivity)param.thisObject).getSupportActionBar().getTitle().toString());
-
                 XposedBridge.log("onResume");
 
                 if (ExtModule.showLockScreen && !firstTime) {
                     XposedBridge.log("finished activity");
                     ((Activity) param.thisObject).finish();
-
                 } else
                     firstTime = false;
 
@@ -193,7 +197,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 XposedBridge.log("onCreateOptionMenu");
 
-
+                //skip call button for group chats
                 if (!contactNumber.contains("-")) {
                     MenuItem callMenuItem = ((Menu) param.args[0]).add("Call");
                     callMenuItem.setIcon(android.R.drawable.ic_menu_search);
@@ -230,9 +234,6 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.PACKAGE_NAME + ".Unlock_Intent"));
 
-
-                //XposedBridge.log(((Activity) param.thisObject).getIntent().getData().toString());
-
             }
 
         });
@@ -254,6 +255,8 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 MenuItem menuItem = (MenuItem) param.args[0];
 
+                //important: param.setResult(false) to prevent call to original method
+
                 if (menuItem.getTitle() == "Lock") {
 
                     lockedContacts.add(contactNumber);
@@ -266,6 +269,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                     XposedBridge.log("called the intent for adding lock");
 
                     ExtModule.this.showToast("Lock Enabled for this contact.");
+                    menuItem.setTitle("Unlock");
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Unlock") {

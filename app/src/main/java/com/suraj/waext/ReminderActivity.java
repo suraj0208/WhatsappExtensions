@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +25,7 @@ public class ReminderActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
         if (contactHashMap == null) {
             contactHashMap = getContactsHashMap();
         }
@@ -33,20 +34,32 @@ public class ReminderActivity extends Activity {
 
         if (bundle != null) {
             String contactNumber = bundle.getString("contactNumber");
+
+            //if launched for setting up reminder
             if (contactNumber != null) {
                 contactName = contactHashMap.get(contactNumber);
                 setContentView(R.layout.activity_reminder);
                 setUpForReminder();
-            } else {
+
+            }//if launched for reminding user
+            else {
                 setContentView(R.layout.activity_reminder_open);
                 contactName = bundle.getString("contactName");
+
+                if (ReminderService.jobsRemaining == 0) {
+                    Intent stopIntent = new Intent(ReminderActivity.this, ReminderService.class);
+                    stopIntent.putExtra("stopService", true);
+                    startService(stopIntent);
+
+                }
+
                 setUpForOpen();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Error Opening Activity. Bundle null", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Error Opening Activity. Bundle null.", Toast.LENGTH_SHORT).show();
         }
 
-        //Toast.makeText(getApplicationContext(), contactName, Toast.LENGTH_SHORT).show();
+        startService(new Intent(ReminderActivity.this, ReminderService.class));
 
 
     }
@@ -89,12 +102,17 @@ public class ReminderActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Thread thread = new Thread() {
+
+                final long timer = getTimer(((Spinner) findViewById(R.id.spinreminders)).getSelectedItemPosition());
+
+                ReminderService.jobsRemaining++;
+
+                ReminderService.handler.post(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             String contactName = ReminderActivity.this.contactName;
-                            Thread.sleep(1000 * 4);
+                            Thread.sleep(timer);
                             Intent intent = new Intent();
                             intent.setAction("com.suraj.waext.ReminderIntent");
                             intent.putExtra("contactName", contactName);
@@ -106,13 +124,35 @@ public class ReminderActivity extends Activity {
                         }
 
                     }
+                });
+
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+
+                    }
                 };
 
-                thread.setDaemon(true);
-                thread.start();
+                //thread.setDaemon(true);
+                //thread.start();
                 ReminderActivity.this.finish();
             }
         });
+    }
+
+    private long getTimer(int selectedItemPosition) {
+        switch (selectedItemPosition) {
+            case 0:
+                return 15 * 60 * 1000;
+            case 1:
+                return 30 * 60 * 1000;
+            case 2:
+                return 60 * 60 * 1000;
+            case 3:
+                return 2 * 60 * 60 * 1000;
+        }
+
+        return 0;
     }
 
     public HashMap<String, String> getContactsHashMap() {
@@ -151,10 +191,7 @@ public class ReminderActivity extends Activity {
                 op.append(s + "\n");
             }
 
-            Log.i("my contact", Integer.toString(op.toString().split("\n").length));
-
             String arr[] = op.toString().split("\n");
-
 
             Arrays.sort(arr);
 
@@ -168,8 +205,6 @@ public class ReminderActivity extends Activity {
                 hashMap.put(potential[1].split("@")[0], potential[0]);
 
             }
-
-            //for (String S : hashMap.keySet())
 
 
         } catch (InterruptedException e) {

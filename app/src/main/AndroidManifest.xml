@@ -50,6 +50,10 @@
             android:name=".LockPreferencesService"
             android:exported="true" />
 
+        <service
+            android:name=".ReminderService"
+            android:exported="true" />
+
         <activity
             android:name=".LockActivity"
             android:exported="true"
@@ -59,8 +63,7 @@
             android:label="@string/title_activity_change_password" />
         <activity
             android:name=".ReminderActivity"
-            android:exported="true"
-            ></activity>
+            android:exported="true" />
     </application>
 
 </manifest>

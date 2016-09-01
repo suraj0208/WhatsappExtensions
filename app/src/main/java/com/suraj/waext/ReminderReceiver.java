@@ -13,7 +13,10 @@ public class ReminderReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String contactName = intent.getStringExtra("contactName");
-        Log.i("Reminder name",contactName);
+        Log.i("Reminder name", contactName);
+
+        ReminderService.jobsRemaining--;
+
         Intent newIntent = new Intent();
         newIntent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.ReminderActivity"));
         newIntent.putExtra("contactName", contactName);
