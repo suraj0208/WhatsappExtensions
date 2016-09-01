@@ -269,7 +269,8 @@ public class ExtModule implements IXposedHookLoadPackage {
                     XposedBridge.log("called the intent for adding lock");
 
                     ExtModule.this.showToast("Lock Enabled for this contact.");
-                    menuItem.setTitle("Unlock");
+
+                    ((Activity)param.thisObject).finish();
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Unlock") {
@@ -285,6 +286,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                     XposedBridge.log("called the intent for removing lock");
                     ExtModule.this.showToast("Lock disabled for this contact.");
 
+                    menuItem.setVisible(false);
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Call") {

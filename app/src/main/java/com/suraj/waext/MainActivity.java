@@ -29,9 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         Spinner spinner = (Spinner) (findViewById(R.id.spinminutes));
 
-
         spinner.setSelection(sharedPreferences.getInt("lockAfter", 2));
-
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         );
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxservicestate));
 
-        if (startService(new Intent(MainActivity.this, ReminderService.class)) != null) {
+        if (ReminderService.isRunning) {
             checkBox.setChecked(true);
         } else {
             checkBox.setChecked(false);

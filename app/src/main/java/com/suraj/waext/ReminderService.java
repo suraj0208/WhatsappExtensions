@@ -3,13 +3,13 @@ package com.suraj.waext;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 /**
  * Created by suraj on 1/9/16.
@@ -18,6 +18,7 @@ public class ReminderService extends Service {
 
     public static Handler handler;
     public static int jobsRemaining = 0;
+    public static boolean isRunning = false;
 
     @Override
     public void onCreate() {
@@ -27,10 +28,13 @@ public class ReminderService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent.getBooleanExtra("stopService",false)){
+        if (intent.getBooleanExtra("stopService", false)) {
             this.stopForeground(true);
             this.stopSelf();
+            ReminderService.isRunning = false;
         }
+
+        ReminderService.isRunning = true;
 
         (new Thread() {
             @Override
@@ -49,6 +53,8 @@ public class ReminderService extends Service {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
         builder.setSmallIcon(R.drawable.ic_notification)
+                .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
+                        R.mipmap.ic_launcher))
                 .setContentTitle("WhatsApp Reminder Service.")
                 .setContentText("Touch to configure.");
 
@@ -64,6 +70,13 @@ public class ReminderService extends Service {
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ReminderService.isRunning = false;
+
+
+    }
 
     @Nullable
     @Override

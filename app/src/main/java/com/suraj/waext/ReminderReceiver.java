@@ -17,6 +17,12 @@ public class ReminderReceiver extends BroadcastReceiver {
 
         ReminderService.jobsRemaining--;
 
+        if (ReminderService.jobsRemaining == 0) {
+            Intent stopIntent = new Intent(context, ReminderService.class);
+            stopIntent.putExtra("stopService", true);
+            context.startService(stopIntent);
+        }
+
         Intent newIntent = new Intent();
         newIntent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.ReminderActivity"));
         newIntent.putExtra("contactName", contactName);

@@ -46,13 +46,6 @@ public class ReminderActivity extends Activity {
                 setContentView(R.layout.activity_reminder_open);
                 contactName = bundle.getString("contactName");
 
-                if (ReminderService.jobsRemaining == 0) {
-                    Intent stopIntent = new Intent(ReminderActivity.this, ReminderService.class);
-                    stopIntent.putExtra("stopService", true);
-                    startService(stopIntent);
-
-                }
-
                 setUpForOpen();
             }
         } else {
@@ -61,7 +54,16 @@ public class ReminderActivity extends Activity {
 
         startService(new Intent(ReminderActivity.this, ReminderService.class));
 
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (ReminderService.jobsRemaining == 0) {
+            Intent stopIntent = new Intent(getApplicationContext(), ReminderService.class);
+            stopIntent.putExtra("stopService", true);
+            getApplicationContext().startService(stopIntent);
+        }
     }
 
     private void setUpForOpen() {
@@ -101,7 +103,6 @@ public class ReminderActivity extends Activity {
         (findViewById(R.id.btnreminderok)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
                 final long timer = getTimer(((Spinner) findViewById(R.id.spinreminders)).getSelectedItemPosition());
 

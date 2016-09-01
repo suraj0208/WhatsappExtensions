@@ -30,6 +30,8 @@ public class ChangePasswordActivity extends AppCompatActivity {
         tvdefaultpassword = (TextView) (findViewById(R.id.tvdefaultpassword));
         tvdefaultpassword.setText("Enter Current Password. "+ tvdefaultpassword.getText());
 
+        etpassword.setEnabled(false);
+
         setEditTextListeners();
         setButtonListeners();
 

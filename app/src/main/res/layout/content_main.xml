@@ -61,4 +61,13 @@
         android:layout_below="@id/tvservicestatus"
         android:text="Enable reminder service" />
 
+    <TextView
+        android:id="@+id/tvnote"
+        android:layout_below="@id/chkboxservicestate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tvservicestatus"
+        android:text="Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly."
+        android:textSize="14sp" />
+
 </RelativeLayout>
