@@ -1,73 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.suraj.waext.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <TextView
-        android:id="@+id/tvlockprefs"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="Lock Preferences"
-        android:textSize="22sp" />
+        android:layout_height="match_parent"
+        android:padding="@dimen/activity_horizontal_margin">
 
-    <TextView
-        android:id="@+id/tvlockafter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/tvlockprefs"
-        android:layout_below="@id/tvlockprefs"
-        android:text="Lock After" />
+        <TextView
+            android:id="@+id/tvlockprefs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="Lock Preferences"
+            android:textSize="22sp" />
 
-    <Spinner
-        android:id="@+id/spinminutes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/tvlockafter"
-        android:layout_alignParentRight="true"
-        android:entries="@array/minutelist" />
+        <TextView
+            android:id="@+id/tvlockdesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_below="@id/tvlockprefs"
+            android:layout_marginBottom="5dp"
+            android:text="Lock all chats after you leave WhatApp."
+            android:textSize="14sp" />
 
-    <Button
-        android:id="@+id/btnchangepass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvlockafter"
-        android:layout_margin="10dp"
-        android:text="Change Password" />
+        <TextView
+            android:id="@+id/tvlockafter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_below="@id/tvlockdesc"
+            android:text="Lock After" />
+
+        <Spinner
+            android:id="@+id/spinminutes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvlockafter"
+            android:layout_alignParentRight="true"
+            android:entries="@array/minutelist" />
+
+        <Button
+            android:id="@+id/btnchangepass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvlockafter"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:text="Change Password" />
 
 
-    <TextView
-        android:id="@+id/tvservicestatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnchangepass"
-        android:layout_margin="10dp"
-        android:text="Reminder Preferences"
-        android:textSize="22sp" />
+        <TextView
+            android:id="@+id/tvservicestatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnchangepass"
+            android:layout_margin="10dp"
+            android:text="Reminder Preferences"
+            android:textSize="22sp" />
 
-    <CheckBox
-        android:id="@+id/chkboxservicestate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvservicestatus"
-        android:text="Enable reminder service" />
+        <CheckBox
+            android:id="@+id/chkboxservicestate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvservicestatus"
+            android:layout_below="@id/tvservicestatus"
+            android:layout_marginBottom="5dp"
+            android:text="Enable reminder service" />
 
-    <TextView
-        android:id="@+id/tvnote"
-        android:layout_below="@id/chkboxservicestate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/tvservicestatus"
-        android:text="Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly."
-        android:textSize="14sp" />
+        <TextView
+            android:id="@+id/tvnote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvservicestatus"
+            android:layout_below="@id/chkboxservicestate"
+            android:layout_marginBottom="10dp"
+            android:text="Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly."
+            android:textSize="14sp" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvhighlight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvnote"
+            android:layout_margin="10dp"
+            android:text="Highlight Preferences"
+            android:textSize="22sp" />
+
+        <CheckBox
+            android:id="@+id/chkboxhighlight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_below="@id/tvhighlight"
+            android:layout_marginTop="5dp"
+            android:text="Highlight Groups" />
+
+        <Button
+            android:id="@+id/btncolorchooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/chkboxhighlight"
+            android:layout_alignParentRight="true"
+            android:text="Select Color" />
+
+    </RelativeLayout>
+</ScrollView>
+

@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class LockActivity extends AppCompatActivity {
-    private static final String PACKAGE_NAME = "com.suraj.waext";
+    public static final String PACKAGE_NAME = "com.suraj.waext";
     private EditText etpassword;
     private byte[] decodedBytes;
     private String decodedString;
@@ -120,7 +120,7 @@ public class LockActivity extends AppCompatActivity {
     //send broadcast to ExtModule's unLockReceiver
     private void unLock() {
         Intent intent = new Intent();
-        intent.setAction(LockActivity.PACKAGE_NAME + ".Unlock_Intent");
+        intent.setAction(LockActivity.PACKAGE_NAME + ".UNLOCK_INTENT");
         intent.putExtra("showLockScreen", false);
         intent.putExtra("firstTime", true);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

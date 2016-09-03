@@ -39,7 +39,6 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".ReminderReceiver">
             <intent-filter>
                 <action android:name="com.suraj.waext.ReminderIntent" />
@@ -49,7 +48,6 @@
         <service
             android:name=".LockPreferencesService"
             android:exported="true" />
-
         <service
             android:name=".ReminderService"
             android:exported="true" />
@@ -64,6 +62,10 @@
         <activity
             android:name=".ReminderActivity"
             android:exported="true" />
+        <activity
+            android:name=".ColorChooserActivity"
+            android:label="@string/title_activity_color_chooser"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

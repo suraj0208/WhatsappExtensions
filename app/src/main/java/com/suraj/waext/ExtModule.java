@@ -7,14 +7,20 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -30,16 +36,30 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 public class ExtModule implements IXposedHookLoadPackage {
 
-    private static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
-    private static final String PACKAGE_NAME = "com.suraj.waext";
+    public static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
+    public static final String PACKAGE_NAME = "com.suraj.waext";
+    public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
+
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
+
+    private static HashMap<View, View> processedViews;
+    private static HashMap<View, View> zerothChildren;
+    private static HashMap<View, View> firstChildren;
+
     private static boolean showLockScreen = false;
     private static boolean firstTime = true;
+    private static boolean enableHighlight = false;
+
+    private int originalColor = -1;
+    private static int highlightColor = Color.GRAY;
 
     private String contactNumber;
+
     private XSharedPreferences sharedPreferences;
+
     private UnlockReceiver unlockReceiver;
+
     private Thread thread;
 
     private int lockAfter;
@@ -48,92 +68,86 @@ public class ExtModule implements IXposedHookLoadPackage {
 
     }
 
-    //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
-    class UnlockReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //set boolean values so that onResume does not close activity. see beforeHook - onResume
-            ExtModule.showLockScreen = intent.getBooleanExtra("showLockScreen", false);
-            ExtModule.firstTime = intent.getBooleanExtra("firstTime", true);
-
-            sharedPreferences.reload();
-            sharedPreferences.makeWorldReadable();
-
-            lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
-
-            //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
-            if (lockAfter != 0) {
-                templockedContacts.remove(contactNumber);
-                ExtModule.this.showToast("Unlocked for " + lockAfter + " minutes.");
-
-                //if thread is not running start it.
-                if (thread != null && !thread.isAlive())
-                    startDaemon();
-            } else {
-                //if contact is to be locked immediately, stop the thread, no use of it.
-                if (thread != null && thread.isAlive())
-                    thread.interrupt();
-            }
-
-
-            XposedBridge.log("Broadcast Received");
-        }
-    }
-
-    @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        //XposedBridge.log("com.suraj.waext Loaded: " + loadPackageParam.packageName);
-
-        if (!loadPackageParam.packageName.equals("com.whatsapp"))
-            return;
-
-        XposedBridge.log("com.suraj.waext Loaded: " + loadPackageParam.packageName);
-
-        sharedPreferences = new XSharedPreferences(ExtModule.PACKAGE_NAME, "myprefs");
-
-        hookConversationMethods(loadPackageParam);
-        hookInitialStage(loadPackageParam);
-        unlockReceiver = new UnlockReceiver();
-
-        initPrefs();
-        templockedContacts = new HashSet<>();
-        templockedContacts.addAll(lockedContacts);
-
-        //value of timer after which contact is to locked
-        lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
-
-        if (lockAfter != 0)
-            startDaemon();
-    }
-
-    //daemon thread to lock contacts periodically
-    private void startDaemon() {
-        thread = new Thread() {
+    private void hookMethodsForHighLight(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
-            public void run() {
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                updateHighlightColor();
+                TypedValue a = new TypedValue();
 
-                while (true) {
-                    try {
-                        Thread.sleep(lockAfter * 1000 * 60);
-                        ExtModule.templockedContacts.addAll(lockedContacts);
-                    } catch (InterruptedException e) {
-                        //e.printStackTrace();
-                        break;
+                AndroidAppHelper.currentApplication().getApplicationContext().getTheme().resolveAttribute(android.R.attr.textColor, a, true);
+                originalColor = a.data;
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.view.View", loadPackageParam.classLoader, "setTag", Object.class, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+
+                        if(!enableHighlight)
+                            return;
+
+                        Object tag = param.args[0];
+
+                        View parent = processedViews.get(param.thisObject);
+
+                        RelativeLayout rl;
+
+                        if (parent == null) {
+                            View contactPictureViewBackground = (View) ((View) param.thisObject).getParent();
+
+                            if (contactPictureViewBackground == null)
+                                return;
+
+                            parent = (View) contactPictureViewBackground.getParent();
+
+                            if (parent == null)
+                                return;
+
+                            processedViews.put((View) param.thisObject, parent);
+
+                            rl = (RelativeLayout) parent;
+
+                            zerothChildren.put(parent, rl.getChildAt(0));
+                            firstChildren.put(parent, rl.getChildAt(1));
+
+                        }
+
+                        View zerothChild = zerothChildren.get(parent);
+
+                        View firstChild = firstChildren.get(parent);
+
+                        if (tag.toString().contains("@g.us")) {
+
+                            firstChild.setBackgroundColor(highlightColor);
+                            zerothChild.setBackgroundColor(highlightColor);
+
+                            if (firstChild instanceof LinearLayout) {
+                                firstChild.setPadding(5, 5, 5, 5);
+                                ((RelativeLayout.LayoutParams) firstChild.getLayoutParams()).height = -1;
+                            }
+
+                        } else {
+
+                            firstChild.setBackgroundColor(originalColor);
+                            zerothChild.setBackgroundColor(originalColor);
+
+                            if (firstChild instanceof LinearLayout) {
+                                ((RelativeLayout.LayoutParams) firstChild.getLayoutParams()).height = -2;
+                            }
+                        }
+
                     }
                 }
-
-            }
-        };
-
-        thread.setDaemon(true);
-        thread.start();
-
+        );
     }
 
-    public void initPrefs() {
+    private void updateHighlightColor() {
         sharedPreferences.reload();
         sharedPreferences.makeWorldReadable();
-        lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
+        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
+        enableHighlight = sharedPreferences.getBoolean("enableHighlight",false);
     }
 
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -142,7 +156,6 @@ public class ExtModule implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(final MethodHookParam param) throws Throwable {
                 ExtModule.showLockScreen = false;
                 ExtModule.firstTime = true;
-
 
                 (new Handler(Looper.getMainLooper())).post(new Runnable() {
                     @Override
@@ -177,7 +190,6 @@ public class ExtModule implements IXposedHookLoadPackage {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-
 
                 XposedBridge.log("onResume");
 
@@ -232,7 +244,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
                 XposedBridge.log("onCreate");
 
-                ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.PACKAGE_NAME + ".Unlock_Intent"));
+                ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
 
             }
 
@@ -247,6 +259,7 @@ public class ExtModule implements IXposedHookLoadPackage {
             }
 
         });
+
 
         XposedHelpers.findAndHookMethod(conversationClass, "onOptionsItemSelected", MenuItem.class, new XC_MethodHook() {
             @Override
@@ -270,7 +283,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                     ExtModule.this.showToast("Lock Enabled for this contact.");
 
-                    ((Activity)param.thisObject).finish();
+                    ((Activity) param.thisObject).finish();
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Unlock") {
@@ -283,18 +296,17 @@ public class ExtModule implements IXposedHookLoadPackage {
                     intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
 
                     AndroidAppHelper.currentApplication().startService(intent);
-                    XposedBridge.log("called the intent for removing lock");
+                    //XposedBridge.log("called the intent for removing lock");
                     ExtModule.this.showToast("Lock disabled for this contact.");
 
                     menuItem.setVisible(false);
                     param.setResult(false);
 
                 } else if (menuItem.getTitle() == "Call") {
-
-
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    callIntent.setData(Uri.parse("tel:" + contactNumber.replaceAll(" ", "")));
+
+                    callIntent.setData(Uri.parse("tel:" + "+".concat(contactNumber.replaceAll(" ", ""))));
 
                     try {
                         AndroidAppHelper.currentApplication().startActivity(callIntent);
@@ -317,6 +329,59 @@ public class ExtModule implements IXposedHookLoadPackage {
             }
 
         });
+
+    }
+
+    private void hookMethodsForLock(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod(Activity.class, "onPause", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                Activity activity = (Activity) param.thisObject;
+
+                if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
+                    return;
+
+                if (thread == null || !thread.isAlive())
+                    startDaemon();
+
+            }
+        });
+
+        XposedHelpers.findAndHookMethod(Activity.class, "onResume", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                if (thread != null && thread.isAlive()) {
+                    thread.interrupt();
+                }
+            }
+        });
+    }
+
+
+    //daemon thread to lock contacts periodically
+    private void startDaemon() {
+        thread = new Thread() {
+            @Override
+            public void run() {
+
+                try {
+                    Thread.sleep(4000);
+                    Thread.sleep(lockAfter * 1000 * 60);
+                    ExtModule.templockedContacts.addAll(lockedContacts);
+                } catch (InterruptedException e) {
+                    XposedBridge.log("Thread Inturrupted");
+                    //e.printStackTrace();
+                }
+
+            }
+        };
+
+        thread.setDaemon(true);
+        thread.start();
 
     }
 
@@ -345,5 +410,66 @@ public class ExtModule implements IXposedHookLoadPackage {
         }
         return 3;
     }
+
+    public void initPrefs() {
+        sharedPreferences.reload();
+        sharedPreferences.makeWorldReadable();
+        lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
+        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
+    }
+
+    //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
+    class UnlockReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //set boolean values so that onResume does not close activity. see beforeHook - onResume
+            ExtModule.showLockScreen = intent.getBooleanExtra("showLockScreen", false);
+            ExtModule.firstTime = intent.getBooleanExtra("firstTime", true);
+
+            sharedPreferences.reload();
+            sharedPreferences.makeWorldReadable();
+
+            lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
+
+            //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
+            templockedContacts.remove(contactNumber);
+
+            XposedBridge.log("Broadcast Received");
+        }
+    }
+
+    @Override
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+
+        if (!loadPackageParam.packageName.equals("com.whatsapp"))
+            return;
+
+        XposedBridge.log("com.suraj.waext Loaded: " + loadPackageParam.packageName);
+
+        sharedPreferences = new XSharedPreferences(ExtModule.PACKAGE_NAME, "myprefs");
+
+        processedViews = new HashMap<>();
+        zerothChildren = new HashMap<>();
+        firstChildren = new HashMap<>();
+
+        hookConversationMethods(loadPackageParam);
+        hookInitialStage(loadPackageParam);
+        hookMethodsForLock(loadPackageParam);
+        hookMethodsForHighLight(loadPackageParam);
+
+        unlockReceiver = new UnlockReceiver();
+
+        initPrefs();
+        templockedContacts = new HashSet<>();
+        templockedContacts.addAll(lockedContacts);
+
+        //value of timer after which contact is to locked
+        lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
+
+        //if (lockAfter != 0)
+        //    startDaemon();
+
+    }
+
 
 }

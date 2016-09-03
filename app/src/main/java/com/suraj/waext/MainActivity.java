@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
@@ -27,6 +28,13 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("myprefs", 1);
         editor = sharedPreferences.edit();
 
+        setupLockUI();
+        setupReminderUI();
+        setupHighlightUI();
+
+    }
+
+    private void setupLockUI() {
         Spinner spinner = (Spinner) (findViewById(R.id.spinminutes));
 
         spinner.setSelection(sharedPreferences.getInt("lockAfter", 2));
@@ -55,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         );
+    }
+
+
+    private void setupReminderUI() {
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxservicestate));
 
         if (ReminderService.isRunning) {
@@ -62,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             checkBox.setChecked(false);
         }
-
 
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,4 +90,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void setupHighlightUI() {
+        final Button btnchooser = (Button) findViewById(R.id.btncolorchooser);
+
+        btnchooser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, ColorChooserActivity.class));
+
+            }
+        });
+
+        final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
+
+        if (sharedPreferences.getBoolean("enableHighlight", false)) {
+            checkBox.setChecked(true);
+            btnchooser.setEnabled(true);
+        } else {
+            checkBox.setChecked(false);
+            btnchooser.setEnabled(false);
+        }
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkBox.isChecked()) {
+                    editor.putBoolean("enableHighlight", true);
+                    btnchooser.setEnabled(true);
+                } else {
+                    editor.putBoolean("enableHighlight", false);
+                    btnchooser.setEnabled(false);
+                }
+                editor.apply();
+            }
+        });
+
+
+    }
 }
