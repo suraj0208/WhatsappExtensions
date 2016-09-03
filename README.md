@@ -20,7 +20,7 @@ clone the project:
 
 git clone https://<span></span>github.com/suraj0208/WhatsappExtensions.git
 
-## Contributors
+## Contribute / Discuss
 
 join the discussion:
 
