@@ -1,4 +1,4 @@
-# WhatsappExtensions
+# WhatsApp Extensions
 ## Synopsis
 
 The project is an Xposed module for WhatsApp. The module includes set of features like Call over phone, lock individual chats, reminders, highlight groups etc.  
