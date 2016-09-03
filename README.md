@@ -23,4 +23,5 @@ git clone https://github.com/suraj0208/WhatsappExtensions
 ## Contributors
 
 join the discussion:
+
 http://forum.xda-developers.com/xposed/modules/mod-whatsapp-extensions-add-extra-t3452784
