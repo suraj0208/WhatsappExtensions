@@ -17,6 +17,7 @@ Xposed module link:
 http://repo.xposed.info/module/com.suraj.waext
 
 clone the project:
+
 git clone https://github.com/suraj0208/WhatsappExtensions
 
 ## Contributors
