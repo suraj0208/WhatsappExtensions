@@ -85,7 +85,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
 
-                        if(!enableHighlight)
+                        if (!enableHighlight)
                             return;
 
                         Object tag = param.args[0];
@@ -147,7 +147,7 @@ public class ExtModule implements IXposedHookLoadPackage {
         sharedPreferences.reload();
         sharedPreferences.makeWorldReadable();
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
-        enableHighlight = sharedPreferences.getBoolean("enableHighlight",false);
+        enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
     }
 
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -183,6 +183,29 @@ public class ExtModule implements IXposedHookLoadPackage {
     }
 
     public void hookConversationMethods(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        /*XposedHelpers.findAndHookMethod("java.util.Calendar", loadPackageParam.classLoader, "getTimeInMillis", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                XposedBridge.log(param.getResult().toString());
+                param.setResult(5000);
+
+            }
+
+        });*/
+
+
+        /*XposedHelpers.findAndHookMethod("android.widget.TextView", loadPackageParam.classLoader, "setText", CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                    XposedBridge.log(((TextView)param.thisObject).getText().toString());
+
+
+            }
+
+        });*/
 
         final Class conversationClass = XposedHelpers.findClass("com.whatsapp.Conversation", loadPackageParam.classLoader);
 
@@ -339,6 +362,8 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
 
                 Activity activity = (Activity) param.thisObject;
+
+                XposedBridge.log(activity.getClass().getName());
 
                 if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
                     return;
