@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/XposedTest.iml" filepath="$PROJECT_DIR$/XposedTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib/android-crop/android-crop.iml" filepath="$PROJECT_DIR$/lib/android-crop/android-crop.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/libs.iml" filepath="$PROJECT_DIR$/libs/libs.iml" />
     </modules>
   </component>
 </project>

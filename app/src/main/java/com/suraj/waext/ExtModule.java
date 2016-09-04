@@ -8,8 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.TypedValue;
@@ -20,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -39,6 +42,7 @@ public class ExtModule implements IXposedHookLoadPackage {
     public static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
     public static final String PACKAGE_NAME = "com.suraj.waext";
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
+    private static final String WALLPAPERDIR = "/WhatsApp/Media/WallPaper/";
 
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
@@ -183,41 +187,16 @@ public class ExtModule implements IXposedHookLoadPackage {
     }
 
     public void hookConversationMethods(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        /*XposedHelpers.findAndHookMethod("java.util.Calendar", loadPackageParam.classLoader, "getTimeInMillis", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                XposedBridge.log(param.getResult().toString());
-                param.setResult(5000);
-
-            }
-
-        });*/
-
-
-        /*XposedHelpers.findAndHookMethod("android.widget.TextView", loadPackageParam.classLoader, "setText", CharSequence.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                    XposedBridge.log(((TextView)param.thisObject).getText().toString());
-
-
-            }
-
-        });*/
-
         final Class conversationClass = XposedHelpers.findClass("com.whatsapp.Conversation", loadPackageParam.classLoader);
 
         XposedHelpers.findAndHookMethod(conversationClass, "onResume", new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-
-                XposedBridge.log("onResume");
+                //XposedBridge.log("onResume");
 
                 if (ExtModule.showLockScreen && !firstTime) {
-                    XposedBridge.log("finished activity");
+                    //XposedBridge.log("finished activity");
                     ((Activity) param.thisObject).finish();
                 } else
                     firstTime = false;
@@ -230,7 +209,7 @@ public class ExtModule implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                XposedBridge.log("onCreateOptionMenu");
+                //XposedBridge.log("onCreateOptionMenu");
 
                 //skip call button for group chats
                 if (!contactNumber.contains("-")) {
@@ -255,20 +234,28 @@ public class ExtModule implements IXposedHookLoadPackage {
                 MenuItem reminderMenuItem = ((Menu) param.args[0]).add("Add Reminder");
                 reminderMenuItem.setIcon(android.R.drawable.ic_menu_search);
                 reminderMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-
-
             }
 
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Menu menu = (Menu) param.args[0];
+
+                File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+                if (f.exists() && !f.isDirectory())
+                    menu.getItem(menu.size() - 1).getSubMenu().add("Remove Wallpaper");
+                else
+                    menu.getItem(menu.size() - 1).getSubMenu().add("Custom Wallpaper");
+
+            }
         });
 
         XposedHelpers.findAndHookMethod(conversationClass, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                XposedBridge.log("onCreate");
-
+                //XposedBridge.log("onCreate");
                 ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
-
             }
 
         });
@@ -277,7 +264,6 @@ public class ExtModule implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-
                 ((Activity) param.thisObject).unregisterReceiver(unlockReceiver);
             }
 
@@ -288,13 +274,11 @@ public class ExtModule implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-
                 MenuItem menuItem = (MenuItem) param.args[0];
 
                 //important: param.setResult(false) to prevent call to original method
 
                 if (menuItem.getTitle() == "Lock") {
-
                     lockedContacts.add(contactNumber);
                     templockedContacts.add(contactNumber);
 
@@ -302,7 +286,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
                     AndroidAppHelper.currentApplication().startService(intent);
-                    XposedBridge.log("called the intent for adding lock");
+                    //XposedBridge.log("called the intent for adding lock");
 
                     ExtModule.this.showToast("Lock Enabled for this contact.");
 
@@ -319,7 +303,6 @@ public class ExtModule implements IXposedHookLoadPackage {
                     intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
 
                     AndroidAppHelper.currentApplication().startService(intent);
-                    //XposedBridge.log("called the intent for removing lock");
                     ExtModule.this.showToast("Lock disabled for this contact.");
 
                     menuItem.setVisible(false);
@@ -338,7 +321,6 @@ public class ExtModule implements IXposedHookLoadPackage {
                         ex.printStackTrace();
                     }
 
-
                     param.setResult(false);
 
                 } else if (menuItem.getTitle().toString().equals("Add Reminder")) {
@@ -348,6 +330,21 @@ public class ExtModule implements IXposedHookLoadPackage {
                     intent.putExtra("contactNumber", contactNumber);
                     AndroidAppHelper.currentApplication().startActivity(intent);
                     param.setResult(false);
+                } else if (menuItem.getTitle().toString().equals("Custom Wallpaper")) {
+                    Intent intent = new Intent();
+                    intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.CropActivity"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("contactNumber", contactNumber);
+                    AndroidAppHelper.currentApplication().startActivity(intent);
+                    param.setResult(false);
+                    ExtModule.this.showToast("ReOpen chat to see effects");
+                } else if (menuItem.getTitle().toString().equals("Remove Wallpaper")) {
+                    File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+                    if (f.exists())
+                        f.delete();
+                    param.setResult(false);
+                    ExtModule.this.showToast("ReOpen chat to see effects");
+
                 }
             }
 
@@ -356,6 +353,7 @@ public class ExtModule implements IXposedHookLoadPackage {
     }
 
     private void hookMethodsForLock(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+
         XposedHelpers.findAndHookMethod(Activity.class, "onPause", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -363,7 +361,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 Activity activity = (Activity) param.thisObject;
 
-                XposedBridge.log(activity.getClass().getName());
+                //XposedBridge.log(activity.getClass().getName());
 
                 if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
                     return;
@@ -398,7 +396,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                     Thread.sleep(lockAfter * 1000 * 60);
                     ExtModule.templockedContacts.addAll(lockedContacts);
                 } catch (InterruptedException e) {
-                    XposedBridge.log("Thread Inturrupted");
+                    //XposedBridge.log("Thread Inturrupted");
                     //e.printStackTrace();
                 }
 
@@ -459,12 +457,29 @@ public class ExtModule implements IXposedHookLoadPackage {
             //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
             templockedContacts.remove(contactNumber);
 
-            XposedBridge.log("Broadcast Received");
+            //XposedBridge.log("Broadcast Received");
         }
     }
 
+    private void hookMethodsForWallPaper(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.wallpaper.WallPaperView", loadPackageParam.classLoader, "setDrawable", Drawable.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                //XposedBridge.log(param.args[0].getClass().getName());
+
+                Drawable drawable = Drawable.createFromPath(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+
+                if (drawable != null)
+                    param.args[0] = drawable;
+
+            }
+        });
+    }
+
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws
+            Throwable {
 
         if (!loadPackageParam.packageName.equals("com.whatsapp"))
             return;
@@ -481,6 +496,7 @@ public class ExtModule implements IXposedHookLoadPackage {
         hookInitialStage(loadPackageParam);
         hookMethodsForLock(loadPackageParam);
         hookMethodsForHighLight(loadPackageParam);
+        hookMethodsForWallPaper(loadPackageParam);
 
         unlockReceiver = new UnlockReceiver();
 
