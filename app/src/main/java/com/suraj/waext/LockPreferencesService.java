@@ -1,11 +1,8 @@
 package com.suraj.waext;
 
 import android.app.IntentService;
-import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import java.util.Set;
 
@@ -28,7 +25,23 @@ public class LockPreferencesService extends IntentService {
         SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
         SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        editor.putStringSet("lockedContacts", (Set<String>) intent.getSerializableExtra("lockedContacts"));
+        int action = intent.getIntExtra("action",0);
+
+        switch (action){
+            case 0:
+                editor.putStringSet("lockedContacts", (Set) intent.getSerializableExtra("lockedContacts"));
+                break;
+            case 1:
+                editor.putStringSet("hiddenGroups",(Set) intent.getSerializableExtra("hiddenGroups"));
+                break;
+            case 2:
+                editor.putBoolean("showGroups",intent.getBooleanExtra("showGroups",true));
+                break;
+            case 3:
+                break;
+
+        }
+
         //XposedBridge.log("saved preferences");
         editor.apply();
 
