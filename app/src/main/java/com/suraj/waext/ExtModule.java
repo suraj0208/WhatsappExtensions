@@ -583,7 +583,16 @@ public class ExtModule implements IXposedHookLoadPackage {
     }
 
     private void hookMethodsForHideGroup(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        final Class cl = XposedHelpers.findClass("com.whatsapp.c.bi", loadPackageParam.classLoader);
+        final Class cl;
+        try {
+            cl = XposedHelpers.findClass("com.whatsapp.c.bi", loadPackageParam.classLoader);
+        } catch (XposedHelpers.ClassNotFoundError classNotFoundError) {
+            classNotFoundError.printStackTrace();
+            return;
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+            return;
+        }
 
         XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
             @Override
@@ -600,9 +609,9 @@ public class ExtModule implements IXposedHookLoadPackage {
                     return;
                 }
 
-                if (!(cl.isInstance(param.getResult()))) {
-                    return;
-                }
+                //if (!(cl.isInstance(param.getResult()))) {
+                // return;
+                //}
 
                 if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
                     return;
@@ -611,7 +620,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                 f.setAccessible(true);
                 f.set(param.getResult(), true);
 
-                //XposedBridge.log(param.args[0] + " " + Boolean.toString((Boolean) f.get(param.getResult())));
+                XposedBridge.log(param.args[0] + " " + param.getResult().getClass().getName());
 
             }
         });
