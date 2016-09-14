@@ -14,10 +14,10 @@ import android.widget.Toast;
 
 public class ChangePasswordActivity extends AppCompatActivity {
 
-    private EditText etpassword;
     private int count = 0;
     private String firstPassword;
-    private TextView tvdefaultpassword;
+    private TextView tvDefaultPassword;
+    private EditText etPassword;
     private SharedPreferences sharedPreferences;
     private String decodedString;
 
@@ -26,11 +26,11 @@ public class ChangePasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lock);
 
-        etpassword = (EditText) (findViewById(R.id.etpassword));
-        tvdefaultpassword = (TextView) (findViewById(R.id.tvdefaultpassword));
-        tvdefaultpassword.setText("Enter Current Password. "+ tvdefaultpassword.getText());
+        etPassword = (EditText) (findViewById(R.id.etPassword));
+        tvDefaultPassword = (TextView) (findViewById(R.id.tvDefaultPassword));
+        tvDefaultPassword.setText("Enter Current Password. "+ tvDefaultPassword.getText());
 
-        etpassword.setEnabled(false);
+        etPassword.setEnabled(false);
 
         setEditTextListeners();
         setButtonListeners();
@@ -50,7 +50,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         final Toast lengthGreaterToast = Toast.makeText(getApplicationContext(), "Length cannot be more than 4.", Toast.LENGTH_SHORT);
 
         //limit pin length to 4 digits
-        etpassword.addTextChangedListener(new TextWatcher() {
+        etPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
@@ -58,7 +58,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 4) {
-                    etpassword.setText(s.subSequence(0, 4));
+                    etPassword.setText(s.subSequence(0, 4));
                     lengthGreaterToast.show();
                 }
             }
@@ -73,7 +73,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         View.OnClickListener digitClickListner = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etpassword.setText(etpassword.getText().append(((Button) v).getText()));
+                etPassword.setText(etPassword.getText().append(((Button) v).getText()));
             }
         };
 
@@ -95,9 +95,9 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
                 //count 0 : current password, count 1: new password, count 2: confirm password
                 if (count == 0) {
-                    if(etpassword.getText().toString().equals(decodedString)){
-                        tvdefaultpassword.setText("Enter New Password");
-                        etpassword.setText("");
+                    if(etPassword.getText().toString().equals(decodedString)){
+                        tvDefaultPassword.setText("Enter New Password");
+                        etPassword.setText("");
                         count++;
                     }else{
                         confirmationToast.show();
@@ -105,13 +105,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
                     }
 
                 } else if(count==1){
-                    firstPassword = etpassword.getText().toString();
-                    etpassword.setText("");
-                    tvdefaultpassword.setText("Confirm Password");
+                    firstPassword = etPassword.getText().toString();
+                    etPassword.setText("");
+                    tvDefaultPassword.setText("Confirm Password");
                     count++;
 
                 }else if(count==2) {
-                    if (etpassword.getText().toString().equals(firstPassword)) {
+                    if (etPassword.getText().toString().equals(firstPassword)) {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         String encodedString = new String(Base64.encode(firstPassword.getBytes(), 0));
                         editor.putString("password", encodedString);
@@ -120,7 +120,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         ChangePasswordActivity.this.finish();
                     } else {
                         count=2;
-                        etpassword.setText("");
+                        etPassword.setText("");
                         doNotMatchToast.show();
                     }
 
@@ -133,7 +133,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
         (findViewById(R.id.btnclear)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                etpassword.setText("");
+                etPassword.setText("");
             }
         });
 

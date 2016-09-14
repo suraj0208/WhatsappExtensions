@@ -26,7 +26,7 @@ public class LockActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         setContentView(R.layout.activity_lock);
 
-        etpassword = (EditText) (findViewById(R.id.etpassword));
+        etpassword = (EditText) (findViewById(R.id.etPassword));
 
         assert etpassword != null;
         etpassword.setEnabled(false);

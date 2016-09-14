@@ -38,6 +38,7 @@ public class LockPreferencesService extends IntentService {
                 editor.putBoolean("showGroups",intent.getBooleanExtra("showGroups",true));
                 break;
             case 3:
+                editor.putStringSet("highlightedChats",(Set) intent.getSerializableExtra("highlightedChats"));
                 break;
 
         }

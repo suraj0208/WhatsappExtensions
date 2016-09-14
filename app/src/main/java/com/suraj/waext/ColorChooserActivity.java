@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
@@ -15,22 +16,37 @@ public class ColorChooserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_color_chooser);
 
+        Bundle bundle  = getIntent().getExtras();
+
+        if(bundle==null){
+            Toast.makeText(getApplicationContext(),"Internal Error",Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
+        final String which = bundle.getString("groupOrIndividual");
+
+
+        if(which==null) {
+            Toast.makeText(getApplicationContext(),"Internal Error",Toast.LENGTH_SHORT).show();
+             finish();
+        }
+
         SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
 
         final ColorPickerView picker = (ColorPickerView) findViewById(R.id.colorPicker);
-        picker.setColor(sharedPreferences.getInt("highlightColor", Color.GRAY));
+        picker.setColor(sharedPreferences.getInt(which, Color.GRAY));
 
-        findViewById(R.id.btncolorchoosercancel).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnColorChooserCancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ColorChooserActivity.this.finish();
             }
         });
 
-        findViewById(R.id.btncolorchooserok).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.btnColorChooserOk).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateHighlightColor(picker.getColor());
+                updateHighlightColor(which,picker.getColor());
                 ColorChooserActivity.this.finish();
             }
 
@@ -38,7 +54,15 @@ public class ColorChooserActivity extends AppCompatActivity {
 
     }
 
-    public void updateHighlightColor(int color) {
+    public void updateHighlightColor(String which,int color) {
+        SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putInt(which, color);
+        editor.commit();
+    }
+
+    public void updateIndividualColor(int color) {
         SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
         final SharedPreferences.Editor editor = sharedPreferences.edit();
 

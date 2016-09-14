@@ -17,7 +17,7 @@ import java.io.File;
 
 public class CropActivity extends AppCompatActivity {
 
-    private String filename;
+    private String fileName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +25,7 @@ public class CropActivity extends AppCompatActivity {
         setContentView(R.layout.activity_crop);
 
 
-        filename = getIntent().getStringExtra("contactNumber");
+        fileName = getIntent().getStringExtra("contactNumber");
 
 
         if (ContextCompat.checkSelfPermission(CropActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -55,7 +55,7 @@ public class CropActivity extends AppCompatActivity {
     }
 
     private void beginCrop(Uri source) {
-        Uri destination = Uri.fromFile(new File(Environment.getExternalStorageDirectory().toString() + "/WhatsApp/Media/WallPaper/", filename + ".jpg"));
+        Uri destination = Uri.fromFile(new File(Environment.getExternalStorageDirectory().toString() + "/WhatsApp/Media/WallPaper/", fileName + ".jpg"));
         Crop.of(source, destination).withAspect(9, 16).start(this);
     }
 

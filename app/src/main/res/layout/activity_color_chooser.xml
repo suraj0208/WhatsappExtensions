@@ -26,14 +26,14 @@
             android:weightSum="2">
 
             <Button
-                android:id="@+id/btncolorchoosercancel"
+                android:id="@+id/btnColorChooserCancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel" />
 
             <Button
-                android:id="@+id/btncolorchooserok"
+                android:id="@+id/btnColorChooserOk"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

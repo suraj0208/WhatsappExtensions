@@ -100,6 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvhighlight"
             android:layout_below="@id/tvhighlight"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
             android:text="Highlight Groups" />
 
@@ -109,7 +110,52 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/chkboxhighlight"
             android:layout_alignParentRight="true"
-            android:text="Select Color" />
+            android:text="Color" />
+
+        <TextView
+            android:id="@+id/tvindividualchat"
+            android:layout_width="match_parent"
+            android:layout_below="@id/btncolorchooser"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:text="Individual chat highlight color"/>
+
+        <Button
+            android:id="@+id/btnindividualcolorchooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvindividualchat"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:text="Color" />
+
+        <TextView
+            android:id="@+id/tvlastseen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvindividualchat"
+            android:layout_margin="10dp"
+            android:text="Last seen Preferences"
+            android:textSize="22sp" />
+
+        <CheckBox
+            android:id="@+id/chkboxseen"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_below="@id/tvlastseen"
+            android:layout_marginTop="5dp"
+            android:text="Hide last seen" />
+
+        <TextView
+            android:id="@+id/tvrebootnotice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/chkboxseen"
+            android:layout_alignParentRight="true"
+            android:text="Requires Restart" />
+
 
     </RelativeLayout>
 </ScrollView>

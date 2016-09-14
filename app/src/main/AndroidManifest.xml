@@ -22,7 +22,7 @@
             android:value="Tweaks for WhatsApp" />
         <meta-data
             android:name="xposedminversion"
-            android:value="82" />
+            android:value="53" />
 
         <activity
             android:name=".MainActivity"
