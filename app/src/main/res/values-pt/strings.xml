@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">WhatsApp extensões</string>
+    <string name="action_settings">Configurações</string>
+	
+    <string name="title_activity_change_password">Mudar Senha</string>
+	<string name="lock_prefs">Preferências de bloqueio</string>
+	<string name="lock_text">Bloquear todas as conversas depois de sair WhatsApp.</string>
+	<string name="lock_by">Bloquear após </string>
+	<string name="change_password">Mudar Senha</string>
+	
+	<string name="reminder_prefs">Preferências de lembrete</string>
+	<string name="enable_reminder">Ativar serviço de lembretes</string>
+	<string name="reminder_text">Nota: O serviço é tratado pelo aplicativo automaticamente. Use esta opção se você deseja ativar/desativar o serviço de forma explícita.</string>
+	<string name="reminder_in">Me Lembre em </string>
+	
+	<string name="highlight_prefs">Preferências de Cores</string>
+	<string name="highlight_groups">Cor do chat em grupos</string>
+	<string name="highlight_individual">Cor do chat individual</string>
+	<string name="select_color">Selecione a cor</string>
+
+	<string name="last_seen_prefs">Preferências de visto por último</string>
+	<string name="hide_last_seen">Ocultar visto por último</string>
+	<string name="req_restart">Requer reinício</string>
+
+	<string name="layout_prefs">Preferências de Layout</string>
+	<string name="hide_camera_btn">Ocultar botão da câmera</string>
+
+	<string name="color">Cor</string>
+	<string name="cancel">Cancelar</string>
+	<string name="clear">Limpar</string>
+	<string name="enter">Confirmar</string>
+	<string name="default_password">Senha Padrão: 1234</string>
+	
+    <string-array name="minutelist">
+        <item>Imediato</item>
+        <item>1 Minuto</item>
+        <item>3 Minutos</item>
+        <item>5 Minutos</item>
+        <item>10 Minutos</item>
+    </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Minutos</item>
+        <item>30 Minutos</item>
+        <item>1 Hora</item>
+        <item>2 Horas</item>
+    </string-array>
+
+    <array name="demo_colors">
+        <item>#9CCC65</item>
+        <item>#D4E157</item>
+        <item>#FFEE58</item>
+        <item>#FFCA28</item>
+        <item>#FFA726</item>
+        <item>#FF7043</item>
+        <item>#BDBDBD</item>
+        <item>#78909C</item>
+        <item>#29B6F6</item>
+        <item>#ef5350</item>
+        <item>#EC407A</item>
+        <item>#212121</item>
+    </array>
+    <string name="title_activity_color_chooser">Escolher a cor</string>
+
+</resources>
