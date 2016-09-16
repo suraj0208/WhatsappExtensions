@@ -1,19 +1,47 @@
 <resources>
     <string name="app_name">WhatsApp Extensions</string>
     <string name="action_settings">Settings</string>
+	
     <string name="title_activity_change_password">Change Password</string>
-
+	<string name="lock_prefs">Lock Preferences</string>
+	<string name="lock_text">Lock all chats after you leave WhatApp.</string>
+	<string name="lock_after">Lock After </string>
+	<string name="change_password">Change Password</string>
+	
+	<string name="reminder_prefs">Reminder Preferences</string>
+	<string name="enable_reminder">Enable reminder service</string>
+	<string name="reminder_text">Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly.</string>
+	<string name="reminder_in">Remind me in </string>
+	
+	<string name="highlight_prefs">Highlight Preferences</string>
+	<string name="highlight_groups">Highlight Groups</string>
+	<string name="highlight_individual">Individual chat highlight color</string>
+	<string name="select_color">Select Color</string>
+	
+	<string name="last_seen_prefs">Last seen Preferences</string>
+	<string name="hide_last_seen">Hide last seen</string>
+	<string name="req_restart">Requires Restart</string>
+	
+	<string name="layout_prefs">Layout Preferences</string>
+	<string name="hide_camera_btn">Hide Camera Button</string>
+	
+	<string name="color">Color</string>
+	<string name="cancel">Cancel</string>
+	<string name="clear">Clear</string>
+	<string name="enter">Enter</string>
+	<string name="default_password">Default password: 1234</string>
+	
     <string-array name="minutelist">
         <item>Immediate</item>
         <item>1 Minute</item>
-        <item>3 Minute</item>
-        <item>5 Minute</item>
+        <item>3 Minutes</item>
+        <item>5 Minutes</item>
         <item>10 Minute</item>
     </string-array>
 
     <string-array name="reminderlist">
         <item>15 Minutes</item>
-        <item>30 Minute</item>
+        <item>30 Minutes</item>
         <item>1 Hour</item>
         <item>2 Hours</item>
     </string-array>
