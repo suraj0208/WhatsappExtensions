@@ -121,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Clear" />
+                android:text="@string/clear" />
 
             <Button
                 android:id="@+id/btn0"
@@ -136,7 +136,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Enter" />
+                android:text="@string/enter" />
         </LinearLayout>
     </LinearLayout>
 
@@ -156,6 +156,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/etPassword"
         android:layout_marginBottom="10dp"
-        android:text="Default password: 1234" />
+        android:text="@string/default_password" />
 
 </RelativeLayout>

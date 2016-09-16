@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Lock Preferences"
+            android:text="@string/lock_prefs"
             android:textSize="22sp" />
 
         <TextView
@@ -28,7 +28,7 @@
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlockprefs"
             android:layout_marginBottom="5dp"
-            android:text="Lock all chats after you leave WhatApp."
+            android:text="@string/lock_text"
             android:textSize="14sp" />
 
         <TextView
@@ -38,7 +38,7 @@
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlockdesc"
-            android:text="Lock After" />
+            android:text="@string/lock_after" />
 
         <Spinner
             android:id="@+id/spinminutes"
@@ -56,7 +56,7 @@
             android:layout_below="@id/tvlockafter"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
-            android:text="Change Password" />
+            android:text="@string/change_password" />
 
         <TextView
             android:id="@+id/tvservicestatus"
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/btnchangepass"
             android:layout_margin="10dp"
-            android:text="Reminder Preferences"
+            android:text="@string/reminder_prefs"
             android:textSize="22sp" />
 
         <CheckBox
@@ -75,7 +75,7 @@
             android:layout_alignStart="@id/tvservicestatus"
             android:layout_below="@id/tvservicestatus"
             android:layout_marginBottom="5dp"
-            android:text="Enable reminder service" />
+            android:text="@string/enable_reminder" />
 
         <TextView
             android:id="@+id/tvnote"
@@ -85,7 +85,7 @@
             android:layout_alignStart="@id/tvservicestatus"
             android:layout_below="@id/chkboxservicestate"
             android:layout_marginBottom="10dp"
-            android:text="Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly."
+            android:text="@string/reminder_text"
             android:textSize="14sp" />
 
         <TextView
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvnote"
             android:layout_margin="10dp"
-            android:text="Highlight Preferences"
+            android:text="@string/highlight_prefs"
             android:textSize="22sp" />
 
         <CheckBox
@@ -106,7 +106,7 @@
             android:layout_below="@id/tvhighlight"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
-            android:text="Highlight Groups" />
+            android:text="@string/highlight_groups" />
 
         <Button
             android:id="@+id/btncolorchooser"
@@ -115,7 +115,7 @@
             android:layout_alignBaseline="@id/chkboxhighlight"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="Color" />
+            android:text="@string/color" />
 
         <TextView
             android:id="@+id/tvindividualchat"
@@ -126,7 +126,7 @@
             android:layout_below="@id/chkboxhighlight"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="10dp"
-            android:text="Individual chat highlight color" />
+            android:text="@string/highlight_individual" />
 
         <Button
             android:id="@+id/btnindividualcolorchooser"
@@ -136,7 +136,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
-            android:text="Color" />
+            android:text="@string/color" />
 
         <TextView
             android:id="@+id/tvlastseen"
@@ -144,7 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvindividualchat"
             android:layout_margin="10dp"
-            android:text="Last seen Preferences"
+            android:text="@string/last_seen_prefs"
             android:textSize="22sp" />
 
         <CheckBox
@@ -156,7 +156,7 @@
             android:layout_below="@id/tvlastseen"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
-            android:text="Hide last seen" />
+            android:text="@string/hide_last_seen" />
 
         <TextView
             android:id="@+id/tvrebootnotice"
@@ -165,7 +165,7 @@
             android:layout_alignBaseline="@id/chkboxseen"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="Requires Restart" />
+            android:text="@string/req_restart" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
@@ -173,7 +173,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/chkboxseen"
             android:layout_margin="10dp"
-            android:text="Layout Preferences"
+            android:text="@string/layout_prefs"
             android:textSize="22sp" />
 
         <CheckBox
@@ -184,7 +184,7 @@
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlayoutprefs"
             android:layout_marginTop="5dp"
-            android:text="Hide Camera Button" />
+            android:text="@string/hide_camera_btn" />
     </RelativeLayout>
 
 </ScrollView>
