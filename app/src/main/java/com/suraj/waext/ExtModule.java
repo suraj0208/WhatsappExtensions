@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.BaseBundle;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -20,6 +22,8 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -29,6 +33,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -36,19 +41,24 @@ import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 
 /**
  * Created by suraj on 28/8/16.
  */
+
+/**
+ * This is where the magic happens
+ */
 public class ExtModule implements IXposedHookLoadPackage {
 
     public static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
-    public static final String HIDDENT_GROUPS_PREF_STRING = "hiddenGroups";
+    public static final String HIDDEN_GROUPS_PREF_STRING = "hiddenGroups";
     public static final String HIGHLIGHTED_CHATS_PREF_STRING = "highlightedChats";
     public static final String PACKAGE_NAME = "com.suraj.waext";
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
-    public static final String WALLPAPERDIR = "/WhatsApp/Media/WallPaper/";
+    public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
 
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
@@ -66,6 +76,8 @@ public class ExtModule implements IXposedHookLoadPackage {
     private static boolean enableHideSeen = false;
     private static boolean isGroup = false;
     private static boolean exceptionThrown = true;
+    private static boolean enableHideCamera = false;
+
 
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
@@ -94,6 +106,8 @@ public class ExtModule implements IXposedHookLoadPackage {
     }
 
     private void hookMethodsForHighLight(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+
+
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -132,6 +146,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                                     contact = contact.replace("+", "");
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
+                                    XposedBridge.log("ArrayIndexOutofBound");
                                     ex.printStackTrace();
                                 }
 
@@ -154,7 +169,11 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                             processedViewsHashMap.put((View) param.thisObject, parent);
 
-                            rl = (RelativeLayout) parent;
+                            try {
+                                rl = (RelativeLayout) parent;
+                            }catch (ClassCastException e){
+                                XposedBridge.log("ClassCastException");
+                            }
 
                             zerothChildrenHashMap.put(parent, rl.getChildAt(0));
                             firstChildrenHashMap.put(parent, rl.getChildAt(1));
@@ -168,13 +187,13 @@ public class ExtModule implements IXposedHookLoadPackage {
                         if (localIsGroup && enableHighlight) {
                             firstChild.setBackgroundColor(highlightColor);
                             zerothChild.setBackgroundColor(highlightColor);
-                            firstChild.setPadding(0, 40, 30, 0);
+                            firstChild.setPadding(0, 37, 30, 0);
                             ((RelativeLayout.LayoutParams) firstChild.getLayoutParams()).height = -1;
                         } else {
                             if (contact != null && highlightedChats.contains(contact)) {
                                 firstChild.setBackgroundColor(individualHighlightColor);
                                 zerothChild.setBackgroundColor(individualHighlightColor);
-                                firstChild.setPadding(0, 40, 30, 0);
+                                firstChild.setPadding(0, 37, 30, 0);
                                 ((RelativeLayout.LayoutParams) firstChild.getLayoutParams()).height = -1;
                                 return;
                             }
@@ -193,9 +212,12 @@ public class ExtModule implements IXposedHookLoadPackage {
     private void updateHighlightColor() {
         sharedPreferences.reload();
         sharedPreferences.makeWorldReadable();
+
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
         individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
+
         enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
+        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
     }
 
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -254,6 +276,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 if (!enableHideSeen)
                     return;
+
 
                 try {
                     Thread.sleep(200);
@@ -314,7 +337,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                 super.afterHookedMethod(param);
                 Menu menu = (Menu) param.args[0];
 
-                File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+                File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
 
                 if (f.exists() && !f.isDirectory())
                     menu.getItem(menu.size() - 1).getSubMenu().add("Remove Wallpaper");
@@ -349,6 +372,7 @@ public class ExtModule implements IXposedHookLoadPackage {
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 ((Activity) param.thisObject).unregisterReceiver(unlockReceiver);
+
             }
 
         });
@@ -398,17 +422,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         break;
 
                     case "call":
-                        Class photoClass = XposedHelpers.findClass("com.whatsapp.PhotoView", loadPackageParam.classLoader);
-
-                        Constructor photoClassConstructor = photoClass.getConstructor(Context.class);
-
-                        Object object = photoClassConstructor.newInstance(((Activity) param.thisObject).getApplicationContext());
-
-                        Bitmap bitmap = BitmapFactory.decodeResource(AndroidAppHelper.currentApplication().getResources(), R.mipmap.ic_launcher);
-
-                        XposedHelpers.callMethod(object, "bindPhoto", bitmap);
-
-                        /*Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                         callIntent.setData(Uri.parse("tel:" + "+".concat(contactNumber.replaceAll(" ", ""))));
@@ -418,7 +432,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         } catch (Exception ex) {
                             showToast("Couldn't place call");
                             ex.printStackTrace();
-                        }*/
+                        }
 
                         param.setResult(false);
                         break;
@@ -443,7 +457,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         break;
 
                     case "Remove Wallpaper":
-                        File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+                        File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
                         if (f.exists())
                             f.delete();
                         param.setResult(false);
@@ -456,7 +470,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         intent = new Intent();
                         intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                         intent.putExtra("action", 1);
-                        intent.putExtra(ExtModule.HIDDENT_GROUPS_PREF_STRING, hiddenGroups);
+                        intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
                         AndroidAppHelper.currentApplication().startService(intent);
                         menuItem.setTitle("Unhide");
                         ExtModule.this.showToast("Restart WhatsApp to take effect.");
@@ -471,7 +485,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         intent = new Intent();
                         intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                         intent.putExtra("action", 1);
-                        intent.putExtra(ExtModule.HIDDENT_GROUPS_PREF_STRING, hiddenGroups);
+                        intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
                         AndroidAppHelper.currentApplication().startService(intent);
                         menuItem.setTitle("Hide");
                         ExtModule.this.showToast("Remove WhatApp from recent apps and Relaunch.");
@@ -520,6 +534,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                 Activity activity = (Activity) param.thisObject;
 
                 context = activity.getApplicationContext();
+
 
                 //if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
                 //    return;
@@ -746,11 +761,16 @@ public class ExtModule implements IXposedHookLoadPackage {
     public void initPrefs() {
         sharedPreferences.reload();
         sharedPreferences.makeWorldReadable();
+
         lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
-        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
-        hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDENT_GROUPS_PREF_STRING, new HashSet<String>());
-        enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
         highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
+        hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
+
+        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
+
+        enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
+        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
+
     }
 
     //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
@@ -773,13 +793,48 @@ public class ExtModule implements IXposedHookLoadPackage {
         }
     }
 
+    private void hookMethodsForCameraAndZoom(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("android.view.View", loadPackageParam.classLoader, "setVisibility", int.class, new de.robv.android.xposed.XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                if (!param.args[0].toString().equals("0"))
+                    return;
+
+
+                View view = (View) param.thisObject;
+
+                if (view.getTransitionName() == null) {
+                    if (enableHideCamera && param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
+                        View parent = (View) view.getParent();
+
+                        if (parent instanceof LinearLayout) {
+                            StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
+
+                            if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
+                                view.setVisibility(View.GONE);
+
+                        }
+                    }
+                    return;
+
+                }
+
+                if (param.thisObject instanceof ImageView) {
+                    new PhotoViewAttacher((ImageView) param.thisObject);
+                }
+            }
+        });
+    }
+
     private void hookMethodsForWallPaper(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("com.whatsapp.wallpaper.WallPaperView", loadPackageParam.classLoader, "setDrawable", Drawable.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                Drawable drawable = Drawable.createFromPath(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPERDIR + contactNumber + ".jpg");
+                Drawable drawable = Drawable.createFromPath(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
 
                 if (drawable != null)
                     param.args[0] = drawable;
@@ -809,7 +864,7 @@ public class ExtModule implements IXposedHookLoadPackage {
                         for (Field field : archiveClass.getDeclaredFields()) {
                             if (field.getType().getName().equals("boolean")) {
                                 archiveBooleanFieldName = field.getName();
-                                XposedBridge.log("Field name set");
+                                XposedBridge.log("s name set");
                                 exceptionThrown = false;
                             }
                         }
@@ -852,7 +907,6 @@ public class ExtModule implements IXposedHookLoadPackage {
         processedViewsHashMap = new HashMap<>();
         zerothChildrenHashMap = new HashMap<>();
         firstChildrenHashMap = new HashMap<>();
-
         tagToContactHashMap = new HashMap<>();
 
         hookConversationMethods(loadPackageParam);
@@ -861,6 +915,7 @@ public class ExtModule implements IXposedHookLoadPackage {
         hookMethodsForHighLight(loadPackageParam);
         hookMethodsForWallPaper(loadPackageParam);
         hookMethodsForHideGroup(loadPackageParam);
+        hookMethodsForCameraAndZoom(loadPackageParam);
 
         unlockReceiver = new UnlockReceiver();
 
@@ -878,9 +933,36 @@ public class ExtModule implements IXposedHookLoadPackage {
             error.printStackTrace();
         }
 
+        /*XposedHelpers.findAndHookMethod("android.os.BaseBundle", loadPackageParam.classLoader, "getString", String.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                XposedBridge.log(param.args[0].toString()+" "+param.getResult());
+                BaseBundle baseBundle = (BaseBundle)param.thisObject;
+                Set set = baseBundle.keySet();
+
+                if(set.size()==2){
+                    if(set.contains("jid") && set.contains("msgid")){
+                        baseBundle.putString("jid", "919657785171@s.whatsapp.net");
+                        if(param.args[0].equals("jid"))
+                            param.setResult("919657785171@s.whatsapp.net");
+                    }
+                }
+
+                XposedBridge.log("------------------------start----------------------------");
+                for(String s : baseBundle.keySet())
+                    XposedBridge.log(s +" " + baseBundle.get(s));
+
+                XposedBridge.log("------------------------end----------------------------");
+                //for(StackTraceElement stackTraceElement : new Exception().getStackTrace())
+                //    XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
+
+            }
+        });*/
+
 
     }
-
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);

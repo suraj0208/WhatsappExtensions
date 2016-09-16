@@ -32,6 +32,29 @@ public class MainActivity extends AppCompatActivity {
         setupReminderUI();
         setupHighlightUI();
         setupSeenUI();
+        setUpLayoutUI();
+
+    }
+
+    private void setUpLayoutUI() {
+        final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxhidecamera);
+
+        if(sharedPreferences.getBoolean("hideCamera",false))
+            checkBox.setChecked(true);
+        else
+            checkBox.setChecked(false);
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(checkBox.isChecked())
+                    editor.putBoolean("hideCamera",true);
+                else
+                    editor.putBoolean("hideCamera",false);
+
+                editor.apply();
+            }
+        });
 
     }
 
