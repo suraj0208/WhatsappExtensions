@@ -5,15 +5,61 @@
     <string name="title_activity_change_password">Change Password</string>
 	<string name="lock_prefs">Lock Preferences</string>
 	<string name="lock_text">Lock all chats after you leave WhatApp.</string>
-	<string name="lock_after">Lock After </string>
-	<string name="change_password">Change Password</string>
-	
-	<string name="reminder_prefs">Reminder Preferences</string>
+
+    <!-- translate from here -->
+    <string name="lock_after">Lock After </string>
+    <!-- translate end -->
+
+    <string name="change_password">Change Password</string>
+
+    <!-- translate from here -->
+    <string name="enter_current_password">Enter Current Password. Default password: 1234</string>
+    <string name="enter_new_password">Enter New Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="password_length_warning">Length cannot be more than 4</string>
+    <string name="password_mismatch">Passwords do not match</string>
+    <string name="password_incorrect">Incorrect Password</string>
+    <string name="password_change_message">Password Changed</string>
+    <string name="lock_enable_message">Lock Enabled for this contact</string>
+    <string name="lock_disable_message">Lock disabled for this contact</string>
+    <string name="call_place_error">Couldn\'t place call</string>
+    <string name="chat_reopen_message">ReOpen chat to see effects</string>
+    <string name="whatsapp_restart_message">Restart WhatsApp to take effect</string>
+    <string name="whatsapp_restart_message_long">Remove WhatApp from recent apps and Relaunch</string>
+    <!-- translate end -->
+
+    <!-- Translate -->
+    <string name="internal_error">Internal Error</string>
+    <string name="bundle_null_error">Error Opening Activity:Bundle null</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="select_picture">Select Picture</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="menuitem_call">call</string>
+    <string name="menuitem_hide">Hide</string>
+    <string name="menuitem_unhide">Unhide</string>
+    <string name="menuitem_wallpaper_set">Custom Wallpaper</string>
+    <string name="menuitem_wallpaper_remove">Remove Wallpaper</string>
+    <string name="menuitem_reminder">Add Reminder</string>
+    <string name="menuitem_lock">Lock</string>
+    <string name="menuitem_unlock">Unlock</string>
+    <string name="menuitem_highlight">Highlight</string>
+    <string name="menuitem_unhighlight">Unhighlight</string>
+    <!-- Translate end-->
+
+    <string name="reminder_prefs">Reminder Preferences</string>
 	<string name="enable_reminder">Enable reminder service</string>
 	<string name="reminder_text">Note: The service is handled by the app automatically. Use this option if you want to enable/disable service explicitly.</string>
 	<string name="reminder_in">Remind me in </string>
-	
-	<string name="highlight_prefs">Highlight Preferences</string>
+    <string name="reply_to">Reply to %1$s</string>
+
+
+    <string name="highlight_prefs">Highlight Preferences</string>
 	<string name="highlight_groups">Highlight Groups</string>
 	<string name="highlight_individual">Individual chat highlight color</string>
 	<string name="select_color">Select Color</string>

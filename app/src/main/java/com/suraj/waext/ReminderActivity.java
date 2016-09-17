@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -49,7 +48,7 @@ public class ReminderActivity extends Activity {
                 setUpForOpen();
             }
         } else {
-            Toast.makeText(getApplicationContext(), "Error Opening Activity. Bundle null.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.bundle_null_error, Toast.LENGTH_SHORT).show();
         }
 
         startService(new Intent(ReminderActivity.this, ReminderService.class));
@@ -67,7 +66,7 @@ public class ReminderActivity extends Activity {
     }
 
     private void setUpForOpen() {
-        ((TextView) (findViewById(R.id.tvreminderwhom))).setText("Reply to " + contactName);
+        ((TextView) (findViewById(R.id.tvreminderwhom))).setText(getString(R.string.reply_to,contactName));
 
         (findViewById(R.id.btnremindercancel)).setOnClickListener(new View.OnClickListener() {
             @Override

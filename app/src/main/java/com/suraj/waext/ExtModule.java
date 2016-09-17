@@ -7,12 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.XModuleResources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.BaseBundle;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -33,13 +31,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 
+import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -51,7 +51,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 /**
  * This is where the magic happens
  */
-public class ExtModule implements IXposedHookLoadPackage {
+public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
     public static final String LOCKED_CONTACTS_PREF_STRING = "lockedContacts";
     public static final String HIDDEN_GROUPS_PREF_STRING = "hiddenGroups";
@@ -59,6 +59,7 @@ public class ExtModule implements IXposedHookLoadPackage {
     public static final String PACKAGE_NAME = "com.suraj.waext";
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
     public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
+    public static String MODULE_PATH;
 
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
@@ -100,6 +101,7 @@ public class ExtModule implements IXposedHookLoadPackage {
     private XSharedPreferences sharedPreferences;
 
     private UnlockReceiver unlockReceiver;
+    private XModuleResources modRes;
 
     public ExtModule() {
 
@@ -171,7 +173,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                             try {
                                 rl = (RelativeLayout) parent;
-                            }catch (ClassCastException e){
+                            } catch (ClassCastException e) {
                                 XposedBridge.log("ClassCastException");
                             }
 
@@ -298,7 +300,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 //skip call button for group chats
                 if (!contactNumber.contains("-")) {
-                    MenuItem callMenuItem = ((Menu) param.args[0]).add("call");
+                    MenuItem callMenuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_call));
                     callMenuItem.setIcon(android.R.drawable.ic_menu_search);
                     callMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 }
@@ -306,9 +308,9 @@ public class ExtModule implements IXposedHookLoadPackage {
                 MenuItem menuItem;
 
                 if (!hiddenGroups.contains(contactNumber))
-                    menuItem = ((Menu) param.args[0]).add("Hide");
+                    menuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_hide));
                 else
-                    menuItem = ((Menu) param.args[0]).add("Unhide");
+                    menuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_unhide));
 
                 menuItem.setIcon(android.R.drawable.ic_menu_search);
                 menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -317,17 +319,17 @@ public class ExtModule implements IXposedHookLoadPackage {
                 MenuItem lock;
                 MenuItem unlock;
 
-                lock = ((Menu) param.args[0]).add("Lock");
+                lock = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_lock));
                 lock.setIcon(android.R.drawable.ic_menu_search);
                 lock.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 
                 if (lockedContacts.contains(contactNumber)) {
-                    unlock = ((Menu) param.args[0]).add("Unlock");
+                    unlock = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_unlock));
                     unlock.setIcon(android.R.drawable.ic_menu_search);
                     unlock.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 }
 
-                MenuItem reminderMenuItem = ((Menu) param.args[0]).add("Add Reminder");
+                MenuItem reminderMenuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_reminder));
                 reminderMenuItem.setIcon(android.R.drawable.ic_menu_search);
                 reminderMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
             }
@@ -340,19 +342,19 @@ public class ExtModule implements IXposedHookLoadPackage {
                 File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
 
                 if (f.exists() && !f.isDirectory())
-                    menu.getItem(menu.size() - 1).getSubMenu().add("Remove Wallpaper");
+                    menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_wallpaper_remove));
                 else
-                    menu.getItem(menu.size() - 1).getSubMenu().add("Custom Wallpaper");
+                    menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_wallpaper_set));
 
 
                 if (isGroup && enableHighlight)
                     return;
 
                 if (highlightedChats.contains(contactNumber)) {
-                    menu.getItem(menu.size() - 1).getSubMenu().add("Unhighlight");
+                    menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_unhighlight));
 
                 } else {
-                    menu.getItem(menu.size() - 1).getSubMenu().add("Highlight");
+                    menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_highlight));
                 }
 
             }
@@ -388,135 +390,123 @@ public class ExtModule implements IXposedHookLoadPackage {
 
                 Intent intent;
 
-                switch (title) {
-                    case "Lock":
-                        lockedContacts.add(contactNumber);
-                        templockedContacts.add(contactNumber);
+                if (title.equals(modRes.getString(R.string.menuitem_lock))) {
+                    lockedContacts.add(contactNumber);
+                    templockedContacts.add(contactNumber);
 
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 0);
-                        intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
-                        AndroidAppHelper.currentApplication().startService(intent);
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 0);
+                    intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
+                    AndroidAppHelper.currentApplication().startService(intent);
 
-                        ExtModule.this.showToast("Lock Enabled for this contact.");
+                    ExtModule.this.showToast(modRes.getString(R.string.lock_enable_message));
 
-                        ((Activity) param.thisObject).finish();
-                        param.setResult(false);
-                        break;
+                    ((Activity) param.thisObject).finish();
+                    param.setResult(false);
 
-                    case "Unlock":
-                        lockedContacts.remove(contactNumber);
-                        templockedContacts.remove(contactNumber);
+                } else if (title.equals(modRes.getString(R.string.menuitem_unlock))) {
+                    lockedContacts.remove(contactNumber);
+                    templockedContacts.remove(contactNumber);
 
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 0);
-                        intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 0);
+                    intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
 
-                        AndroidAppHelper.currentApplication().startService(intent);
-                        ExtModule.this.showToast("Lock disabled for this contact.");
+                    AndroidAppHelper.currentApplication().startService(intent);
+                    ExtModule.this.showToast(modRes.getString(R.string.lock_disable_message));
 
-                        menuItem.setVisible(false);
-                        param.setResult(false);
-                        break;
+                    menuItem.setVisible(false);
+                    param.setResult(false);
 
-                    case "call":
-                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                } else if (title.equals(modRes.getString(R.string.menuitem_call))) {
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-                        callIntent.setData(Uri.parse("tel:" + "+".concat(contactNumber.replaceAll(" ", ""))));
+                    callIntent.setData(Uri.parse("tel:" + "+".concat(contactNumber.replaceAll(" ", ""))));
 
-                        try {
-                            AndroidAppHelper.currentApplication().startActivity(callIntent);
-                        } catch (Exception ex) {
-                            showToast("Couldn't place call");
-                            ex.printStackTrace();
-                        }
+                    try {
+                        AndroidAppHelper.currentApplication().startActivity(callIntent);
+                    } catch (Exception ex) {
+                        showToast(modRes.getString(R.string.call_place_error));
+                        ex.printStackTrace();
+                    }
 
-                        param.setResult(false);
-                        break;
+                    param.setResult(false);
 
-                    case "Add Reminder":
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.ReminderActivity"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("contactNumber", contactNumber);
-                        AndroidAppHelper.currentApplication().startActivity(intent);
-                        param.setResult(false);
-                        break;
+                } else if (title.equals(modRes.getString(R.string.menuitem_reminder))) {
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.ReminderActivity"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("contactNumber", contactNumber);
+                    AndroidAppHelper.currentApplication().startActivity(intent);
+                    param.setResult(false);
 
-                    case "Custom Wallpaper":
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.CropActivity"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("contactNumber", contactNumber);
-                        AndroidAppHelper.currentApplication().startActivity(intent);
-                        param.setResult(false);
-                        ExtModule.this.showToast("ReOpen chat to see effects");
-                        break;
+                } else if (title.equals(modRes.getString(R.string.menuitem_wallpaper_set))) {
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.CropActivity"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra("contactNumber", contactNumber);
+                    AndroidAppHelper.currentApplication().startActivity(intent);
+                    param.setResult(false);
+                    ExtModule.this.showToast(modRes.getString(R.string.chat_reopen_message));
 
-                    case "Remove Wallpaper":
-                        File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
-                        if (f.exists())
-                            f.delete();
-                        param.setResult(false);
-                        ExtModule.this.showToast("ReOpen chat to see effects");
-                        break;
+                } else if (title.equals(modRes.getString(R.string.menuitem_wallpaper_remove))) {
+                    File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
+                    if (f.exists())
+                        f.delete();
+                    param.setResult(false);
+                    ExtModule.this.showToast(modRes.getString(R.string.chat_reopen_message));
 
-                    case "Hide":
-                        hiddenGroups.add(contactNumber);
+                } else if (title.equals(modRes.getString(R.string.menuitem_hide))) {
+                    hiddenGroups.add(contactNumber);
 
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 1);
-                        intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
-                        AndroidAppHelper.currentApplication().startService(intent);
-                        menuItem.setTitle("Unhide");
-                        ExtModule.this.showToast("Restart WhatsApp to take effect.");
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 1);
+                    intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
+                    AndroidAppHelper.currentApplication().startService(intent);
+                    menuItem.setTitle(modRes.getString(R.string.menuitem_unhide));
+                    ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
 
-                        param.setResult(false);
+                    param.setResult(false);
 
-                        break;
+                } else if (title.equals(modRes.getString(R.string.menuitem_unhide))) {
+                    hiddenGroups.remove(contactNumber);
 
-                    case "Unhide":
-                        hiddenGroups.remove(contactNumber);
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 1);
+                    intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
+                    AndroidAppHelper.currentApplication().startService(intent);
+                    menuItem.setTitle(modRes.getString(R.string.menuitem_hide));
+                    ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message_long));
 
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 1);
-                        intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
-                        AndroidAppHelper.currentApplication().startService(intent);
-                        menuItem.setTitle("Hide");
-                        ExtModule.this.showToast("Remove WhatApp from recent apps and Relaunch.");
+                    param.setResult(false);
+                } else if (title.equals(modRes.getString(R.string.menuitem_highlight))) {
+                    highlightedChats.add(contactNumber);
 
-                        param.setResult(false);
-                        break;
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 3);
+                    intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
+                    AndroidAppHelper.currentApplication().startService(intent);
+                    menuItem.setTitle(modRes.getString(R.string.menuitem_unhighlight));
+                    ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
+                    param.setResult(false);
 
-                    case "Highlight":
-                        highlightedChats.add(contactNumber);
+                } else if (title.equals(modRes.getString(R.string.menuitem_unhighlight))) {
+                    highlightedChats.remove(contactNumber);
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
+                    intent.putExtra("action", 3);
+                    intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
+                    AndroidAppHelper.currentApplication().startService(intent);
+                    menuItem.setTitle(modRes.getString(R.string.menuitem_highlight));
+                    ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
+                    param.setResult(false);
 
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 3);
-                        intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
-                        AndroidAppHelper.currentApplication().startService(intent);
-                        menuItem.setTitle("Unhighlight");
-                        ExtModule.this.showToast("Restart WA to avoid unwanted effects.");
-                        param.setResult(false);
-                        break;
-
-                    case "Unhighlight":
-                        highlightedChats.remove(contactNumber);
-                        intent = new Intent();
-                        intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
-                        intent.putExtra("action", 3);
-                        intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
-                        AndroidAppHelper.currentApplication().startService(intent);
-                        menuItem.setTitle("Highlight");
-                        ExtModule.this.showToast("Restart WA to avoid unwanted effects.");
-                        param.setResult(false);
-                        break;
                 }
             }
 
@@ -557,102 +547,6 @@ public class ExtModule implements IXposedHookLoadPackage {
                 Activity activity = (Activity) param.thisObject;
                 context = activity.getApplicationContext();
 
-                //if (activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
-                //    setSeenOff("0");
-
-                /*Class settingClass = XposedHelpers.findClass("com.whatsapp.SettingsPrivacy", loadPackageParam.classLoader);
-
-                Constructor<?> settingsConstructor = settingClass.getDeclaredConstructor();
-                settingsConstructor.setAccessible(true);
-                Object settingsObject = settingsConstructor.newInstance();
-
-                if (settingsObject != null) {
-                    XposedBridge.log("we constructed.");
-                }
-
-
-                Class preferenceClass = XposedHelpers.findClass("com.whatsapp.preference.WaPrivacyPreference", loadPackageParam.classLoader);
-
-                Constructor<?> preferenceConstructor = preferenceClass.getDeclaredConstructor(Context.class);
-                preferenceConstructor.setAccessible(true);
-                Object preferenceObject = preferenceConstructor.newInstance(activity.getApplicationContext());
-
-                CharSequence[] entryCharSequences = new CharSequence[]{"Everyone", "My contacts", "Nobody"};
-                CharSequence[] entryValuesSequences = new CharSequence[]{"0", "1", "2"};
-
-                //ListPreference listPreference = new ListPreference(activity.getApplicationContext());
-                //listPreference.setEntries(charSequences);
-                //listPreference.setKey("privacy_last_seen");
-                //listPreference.setValue("0");
-
-                //preferenceObject=preferenceClass.cast(listpreferenceClass.cast(listPreference));
-
-                XposedHelpers.callMethod(preferenceObject, "setKey", "privacy_last_seen");
-                //XposedHelpers.callMethod(preferenceObject,"setEntries",charSequences);
-
-                //preferenceObject.setKey("privacy_last_seen");
-                XposedBridge.log(XposedHelpers.callMethod(preferenceObject, "getKey").toString());
-
-                ListPreference listPreference = (ListPreference) preferenceObject;
-                listPreference.setEntries(entryCharSequences);
-                listPreference.setEntryValues(entryValuesSequences);
-
-                XposedHelpers.callMethod(settingsObject, "a", preferenceObject, "0");
-
-                Preference preference;
-
-                /*Activity activity = (Activity) param.thisObject;
-                HashMap hashMap = new HashMap();
-                hashMap.put("profile", "all");
-                Message message = new Message();
-                message.arg1 = 69;
-                message.what = 5;
-                message.obj = hashMap;
-
-                Class r = XposedHelpers.findClass("com.whatsapp.messaging.r", loadPackageParam.classLoader);
-                Constructor<?> rrconstructor = r.getDeclaredConstructor(Context.class);
-                rrconstructor.setAccessible(true);
-                Object robject = rrconstructor.newInstance(activity.getApplicationContext());
-
-                Class appclass = XposedHelpers.findClass("com.whatsapp.App", loadPackageParam.classLoader);
-                Constructor<?> appconstructor = appclass.getConstructor(Application.class);
-                appconstructor.setAccessible(true);
-
-                Object appobject = appconstructor.newInstance(((Activity) param.thisObject).getApplication());
-
-                Field fields[] = r.getDeclaredFields();
-                BroadcastReceiver i, m, n, o;
-                Field fi = r.getDeclaredField("I");
-                fi.setAccessible(true);
-                i = (BroadcastReceiver) fi.get(robject);
-
-                Field fm = r.getDeclaredField("M");
-                fm.setAccessible(true);
-                m = (BroadcastReceiver) fm.get(robject);
-
-                Field fn = r.getDeclaredField("N");
-                fn.setAccessible(true);
-                n = (BroadcastReceiver) fn.get(robject);
-
-                Field fo = r.getDeclaredField("O");
-                fo.setAccessible(true);
-                o = (BroadcastReceiver) fo.get(robject);
-
-                Field field = robject.getClass().getDeclaredField("c");
-                field.setAccessible(true);
-                field.set(robject, appobject);
-
-                Class handlerclasss = XposedHelpers.findClass("com.whatsapp.messaging.aa", loadPackageParam.classLoader);
-                Constructor<?> handlerconstructor = handlerclasss.getConstructor(r, Looper.class);
-                handlerconstructor.setAccessible(true);
-
-                Object object = handlerconstructor.newInstance(new Object[]{robject, activity.getMainLooper()});
-                Handler handler = (Handler) object;
-
-                handler.sendMessage(message);
-*/
-
-                //handler.sendMessage(message);
 
                 if (thread != null && thread.isAlive()) {
                     thread.interrupt();
@@ -773,6 +667,7 @@ public class ExtModule implements IXposedHookLoadPackage {
 
     }
 
+
     //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
     class UnlockReceiver extends BroadcastReceiver {
         @Override
@@ -892,6 +787,19 @@ public class ExtModule implements IXposedHookLoadPackage {
         });
     }
 
+    @Override
+    public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
+        MODULE_PATH = startupParam.modulePath;
+    }
+
+    @Override
+    public void handleInitPackageResources(XC_InitPackageResources.InitPackageResourcesParam initPackageResourcesParam) throws Throwable {
+        if (!initPackageResourcesParam.packageName.equals("com.whatsapp"))
+            return;
+
+        modRes = XModuleResources.createInstance(MODULE_PATH, initPackageResourcesParam.res);
+    }
+
 
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws
@@ -933,35 +841,6 @@ public class ExtModule implements IXposedHookLoadPackage {
             error.printStackTrace();
         }
 
-        /*XposedHelpers.findAndHookMethod("android.os.BaseBundle", loadPackageParam.classLoader, "getString", String.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                XposedBridge.log(param.args[0].toString()+" "+param.getResult());
-                BaseBundle baseBundle = (BaseBundle)param.thisObject;
-                Set set = baseBundle.keySet();
-
-                if(set.size()==2){
-                    if(set.contains("jid") && set.contains("msgid")){
-                        baseBundle.putString("jid", "919657785171@s.whatsapp.net");
-                        if(param.args[0].equals("jid"))
-                            param.setResult("919657785171@s.whatsapp.net");
-                    }
-                }
-
-                XposedBridge.log("------------------------start----------------------------");
-                for(String s : baseBundle.keySet())
-                    XposedBridge.log(s +" " + baseBundle.get(s));
-
-                XposedBridge.log("------------------------end----------------------------");
-                //for(StackTraceElement stackTraceElement : new Exception().getStackTrace())
-                //    XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
-
-            }
-        });*/
-
-
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -977,8 +856,6 @@ public class ExtModule implements IXposedHookLoadPackage {
                 m = m + " " + p.getName();
             }
             XposedBridge.log(m);
-
         }
     }
-
 }

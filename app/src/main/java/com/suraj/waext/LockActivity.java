@@ -17,7 +17,6 @@ import android.widget.Toast;
 public class LockActivity extends AppCompatActivity {
     public static final String PACKAGE_NAME = "com.suraj.waext";
     private EditText etpassword;
-    private byte[] decodedBytes;
     private String decodedString;
 
     @Override
@@ -40,7 +39,7 @@ public class LockActivity extends AppCompatActivity {
         byte[] defaultEncoded = Base64.encode("1234".getBytes(), 0);
 
         String encodedString = sharedPreferences.getString("password", new String(defaultEncoded));
-        decodedBytes = Base64.decode(encodedString.getBytes(), 0);
+        byte[] decodedBytes = Base64.decode(encodedString.getBytes(), 0);
         decodedString = new String(decodedBytes);
 
     }
@@ -63,7 +62,7 @@ public class LockActivity extends AppCompatActivity {
         }
 
         @SuppressLint("ShowToast")
-        final Toast incorrectPasswordToast = Toast.makeText(getApplicationContext(), "Incorrect Password.", Toast.LENGTH_SHORT);
+        final Toast incorrectPasswordToast = Toast.makeText(getApplicationContext(), R.string.password_incorrect, Toast.LENGTH_SHORT);
 
         findViewById(R.id.btnenter).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,7 +89,7 @@ public class LockActivity extends AppCompatActivity {
     private void setEditTextListeners() {
 
 
-        final Toast lengthGreatertoast = Toast.makeText(getApplicationContext(), "Length cannot be more than 4.", Toast.LENGTH_SHORT);
+        final Toast lengthGreatertoast = Toast.makeText(getApplicationContext(), R.string.password_length_warning, Toast.LENGTH_SHORT);
 
         etpassword.addTextChangedListener(new TextWatcher() {
             @Override

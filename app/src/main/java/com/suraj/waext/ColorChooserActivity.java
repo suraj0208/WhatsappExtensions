@@ -19,7 +19,7 @@ public class ColorChooserActivity extends AppCompatActivity {
         Bundle bundle  = getIntent().getExtras();
 
         if(bundle==null){
-            Toast.makeText(getApplicationContext(),"Internal Error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),R.string.internal_error,Toast.LENGTH_SHORT).show();
             finish();
         }
 
@@ -27,7 +27,7 @@ public class ColorChooserActivity extends AppCompatActivity {
 
 
         if(which==null) {
-            Toast.makeText(getApplicationContext(),"Internal Error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(),R.string.internal_error,Toast.LENGTH_SHORT).show();
              finish();
         }
 

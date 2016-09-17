@@ -28,7 +28,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
         etPassword = (EditText) (findViewById(R.id.etPassword));
         tvDefaultPassword = (TextView) (findViewById(R.id.tvDefaultPassword));
-        tvDefaultPassword.setText("Enter Current Password. "+ tvDefaultPassword.getText());
+        tvDefaultPassword.setText(R.string.enter_current_password);
 
         etPassword.setEnabled(false);
 
@@ -47,7 +47,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
 
     private void setEditTextListeners() {
 
-        final Toast lengthGreaterToast = Toast.makeText(getApplicationContext(), "Length cannot be more than 4.", Toast.LENGTH_SHORT);
+        final Toast lengthGreaterToast = Toast.makeText(getApplicationContext(), R.string.password_length_warning, Toast.LENGTH_SHORT);
 
         //limit pin length to 4 digits
         etPassword.addTextChangedListener(new TextWatcher() {
@@ -90,13 +90,13 @@ public class ChangePasswordActivity extends AppCompatActivity {
         findViewById(R.id.btnenter).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast doNotMatchToast = Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_SHORT);
-                Toast confirmationToast = Toast.makeText(getApplicationContext(), "Incorrect Password", Toast.LENGTH_SHORT);
+                Toast doNotMatchToast = Toast.makeText(getApplicationContext(), R.string.password_mismatch, Toast.LENGTH_SHORT);
+                Toast confirmationToast = Toast.makeText(getApplicationContext(), R.string.password_incorrect, Toast.LENGTH_SHORT);
 
                 //count 0 : current password, count 1: new password, count 2: confirm password
                 if (count == 0) {
                     if(etPassword.getText().toString().equals(decodedString)){
-                        tvDefaultPassword.setText("Enter New Password");
+                        tvDefaultPassword.setText(R.string.enter_new_password);
                         etPassword.setText("");
                         count++;
                     }else{
@@ -107,7 +107,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                 } else if(count==1){
                     firstPassword = etPassword.getText().toString();
                     etPassword.setText("");
-                    tvDefaultPassword.setText("Confirm Password");
+                    tvDefaultPassword.setText(R.string.confirm_password);
                     count++;
 
                 }else if(count==2) {
@@ -116,7 +116,7 @@ public class ChangePasswordActivity extends AppCompatActivity {
                         String encodedString = new String(Base64.encode(firstPassword.getBytes(), 0));
                         editor.putString("password", encodedString);
                         editor.apply();
-                        Toast.makeText(getApplicationContext(),"Password Changed.",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(),R.string.password_change_message,Toast.LENGTH_SHORT).show();
                         ChangePasswordActivity.this.finish();
                     } else {
                         count=2;

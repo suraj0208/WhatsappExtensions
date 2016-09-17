@@ -40,7 +40,7 @@ public class CropActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
 
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 0X1);
+        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_picture)), 0X1);
 
     }
 
