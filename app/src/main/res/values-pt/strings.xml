@@ -5,8 +5,52 @@
     <string name="title_activity_change_password">Mudar Senha</string>
 	<string name="lock_prefs">Preferências de bloqueio</string>
 	<string name="lock_text">Bloquear todas as conversas depois de sair WhatsApp.</string>
-	<string name="lock_by">Bloquear após </string>
-	<string name="change_password">Mudar Senha</string>
+	
+	<!-- translate from here -->
+    <string name="lock_after">Bloquear Após </string>
+    <!-- translate end -->
+
+    <string name="change_password">Mudar Senha</string>
+
+    <!-- translate from here -->
+    <string name="enter_current_password">Insira a senha atual. senha padrão: 1234</string>
+    <string name="enter_new_password">Insira a nova senha</string>
+    <string name="confirm_password">Confirme a senha</string>
+    <string name="password_length_warning">O comprimento não pode ser mais do que 4</string>
+    <string name="password_mismatch">As senhas não correspondem</string>
+    <string name="password_incorrect">Senha incorreta</string>
+    <string name="password_change_message">Senha Alterada</string>
+    <string name="lock_enable_message">Bloqueio Ativado para este contato</string>
+    <string name="lock_disable_message">Bloquear desativado para este contato</string>
+    <string name="call_place_error">Não foi possível colocar chamadas</string>
+    <string name="chat_reopen_message">Reabrir conversar para ver os efeitos</string>
+    <string name="whatsapp_restart_message">Reinicie WhatsApp para entrar em vigor</string>
+    <string name="whatsapp_restart_message_long">Remover WhatsApp de aplicativos recentes e abri-lo novamente</string>
+    <!-- translate end -->
+
+    <!-- Translate -->
+    <string name="internal_error">Erro interno</string>
+    <string name="bundle_null_error">Erro ao abrir Activity:Bundle null</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="select_picture">Selecionar Imagem</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="menuitem_call">Chamar</string>
+    <string name="menuitem_hide">Ocultar</string>
+    <string name="menuitem_unhide">Desocultar</string>
+    <string name="menuitem_wallpaper_set">Imagem Personalizada</string>
+    <string name="menuitem_wallpaper_remove">Remover Imagem Pers.</string>
+    <string name="menuitem_reminder">Adicionar Lembrete</string>
+    <string name="menuitem_lock">Bloquear</string>
+    <string name="menuitem_unlock">Desbloquear</string>
+    <string name="menuitem_highlight">Cor de Destaque</string>
+    <string name="menuitem_unhighlight">Rem. Cor de destaque</string>
+    <!-- Translate end-->
 	
 	<string name="reminder_prefs">Preferências de lembrete</string>
 	<string name="enable_reminder">Ativar serviço de lembretes</string>
