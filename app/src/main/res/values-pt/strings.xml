@@ -56,6 +56,7 @@
 	<string name="enable_reminder">Ativar serviço de lembretes</string>
 	<string name="reminder_text">Nota: O serviço é tratado pelo aplicativo automaticamente. Use esta opção se você deseja ativar/desativar o serviço de forma explícita.</string>
 	<string name="reminder_in">Me Lembre em </string>
+	<string name="reply_to">Responder a %1$s</string>
 	
 	<string name="highlight_prefs">Preferências de Cores</string>
 	<string name="highlight_groups">Cor do chat em grupos</string>
