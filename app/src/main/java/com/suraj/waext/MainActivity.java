@@ -37,49 +37,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpLayoutUI() {
-        final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxhidecamera);
+        CheckBox checkBoxHideCamera = (CheckBox)findViewById(R.id.chkboxhidecamera);
+        CheckBox checkBoxHideTabs = (CheckBox)findViewById(R.id.chkboxhidetabs);
+        CheckBox checkBoxReplaceCallButton = (CheckBox)findViewById(R.id.chkboxreplacecallbtn);
 
-        if(sharedPreferences.getBoolean("hideCamera",false))
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
 
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(checkBox.isChecked())
-                    editor.putBoolean("hideCamera",true);
-                else
-                    editor.putBoolean("hideCamera",false);
+        setUpCheckBox(checkBoxHideCamera,"hideCamera");
+        setUpCheckBox(checkBoxHideTabs,"hideTabs");
+        setUpCheckBox(checkBoxReplaceCallButton,"replaceCallButton");
 
-                editor.apply();
-            }
-        });
 
     }
+
 
     private void setupSeenUI() {
         final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxseen);
 
-        if(sharedPreferences.getBoolean("hideSeen",false)){
-            checkBox.setChecked(true);
-        }else{
-            checkBox.setChecked(false);
-        }
-
-
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(checkBox.isChecked()){
-                    editor.putBoolean("hideSeen",true);
-                }else{
-                    editor.putBoolean("hideSeen",false);
-                }
-                editor.apply();
-
-            }
-        });
+        setUpCheckBox(checkBox,"hideSeen");
     }
 
     private void setupLockUI() {
@@ -171,27 +145,26 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        if (sharedPreferences.getBoolean("enableHighlight", false)) {
+        setUpCheckBox(checkBox,"enableHighlight");
+
+    }
+
+    private void setUpCheckBox(final CheckBox checkBox, final String prefname) {
+        if(sharedPreferences.getBoolean(prefname,false))
             checkBox.setChecked(true);
-            //btnchooser.setEnabled(true);
-        } else {
+        else
             checkBox.setChecked(false);
-            //btnchooser.setEnabled(false);
-        }
+
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkBox.isChecked()) {
-                    editor.putBoolean("enableHighlight", true);
-                    //btnchooser.setEnabled(true);
-                } else {
-                    editor.putBoolean("enableHighlight", false);
-                    //btnchooser.setEnabled(false);
-                }
+                if(checkBox.isChecked())
+                    editor.putBoolean(prefname,true);
+                else
+                    editor.putBoolean(prefname,false);
+
                 editor.apply();
             }
         });
-
-
     }
 }

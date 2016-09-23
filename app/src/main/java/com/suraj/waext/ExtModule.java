@@ -20,6 +20,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,6 +37,7 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -148,7 +150,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                     contact = contact.replace("+", "");
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
-                                    XposedBridge.log("ArrayIndexOutofBound");
+                                    //XposedBridge.log("ArrayIndexOutofBound");
                                     ex.printStackTrace();
                                 }
 
@@ -701,7 +703,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 View view = (View) param.thisObject;
 
                 if (view.getTransitionName() == null) {
-                    if (enableHideCamera && param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
+                    if (enableHideCamera && param.thisObject instanceof ImageButton) {//param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
                         View parent = (View) view.getParent();
 
                         if (parent instanceof LinearLayout) {
@@ -798,6 +800,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             return;
 
         modRes = XModuleResources.createInstance(MODULE_PATH, initPackageResourcesParam.res);
+
+        if(sharedPreferences!=null && sharedPreferences.getBoolean("hideTabs",false))
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "dimen", "tab_height", modRes.fwd(R.dimen.tab_height));
     }
 
 
@@ -840,7 +845,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
-
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {

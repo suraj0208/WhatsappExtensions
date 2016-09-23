@@ -185,6 +185,36 @@
             android:layout_below="@id/tvlayoutprefs"
             android:layout_marginTop="5dp"
             android:text="@string/hide_camera_btn" />
+
+        <CheckBox
+            android:id="@+id/chkboxhidetabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxhidecamera"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_tabs_btn" />
+
+        <TextView
+            android:id="@+id/tvrebootnotice1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/chkboxhidetabs"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/req_restart" />
+
+        <CheckBox
+            android:id="@+id/chkboxreplacecallbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxhidetabs"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_tabs_btn" />
+
     </RelativeLayout>
 
 </ScrollView>

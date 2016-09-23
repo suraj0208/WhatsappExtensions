@@ -40,7 +40,7 @@
 
 
     <!-- Translate -->
-    <string name="menuitem_call">Chamar</string>
+    <string name="menuitem_call">chamar</string>
     <string name="menuitem_hide">Ocultar</string>
     <string name="menuitem_unhide">Desocultar</string>
     <string name="menuitem_wallpaper_set">Imagem Personalizada</string>
@@ -69,8 +69,11 @@
 
 	<string name="layout_prefs">Preferências de Layout</string>
 	<string name="hide_camera_btn">Ocultar botão da câmera</string>
+    <string name="hide_tabs_btn">ocultar guias</string>
+    <string name="replace_call_btn">Substituir botão de chamada</string>
 
-	<string name="color">Cor</string>
+
+    <string name="color">Cor</string>
 	<string name="cancel">Cancelar</string>
 	<string name="clear">Limpar</string>
 	<string name="enter">Confirmar</string>
