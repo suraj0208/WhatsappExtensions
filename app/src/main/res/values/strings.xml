@@ -26,6 +26,7 @@
     <string name="chat_reopen_message">ReOpen chat to see effects</string>
     <string name="whatsapp_restart_message">Restart WhatsApp to take effect</string>
     <string name="whatsapp_restart_message_long">Remove WhatApp from recent apps and Relaunch</string>
+    <string name="wait_message">please wait 2 minutes after boot then retry</string>
     <!-- translate end -->
 
     <!-- Translate -->

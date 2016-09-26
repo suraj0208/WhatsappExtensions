@@ -158,14 +158,6 @@
             android:layout_marginTop="5dp"
             android:text="@string/hide_last_seen" />
 
-        <TextView
-            android:id="@+id/tvrebootnotice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/chkboxseen"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:text="@string/req_restart" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
@@ -213,7 +205,7 @@
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/chkboxhidetabs"
             android:layout_marginTop="5dp"
-            android:text="@string/hide_tabs_btn" />
+            android:text="@string/replace_call_btn" />
 
     </RelativeLayout>
 

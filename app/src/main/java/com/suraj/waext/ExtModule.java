@@ -37,7 +37,6 @@ import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
@@ -61,6 +60,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public static final String PACKAGE_NAME = "com.suraj.waext";
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
     public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
+    public static final String UPDATE_INTENT = ".UPDATE_INTENT";
+
     public static String MODULE_PATH;
 
     private static HashSet<String> lockedContacts;
@@ -80,6 +81,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean isGroup = false;
     private static boolean exceptionThrown = true;
     private static boolean enableHideCamera = false;
+    private static boolean replaceCallButton;
 
 
     private static int highlightColor = Color.GRAY;
@@ -115,7 +117,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                updateHighlightColor();
+                initPrefs();
                 TypedValue a = new TypedValue();
 
                 AndroidAppHelper.currentApplication().getApplicationContext().getTheme().resolveAttribute(android.R.attr.textColor, a, true);
@@ -133,7 +135,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         String tag = param.args[0].toString();
 
-                        boolean localIsGroup = tag.toString().contains("@g.us");
+                        boolean localIsGroup = tag.contains("@g.us");
 
                         View parent = processedViewsHashMap.get(param.thisObject);
 
@@ -213,17 +215,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         );
     }
 
-    private void updateHighlightColor() {
-        sharedPreferences.reload();
-        sharedPreferences.makeWorldReadable();
-
-        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
-        individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
-
-        enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
-        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
-    }
-
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod(Intent.class, "getStringExtra", String.class, new XC_MethodHook() {
             @Override
@@ -301,7 +292,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 //XposedBridge.log("onCreateOptionMenu");
 
                 //skip call button for group chats
-                if (!contactNumber.contains("-")) {
+                if (!isGroup && !replaceCallButton) {
                     MenuItem callMenuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_call));
                     callMenuItem.setIcon(android.R.drawable.ic_menu_search);
                     callMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -391,6 +382,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 //important: param.setResult(false) to prevent call to original method
 
                 Intent intent;
+
+                String callTitle = modRes.getString(R.string.menuitem_call);
+                String capCallTitle=callTitle.replace('c','C');
+
+
+                if(replaceCallButton && title.equals(capCallTitle)){
+                    title=callTitle;
+                }
 
                 if (title.equals(modRes.getString(R.string.menuitem_lock))) {
                     lockedContacts.add(contactNumber);
@@ -629,65 +628,20 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
-    public void showToast(final String text) {
-        (new Handler(Looper.getMainLooper())).post(new Runnable() {
+    private void hookMethodsForUpdatePrefs(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.BootReceiver", loadPackageParam.classLoader, "onReceive", Context.class, Intent.class, new XC_MethodHook() {
             @Override
-            public void run() {
-                Toast.makeText(AndroidAppHelper.currentApplication(), text, Toast.LENGTH_SHORT).show();
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Context context = (Context) param.args[0];
+
+                Context appContext = AndroidAppHelper.currentApplication().getApplicationContext(); // context.getApplicationContext();
+
+                appContext.registerReceiver(new UpdateReceiver(), new IntentFilter(ExtModule.PACKAGE_NAME + UPDATE_INTENT));
+                XposedBridge.log("Registed receiver for update");
+
             }
         });
-    }
-
-    public int getLockAfter(int position) {
-        switch (position) {
-            case 0:
-                return 0;
-            case 1:
-                return 1;
-            case 2:
-                return 3;
-            case 3:
-                return 5;
-            case 4:
-                return 10;
-        }
-        return 3;
-    }
-
-    public void initPrefs() {
-        sharedPreferences.reload();
-        sharedPreferences.makeWorldReadable();
-
-        lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
-        highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
-        hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
-
-        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
-
-        enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
-        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
-
-    }
-
-
-    //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
-    class UnlockReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //set boolean values so that onResume does not close activity. see beforeHook - onResume
-            ExtModule.showLockScreen = intent.getBooleanExtra("showLockScreen", false);
-            ExtModule.firstTime = intent.getBooleanExtra("firstTime", true);
-
-            sharedPreferences.reload();
-            sharedPreferences.makeWorldReadable();
-
-            lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
-
-            //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
-            templockedContacts.remove(contactNumber);
-
-            //XposedBridge.log("Broadcast Received");
-        }
     }
 
     private void hookMethodsForCameraAndZoom(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -789,6 +743,79 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
+    public void showToast(final String text) {
+        (new Handler(Looper.getMainLooper())).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(AndroidAppHelper.currentApplication(), text, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public int getLockAfter(int position) {
+        switch (position) {
+            case 0:
+                return 0;
+            case 1:
+                return 1;
+            case 2:
+                return 3;
+            case 3:
+                return 5;
+            case 4:
+                return 10;
+        }
+        return 3;
+    }
+
+    public void initPrefs() {
+        sharedPreferences.reload();
+        sharedPreferences.makeWorldReadable();
+
+        lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
+        highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
+        hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
+
+        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
+        individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
+
+        enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
+        replaceCallButton = sharedPreferences.getBoolean("replaceCallButton", false);
+        enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
+        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
+
+    }
+
+
+    //broadcast receiver to unlock - broadcast is sent from LockActivity's unLock method
+    class UnlockReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //set boolean values so that onResume does not close activity. see beforeHook - onResume
+            ExtModule.showLockScreen = intent.getBooleanExtra("showLockScreen", false);
+            ExtModule.firstTime = intent.getBooleanExtra("firstTime", true);
+
+            sharedPreferences.reload();
+            sharedPreferences.makeWorldReadable();
+
+            lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
+
+            //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
+            templockedContacts.remove(contactNumber);
+
+            //XposedBridge.log("Broadcast Received");
+        }
+    }
+
+    class UpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initPrefs();
+            XposedBridge.log("Recieved intent");
+        }
+    }
+
+
     @Override
     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
         MODULE_PATH = startupParam.modulePath;
@@ -801,7 +828,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         modRes = XModuleResources.createInstance(MODULE_PATH, initPackageResourcesParam.res);
 
-        if(sharedPreferences!=null && sharedPreferences.getBoolean("hideTabs",false))
+        if (sharedPreferences != null && sharedPreferences.getBoolean("hideTabs", false))
             initPackageResourcesParam.res.setReplacement("com.whatsapp", "dimen", "tab_height", modRes.fwd(R.dimen.tab_height));
     }
 
@@ -829,6 +856,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForWallPaper(loadPackageParam);
         hookMethodsForHideGroup(loadPackageParam);
         hookMethodsForCameraAndZoom(loadPackageParam);
+        hookMethodsForUpdatePrefs(loadPackageParam);
+
 
         unlockReceiver = new UnlockReceiver();
 
@@ -845,7 +874,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
+
+
     }
+
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);

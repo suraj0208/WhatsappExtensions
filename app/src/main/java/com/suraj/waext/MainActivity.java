@@ -3,6 +3,7 @@ package com.suraj.waext;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,23 +39,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpLayoutUI() {
-        CheckBox checkBoxHideCamera = (CheckBox)findViewById(R.id.chkboxhidecamera);
-        CheckBox checkBoxHideTabs = (CheckBox)findViewById(R.id.chkboxhidetabs);
-        CheckBox checkBoxReplaceCallButton = (CheckBox)findViewById(R.id.chkboxreplacecallbtn);
+        CheckBox checkBoxHideCamera = (CheckBox) findViewById(R.id.chkboxhidecamera);
+        CheckBox checkBoxHideTabs = (CheckBox) findViewById(R.id.chkboxhidetabs);
+        CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
 
-
-        setUpCheckBox(checkBoxHideCamera,"hideCamera");
-        setUpCheckBox(checkBoxHideTabs,"hideTabs");
-        setUpCheckBox(checkBoxReplaceCallButton,"replaceCallButton");
+        setUpCheckBox(checkBoxHideCamera, "hideCamera");
+        setUpCheckBox(checkBoxHideTabs, "hideTabs");
+        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton");
 
 
     }
 
 
     private void setupSeenUI() {
-        final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxseen);
+        final CheckBox checkBox = (CheckBox) findViewById(R.id.chkboxseen);
 
-        setUpCheckBox(checkBox,"hideSeen");
+        setUpCheckBox(checkBox, "hideSeen");
     }
 
     private void setupLockUI() {
@@ -126,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
         btnchooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new  Intent(MainActivity.this, ColorChooserActivity.class);
-                intent.putExtra("groupOrIndividual","highlightColor");
+                Intent intent = new Intent(MainActivity.this, ColorChooserActivity.class);
+                intent.putExtra("groupOrIndividual", "highlightColor");
                 startActivity(intent);
 
             }
@@ -137,20 +138,20 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnindividualcolorchooser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent  intent = new Intent(MainActivity.this,ColorChooserActivity.class);
-                intent.putExtra("groupOrIndividual","individualHighlightColor");
+                Intent intent = new Intent(MainActivity.this, ColorChooserActivity.class);
+                intent.putExtra("groupOrIndividual", "individualHighlightColor");
                 startActivity(intent);
             }
         });
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        setUpCheckBox(checkBox,"enableHighlight");
+        setUpCheckBox(checkBox, "enableHighlight");
 
     }
 
     private void setUpCheckBox(final CheckBox checkBox, final String prefname) {
-        if(sharedPreferences.getBoolean(prefname,false))
+        if (sharedPreferences.getBoolean(prefname, false))
             checkBox.setChecked(true);
         else
             checkBox.setChecked(false);
@@ -158,12 +159,27 @@ public class MainActivity extends AppCompatActivity {
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkBox.isChecked())
-                    editor.putBoolean(prefname,true);
+
+                long t = SystemClock.elapsedRealtime();
+
+                /*if (t < 2 * 60 * 1000) {
+                    checkBox.setChecked(!checkBox.isChecked());
+                    Toast.makeText(getApplicationContext(), R.string.wait_message, Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
+
+                if (checkBox.isChecked())
+                    editor.putBoolean(prefname, true);
                 else
-                    editor.putBoolean(prefname,false);
+                    editor.putBoolean(prefname, false);
 
                 editor.apply();
+
+                /*Intent intent = new Intent();
+                intent.setAction(ExtModule.PACKAGE_NAME + ExtModule.UPDATE_INTENT);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                sendBroadcast(intent);*/
+
             }
         });
     }
