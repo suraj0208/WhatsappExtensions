@@ -41,7 +41,7 @@
 
 
     <!-- Translate -->
-    <string name="menuitem_call">call</string>
+    <string name="menuitem_call">Call</string>
     <string name="menuitem_hide">Hide</string>
     <string name="menuitem_unhide">Unhide</string>
     <string name="menuitem_wallpaper_set">Custom Wallpaper</string>
