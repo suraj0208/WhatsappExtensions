@@ -3,13 +3,16 @@
     <string name="action_settings">Configuración</string>
 	
     <string name="title_activity_change_password">Cambiar Contraseña</string>
-	<string name="lock_prefs">Bloquear Opciones</string>
+	<string name="lock_prefs">Opciones de Bloqueo</string>
 	<string name="lock_text">Bloquear chats al cerrar WhatApp.</string>
 
+    <!-- translate from here -->
     <string name="lock_after">Bloquear luego de </string>
+    <!-- translate end -->
 
     <string name="change_password">Cambiar Contraseña</string>
 
+    <!-- translate from here -->
     <string name="enter_current_password">Ingresar Contraseña actual. Contraseña predeterminada: 1234</string>
     <string name="enter_new_password">Nueva Contraseña</string>
     <string name="confirm_password">Confirmar Contraseña</string>
@@ -24,13 +27,20 @@
     <string name="whatsapp_restart_message">Reiniciar WhatsApp para aplicar</string>
     <string name="whatsapp_restart_message_long">Eliminar WhatsApp de Recientes y reabrir</string>
     <string name="wait_message">espera 2 Minutos luego del inicio y reintenta</string>
+    <!-- translate end -->
 
+    <!-- Translate -->
     <string name="internal_error">Error Interno</string>
     <string name="bundle_null_error">Error Abriendo Actividad:Bundle null</string>
+    <!-- Translate end-->
 
+
+    <!-- Translate -->
     <string name="select_picture">Elegir Imagen</string>
+    <!-- Translate end-->
 
 
+    <!-- Translate -->
     <string name="menuitem_call">llamar</string>
     <string name="menuitem_hide">Ocultar</string>
     <string name="menuitem_unhide">Mostrar</string>
@@ -41,6 +51,7 @@
     <string name="menuitem_unlock">Desbloquear</string>
     <string name="menuitem_highlight">Marcar</string>
     <string name="menuitem_unhighlight">Desmarcar</string>
+    <!-- Translate end-->
 
     <string name="reminder_prefs">Opciones de Recordatorio</string>
 	<string name="enable_reminder">Habilitar servicio recordatorio</string>

@@ -386,12 +386,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 Intent intent;
 
                 String callTitle = modRes.getString(R.string.menuitem_call);
-                String capCallTitle;
-
-                if(Locale.getDefault().getLanguage().equals("es"))
-                    capCallTitle=callTitle.replace('l','L');
-                else
-                    capCallTitle=callTitle.replace('c', 'C');
+                String capCallTitle = title.substring(0,1).toUpperCase() + callTitle.substring(1);
 
 
                 if (replaceCallButton && title.equals(capCallTitle)) {
