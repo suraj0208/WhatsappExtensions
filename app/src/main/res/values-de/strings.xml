@@ -41,7 +41,7 @@
 
 
     <!-- Translate -->
-    <string name="menuitem_call">Anruf</string>
+    <string name="menuitem_call">anruf</string>
     <string name="menuitem_hide">Ausblenden</string>
     <string name="menuitem_unhide">Einblenden</string>
     <string name="menuitem_wallpaper_set">Benutzerdefinierter Hintergrund</string>
