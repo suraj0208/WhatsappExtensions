@@ -81,6 +81,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean isGroup = false;
     private static boolean exceptionThrown = true;
     private static boolean enableHideCamera = false;
+    private static boolean hideReadReceipts = false;
     private static boolean replaceCallButton;
 
 
@@ -384,11 +385,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 Intent intent;
 
                 String callTitle = modRes.getString(R.string.menuitem_call);
-                String capCallTitle=callTitle.replace('c','C');
+                String capCallTitle = callTitle.replace('c', 'C');
 
 
-                if(replaceCallButton && title.equals(capCallTitle)){
-                    title=callTitle;
+                if (replaceCallButton && title.equals(capCallTitle)) {
+                    title = callTitle;
                 }
 
                 if (title.equals(modRes.getString(R.string.menuitem_lock))) {
@@ -622,11 +623,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 } catch (Throwable e) {
                     e.printStackTrace();
-                    return;
                 }
             }
         });
     }
+
+    Context newContext;
 
     private void hookMethodsForUpdatePrefs(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("com.whatsapp.BootReceiver", loadPackageParam.classLoader, "onReceive", Context.class, Intent.class, new XC_MethodHook() {
@@ -635,9 +637,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.afterHookedMethod(param);
                 Context context = (Context) param.args[0];
 
-                Context appContext = AndroidAppHelper.currentApplication().getApplicationContext(); // context.getApplicationContext();
+                //Context appContext = AndroidAppHelper.currentApplication().getApplicationContext(); // context.getApplicationContext();
 
-                appContext.registerReceiver(new UpdateReceiver(), new IntentFilter(ExtModule.PACKAGE_NAME + UPDATE_INTENT));
+                newContext = context.createPackageContext(ExtModule.PACKAGE_NAME, Context.CONTEXT_IGNORE_SECURITY);
+
+                newContext.registerReceiver(new UpdateReceiver(), new IntentFilter(ExtModule.PACKAGE_NAME + UPDATE_INTENT));
                 XposedBridge.log("Registed receiver for update");
 
             }
@@ -694,7 +698,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
-    private void hookMethodsForHideGroup(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    private void hookMethodsForHideGroup(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -729,7 +733,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     return;
                 }
 
-
                 if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
                     return;
 
@@ -742,6 +745,20 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
     }
+
+    private void hookMethodsForHideReadReceipts(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                if (hideReadReceipts) {
+                    XposedBridge.log("read receipts off");
+                    param.setResult(null);
+                }
+            }
+        });
+    }
+
 
     public void showToast(final String text) {
         (new Handler(Looper.getMainLooper())).post(new Runnable() {
@@ -783,6 +800,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         replaceCallButton = sharedPreferences.getBoolean("replaceCallButton", false);
         enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
+        hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
 
     }
 
@@ -856,12 +874,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForWallPaper(loadPackageParam);
         hookMethodsForHideGroup(loadPackageParam);
         hookMethodsForCameraAndZoom(loadPackageParam);
-        hookMethodsForUpdatePrefs(loadPackageParam);
+        hookMethodsForHideReadReceipts(loadPackageParam);
+        //hookMethodsForUpdatePrefs(loadPackageParam);
 
 
         unlockReceiver = new UnlockReceiver();
 
         initPrefs();
+
         templockedContacts = new HashSet<>();
         templockedContacts.addAll(lockedContacts);
 
@@ -874,20 +894,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
-
-
+        //Class msgstore = XposedHelpers.findClass("com.whatsapp.c.d",loadPackageParam.classLoader);
     }
-
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);
-
         Method[] methods = cls.getDeclaredMethods();
-
 
         for (Method method : methods) {
             String m = method.getName();
-
             for (Class p : method.getParameterTypes()) {
                 m = m + " " + p.getName();
             }

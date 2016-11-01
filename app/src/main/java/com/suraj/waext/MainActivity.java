@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setupLockUI();
         setupReminderUI();
         setupHighlightUI();
-        setupSeenUI();
+        setupPrivacyUI();
         setUpLayoutUI();
 
     }
@@ -51,10 +50,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void setupSeenUI() {
-        final CheckBox checkBox = (CheckBox) findViewById(R.id.chkboxseen);
+    private void setupPrivacyUI() {
+        final CheckBox checkBoxSeen = (CheckBox) findViewById(R.id.chkboxseen);
+        final CheckBox checkBoxReceipts = (CheckBox) findViewById(R.id.chkboxreceipts);
 
-        setUpCheckBox(checkBox, "hideSeen");
+        setUpCheckBox(checkBoxSeen, "hideSeen");
+        setUpCheckBox(checkBoxReceipts, "hideReadReceipts");
     }
 
     private void setupLockUI() {
@@ -175,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
 
                 editor.apply();
 
-                /*Intent intent = new Intent();
+                Intent intent = new Intent();
                 intent.setAction(ExtModule.PACKAGE_NAME + ExtModule.UPDATE_INTENT);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                sendBroadcast(intent);*/
+                sendBroadcast(intent);
 
             }
         });

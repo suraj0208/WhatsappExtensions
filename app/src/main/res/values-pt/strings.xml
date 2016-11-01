@@ -63,7 +63,7 @@
 	<string name="highlight_individual">Cor do chat individual</string>
 	<string name="select_color">Selecione a cor</string>
 
-	<string name="last_seen_prefs">Preferências de visto por último</string>
+	<string name="privacy_prefs">Preferências de Privacidade</string>
 	<string name="hide_last_seen">Ocultar visto por último</string>
 	<string name="req_restart">Requer reinício</string>
 
@@ -110,5 +110,6 @@
     </array>
     <string name="title_activity_color_chooser">Escolher a cor</string>
     <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
+    <string name="hide_read_receipts">Desativar confirmações de leitura</string>
 
 </resources>
