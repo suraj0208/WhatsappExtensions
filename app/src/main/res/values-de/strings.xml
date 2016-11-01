@@ -6,13 +6,10 @@
 	<string name="lock_prefs">Einstellungen sperren</string>
 	<string name="lock_text">Alle Chats sperren beim Verlassen von WhatsApp.</string>
 
-    <!-- translate from here -->
     <string name="lock_after">Sperren nach </string>
-    <!-- translate end -->
 
     <string name="change_password">Passwort ändern Password</string>
 
-    <!-- translate from here -->
     <string name="enter_current_password">Aktuelles Passwort eingeben. Standardpasswort: 1234</string>
     <string name="enter_new_password">Neues Passwort eingeben</string>
     <string name="confirm_password">Passwort bestätigen</string>
@@ -27,20 +24,14 @@
     <string name="whatsapp_restart_message">WhatsApp neustarten um die Änderungen zu übernehmen</string>
     <string name="whatsapp_restart_message_long">Entferne WhatsApp aus den kürzlich geöffneten Apps und öffne WhatsApp neu</string>
     <string name="wait_message">bitte warte 2 Minuten nach dem Start und versuche es erneut</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
     <string name="internal_error">Interner Fehler</string>
     <string name="bundle_null_error">Fehler beim öffnen der Activity:Bundle null</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="select_picture">Bild auswählen</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="menuitem_call">anruf</string>
     <string name="menuitem_hide">Ausblenden</string>
     <string name="menuitem_unhide">Einblenden</string>
@@ -51,7 +42,6 @@
     <string name="menuitem_unlock">Entsperren</string>
     <string name="menuitem_highlight">Hervorheben</string>
     <string name="menuitem_unhighlight">Hervorhebung entfernen</string>
-    <!-- Translate end-->
 
     <string name="reminder_prefs">Erinnerungseinstellungen</string>
 	<string name="enable_reminder">Erinnerungsservice aktivieren</string>
