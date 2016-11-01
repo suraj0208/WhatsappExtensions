@@ -1,0 +1,116 @@
+<resources>
+    <string name="app_name">WhatsApp Extensions</string>
+    <string name="action_settings">Einstellungen</string>
+	
+    <string name="title_activity_change_password">Passwort ändern</string>
+	<string name="lock_prefs">Einstellungen sperren</string>
+	<string name="lock_text">Alle Chats sperren beim Verlassen von WhatsApp.</string>
+
+    <!-- translate from here -->
+    <string name="lock_after">Sperren nach </string>
+    <!-- translate end -->
+
+    <string name="change_password">Passwort ändern Password</string>
+
+    <!-- translate from here -->
+    <string name="enter_current_password">Aktuelles Passwort eingeben. Standardpasswort: 1234</string>
+    <string name="enter_new_password">Neues Passwort eingeben</string>
+    <string name="confirm_password">Passwort bestätigen</string>
+    <string name="password_length_warning">Das Passwort darf nicht länger als 4 Zeichen sein</string>
+    <string name="password_mismatch">Passwörter stimmen nicht überein</string>
+    <string name="password_incorrect">Falsches Passwort</string>
+    <string name="password_change_message">Passwort wurde geändert</string>
+    <string name="lock_enable_message">Sperre für diesen Kontakt aktiviert</string>
+    <string name="lock_disable_message">Sperre für diesen Kontakt deaktiviert</string>
+    <string name="call_place_error">Anruf konnte nicht getätigt werden</string>
+    <string name="chat_reopen_message">Chat erneut öffnen um die Änderungen zu sehen</string>
+    <string name="whatsapp_restart_message">WhatsApp neustarten um die Änderungen zu übernehmen</string>
+    <string name="whatsapp_restart_message_long">Entferne WhatsApp aus den kürzlich geöffneten Apps und öffne WhatsApp neu</string>
+    <string name="wait_message">bitte warte 2 Minuten nach dem Start und versuche es erneut</string>
+    <!-- translate end -->
+
+    <!-- Translate -->
+    <string name="internal_error">Interner Fehler</string>
+    <string name="bundle_null_error">Fehler beim öffnen der Activity:Bundle null</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="select_picture">Bild auswählen</string>
+    <!-- Translate end-->
+
+
+    <!-- Translate -->
+    <string name="menuitem_call">Anrufen</string>
+    <string name="menuitem_hide">Ausblenden</string>
+    <string name="menuitem_unhide">Einblenden</string>
+    <string name="menuitem_wallpaper_set">Benutzerdefinierter Hintergrund</string>
+    <string name="menuitem_wallpaper_remove">Hintergrund entfernen</string>
+    <string name="menuitem_reminder">Erinnerung hinzufügen</string>
+    <string name="menuitem_lock">Sperren</string>
+    <string name="menuitem_unlock">Entsperren</string>
+    <string name="menuitem_highlight">Hervorheben</string>
+    <string name="menuitem_unhighlight">Hervorhebung entfernen</string>
+    <!-- Translate end-->
+
+    <string name="reminder_prefs">Erinnerungseinstellungen</string>
+	<string name="enable_reminder">Erinnerungsservice aktivieren</string>
+	<string name="reminder_text">Hinweis: Der Service wird von der App automatisch verwaltet. Nutze diese Option nur wenn du den Service explizit aktivieren oder deaktivieren möchtest.</string>
+	<string name="reminder_in">Erinnere mich in </string>
+    <string name="reply_to">Antwort an %1$s</string>
+
+
+    <string name="highlight_prefs">Hervorhebungseinstellungen</string>
+	<string name="highlight_groups">Gruppen hervorheben</string>
+	<string name="highlight_individual">Benutzerdefinierte Farbe des Chats</string>
+	<string name="select_color">Farbe wählen</string>
+	
+	<string name="privacy_prefs">Datenschutzeinstellungen</string>
+	<string name="hide_last_seen">Deaktiviere die "zuletzt Online"-Anzeige</string>
+    <string name="hide_read_receipts">Deaktiviere die "Gelesen"-Benachrichtigungen</string>
+    <string name="req_restart">Benötigt neustart</string>
+	
+	<string name="layout_prefs">Layouteinstellungen</string>
+	<string name="hide_camera_btn">Verstecke Kamera-Button</string>
+    <string name="hide_tabs_btn">Blende Tabs aus</string>
+    <string name="replace_call_btn">Ersetze Anruf-Button</string>
+
+
+    <string name="color">Farbe</string>
+	<string name="cancel">Abrechen</string>
+	<string name="clear">Löschen</string>
+	<string name="enter">OK</string>
+	<string name="default_password">Standard Passwort: 1234</string>
+	
+    <string-array name="minutelist">
+        <item>Jetzt</item>
+        <item>1 Minute</item>
+        <item>3 Minuten</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+    </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Minuten</item>
+        <item>30 Minuten</item>
+        <item>1 Stunde</item>
+        <item>2 Stunden</item>
+    </string-array>
+
+    <array name="demo_colors">
+        <item>#9CCC65</item>
+        <item>#D4E157</item>
+        <item>#FFEE58</item>
+        <item>#FFCA28</item>
+        <item>#FFA726</item>
+        <item>#FF7043</item>
+        <item>#BDBDBD</item>
+        <item>#78909C</item>
+        <item>#29B6F6</item>
+        <item>#ef5350</item>
+        <item>#EC407A</item>
+        <item>#212121</item>
+    </array>
+    <string name="title_activity_color_chooser">ColorChooserActivity</string>
+
+</resources>
