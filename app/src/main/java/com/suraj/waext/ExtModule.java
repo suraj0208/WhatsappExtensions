@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -385,7 +386,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 Intent intent;
 
                 String callTitle = modRes.getString(R.string.menuitem_call);
-                String capCallTitle = callTitle.replace('c', 'C');
+                String capCallTitle;
+
+                if(Locale.getDefault().getLanguage().equals("es"))
+                    capCallTitle=callTitle.replace('l','L');
+                else
+                    capCallTitle=callTitle.replace('c', 'C');
 
 
                 if (replaceCallButton && title.equals(capCallTitle)) {

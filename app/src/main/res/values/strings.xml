@@ -6,13 +6,13 @@
 	<string name="lock_prefs">Lock Preferences</string>
 	<string name="lock_text">Lock all chats after you leave WhatApp.</string>
 
-    <!-- translate from here -->
+    
     <string name="lock_after">Lock After </string>
-    <!-- translate end -->
+    
 
     <string name="change_password">Change Password</string>
 
-    <!-- translate from here -->
+    
     <string name="enter_current_password">Enter Current Password. Default password: 1234</string>
     <string name="enter_new_password">Enter New Password</string>
     <string name="confirm_password">Confirm Password</string>
@@ -27,20 +27,16 @@
     <string name="whatsapp_restart_message">Restart WhatsApp to take effect</string>
     <string name="whatsapp_restart_message_long">Remove WhatApp from recent apps and Relaunch</string>
     <string name="wait_message">please wait 2 minutes after boot then retry</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
+    
     <string name="internal_error">Internal Error</string>
     <string name="bundle_null_error">Error Opening Activity:Bundle null</string>
-    <!-- Translate end-->
+    
 
 
-    <!-- Translate -->
     <string name="select_picture">Select Picture</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="menuitem_call">call</string>
     <string name="menuitem_hide">Hide</string>
     <string name="menuitem_unhide">Unhide</string>
@@ -51,7 +47,6 @@
     <string name="menuitem_unlock">Unlock</string>
     <string name="menuitem_highlight">Highlight</string>
     <string name="menuitem_unhighlight">Unhighlight</string>
-    <!-- Translate end-->
 
     <string name="reminder_prefs">Reminder Preferences</string>
 	<string name="enable_reminder">Enable reminder service</string>

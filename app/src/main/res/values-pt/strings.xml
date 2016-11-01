@@ -6,13 +6,10 @@
 	<string name="lock_prefs">Preferências de bloqueio</string>
 	<string name="lock_text">Bloquear todas as conversas depois de sair WhatsApp.</string>
 	
-	<!-- translate from here -->
     <string name="lock_after">Bloquear Após </string>
-    <!-- translate end -->
 
     <string name="change_password">Mudar Senha</string>
 
-    <!-- translate from here -->
     <string name="enter_current_password">Insira a senha atual. senha padrão: 1234</string>
     <string name="enter_new_password">Insira a nova senha</string>
     <string name="confirm_password">Confirme a senha</string>
@@ -26,20 +23,14 @@
     <string name="chat_reopen_message">Reabrir conversar para ver os efeitos</string>
     <string name="whatsapp_restart_message">Reinicie WhatsApp para entrar em vigor</string>
     <string name="whatsapp_restart_message_long">Remover WhatsApp de aplicativos recentes e abri-lo novamente</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
     <string name="internal_error">Erro interno</string>
     <string name="bundle_null_error">Erro ao abrir Activity:Bundle null</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="select_picture">Selecionar Imagem</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="menuitem_call">chamar</string>
     <string name="menuitem_hide">Ocultar</string>
     <string name="menuitem_unhide">Desocultar</string>
@@ -50,8 +41,7 @@
     <string name="menuitem_unlock">Desbloquear</string>
     <string name="menuitem_highlight">Cor de Destaque</string>
     <string name="menuitem_unhighlight">Rem. Cor de destaque</string>
-    <!-- Translate end-->
-	
+
 	<string name="reminder_prefs">Preferências de lembrete</string>
 	<string name="enable_reminder">Ativar serviço de lembretes</string>
 	<string name="reminder_text">Nota: O serviço é tratado pelo aplicativo automaticamente. Use esta opção se você deseja ativar/desativar o serviço de forma explícita.</string>
