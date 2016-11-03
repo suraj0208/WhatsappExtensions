@@ -218,6 +218,16 @@
             android:layout_marginTop="5dp"
             android:text="@string/replace_call_btn" />
 
+        <CheckBox
+            android:id="@+id/chkboxclicktoreply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxreplacecallbtn"
+            android:layout_marginTop="5dp"
+            android:text="@string/clicktoreply" />
+
     </RelativeLayout>
 
 </ScrollView>

@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -79,6 +78,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean firstTime = true;
     private static boolean enableHighlight = false;
     private static boolean enableHideSeen = false;
+    private static boolean enableClickToReply =false;
     private static boolean isGroup = false;
     private static boolean exceptionThrown = true;
     private static boolean enableHideCamera = false;
@@ -101,6 +101,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private String contactNumber;
 
     private Context context;
+    private View replyButton;
 
     private Thread thread;
 
@@ -293,6 +294,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 //XposedBridge.log("onCreateOptionMenu");
 
+
                 //skip call button for group chats
                 if (!isGroup && !replaceCallButton) {
                     MenuItem callMenuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_call));
@@ -333,6 +335,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
                 Menu menu = (Menu) param.args[0];
+
 
                 File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
 
@@ -385,8 +388,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 Intent intent;
 
+                if (title.equals("Info")) {
+                    Toast.makeText(AndroidAppHelper.currentApplication(), "info info info", Toast.LENGTH_SHORT);
+                    param.setResult(false);
+                }
+
                 String callTitle = modRes.getString(R.string.menuitem_call);
-                String capCallTitle = title.substring(0,1).toUpperCase() + callTitle.substring(1);
+                String capCallTitle = title.substring(0, 1).toUpperCase() + callTitle.substring(1);
 
 
                 if (replaceCallButton && title.equals(capCallTitle)) {
@@ -760,6 +768,53 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
+    public void hookMethodsForClickToReply(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        try {
+            Class jq = XposedHelpers.findClass("com.whatsapp.jq", loadPackageParam.classLoader);
+            Class p = XposedHelpers.findClass("com.whatsapp.protocol.j", loadPackageParam.classLoader);
+
+            XposedHelpers.findAndHookConstructor(jq, Context.class, p, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+
+                    ((View) param.thisObject).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // v.setVisibility(View.INVISIBLE);
+
+                            if(!enableClickToReply)
+                                return;
+
+                            v.performLongClick();
+                            replyButton.performClick();
+
+                        }
+                    });
+                }
+            });
+
+            XposedHelpers.findAndHookMethod("android.support.v7.view.menu.ActionMenuItemView", loadPackageParam.classLoader, "setTitle", CharSequence.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+
+                    if (param.args[0].toString().equals("Reply")) {
+                        replyButton = (View) param.thisObject;
+                    }
+
+                }
+            });
+
+        }catch (Exception ex){
+            XposedBridge.log("couldnt find touch2reply classes");
+            XposedBridge.log(ex.toString());
+
+        }
+
+
+    }
+
 
     public void showToast(final String text) {
         (new Handler(Looper.getMainLooper())).post(new Runnable() {
@@ -801,6 +856,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         replaceCallButton = sharedPreferences.getBoolean("replaceCallButton", false);
         enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
+        enableClickToReply = sharedPreferences.getBoolean("enableClickToReply",false);
         hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
 
     }
@@ -876,6 +932,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForHideGroup(loadPackageParam);
         hookMethodsForCameraAndZoom(loadPackageParam);
         hookMethodsForHideReadReceipts(loadPackageParam);
+        hookMethodsForClickToReply(loadPackageParam);
         //hookMethodsForUpdatePrefs(loadPackageParam);
 
 
@@ -896,7 +953,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
         //Class msgstore = XposedHelpers.findClass("com.whatsapp.c.d",loadPackageParam.classLoader);
+
     }
+
+
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);

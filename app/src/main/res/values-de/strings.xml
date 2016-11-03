@@ -102,5 +102,6 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
+    <string name="clicktoreply">Klicken Sie auf Antwort</string>
 
 </resources>

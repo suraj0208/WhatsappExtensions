@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxHideCamera = (CheckBox) findViewById(R.id.chkboxhidecamera);
         CheckBox checkBoxHideTabs = (CheckBox) findViewById(R.id.chkboxhidetabs);
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
+        CheckBox checkBoxClickToReply = (CheckBox)findViewById(R.id.chkboxclicktoreply);
 
         setUpCheckBox(checkBoxHideCamera, "hideCamera");
         setUpCheckBox(checkBoxHideTabs, "hideTabs");
         setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton");
+        setUpCheckBox(checkBoxClickToReply, "enableClickToReply");
 
 
     }

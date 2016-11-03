@@ -69,6 +69,7 @@
 	<string name="hide_camera_btn">Hide Camera Button</string>
     <string name="hide_tabs_btn">Hide tabs</string>
     <string name="replace_call_btn">Replace call button</string>
+    <string name="clicktoreply">Click to Reply</string>
 
 
     <string name="color">Color</string>
