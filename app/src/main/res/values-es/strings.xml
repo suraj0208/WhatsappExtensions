@@ -103,5 +103,6 @@
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="clicktoreply">Haga clic para responder</string>
+    <string name="wamenuitem_reply">Responder</string>
 
 </resources>

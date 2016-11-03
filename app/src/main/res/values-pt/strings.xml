@@ -102,5 +102,6 @@
     <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
     <string name="hide_read_receipts">Desativar confirmações de leitura</string>
     <string name="clicktoreply">Clique para Responder</string>
+    <string name="wamenuitem_reply">Responder</string>
 
 </resources>

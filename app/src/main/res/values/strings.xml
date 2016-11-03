@@ -93,6 +93,13 @@
         <item>2 Hours</item>
     </string-array>
 
+    <string-array name="singleclickactions">
+        <item>Reply</item>
+        <item>Info</item>
+        <item>Forward</item>
+        <item>Disable</item>
+    </string-array>
+
     <array name="demo_colors">
         <item>#9CCC65</item>
         <item>#D4E157</item>
@@ -108,5 +115,8 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
+    <string name="single_click_label">Single Click action</string>
+
+    <string name="wamenuitem_reply">Reply</string>
 
 </resources>

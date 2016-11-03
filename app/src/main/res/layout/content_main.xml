@@ -205,6 +205,8 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/chkboxhidetabs"
             android:layout_alignParentEnd="true"
+            android:layout_marginRight="14dp"
+            android:layout_marginEnd="14dp"
             android:layout_alignParentRight="true"
             android:text="@string/req_restart" />
 
@@ -218,15 +220,26 @@
             android:layout_marginTop="5dp"
             android:text="@string/replace_call_btn" />
 
-        <CheckBox
-            android:id="@+id/chkboxclicktoreply"
+        <TextView
+            android:id="@+id/tvsingleclickaction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@id/tvlockprefs"
-            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_alignLeft="@id/chkboxreplacecallbtn"
+            android:layout_alignStart="@id/chkboxreplacecallbtn"
             android:layout_below="@id/chkboxreplacecallbtn"
-            android:layout_marginTop="5dp"
-            android:text="@string/clicktoreply" />
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginStart="7dp"
+            android:text="@string/single_click_label" />
+
+        <Spinner
+            android:id="@+id/spinsingleclickactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvsingleclickaction"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:entries="@array/singleclickactions" />
 
     </RelativeLayout>
 
