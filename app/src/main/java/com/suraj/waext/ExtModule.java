@@ -21,6 +21,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -88,7 +89,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
-    private static int singleClickAction = 3;
+    private static int oneClickAction = 3;
 
     private String archiveBooleanFieldName;
 
@@ -102,7 +103,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private String contactNumber;
 
     private Context context;
-    private View singleClickActionButton;
+    private View oneClickActionButton;
 
     private Thread thread;
 
@@ -769,59 +770,58 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
-    public void hookMethodsForClickToReply(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        try {
-            Class jq = XposedHelpers.findClass("com.whatsapp.jq", loadPackageParam.classLoader);
-            Class p = XposedHelpers.findClass("com.whatsapp.protocol.j", loadPackageParam.classLoader);
+    public void hookMethodsForClickToReply(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
 
-            XposedHelpers.findAndHookConstructor(jq, Context.class, p, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
+        XposedHelpers.findAndHookMethod("android.widget.HeaderViewListAdapter", loadPackageParam.classLoader, "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
 
-                    ((View) param.thisObject).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // v.setVisibility(View.INVISIBLE);
+                if (param.args[2] != null && !param.args[2].getClass().getName().equals("com.whatsapp.ConversationListView"))
+                    return;
 
-                            if (singleClickAction == 3)
-                                return;
+                if (param.args[1] != null) {
+                    try {
+                        ((View) param.args[1]).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                            singleClickActionButton=null;
+                                if (oneClickAction == 3)
+                                    return;
 
-                            v.performLongClick();
+                                oneClickActionButton = null;
 
-                            if (singleClickActionButton != null)
-                                singleClickActionButton.performClick();
-                            else
-                                v.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
-                        }
-                    });
-                }
-            });
+                                v.performLongClick();
 
-            XposedHelpers.findAndHookMethod("android.support.v7.view.menu.ActionMenuItemView", loadPackageParam.classLoader, "setTitle", CharSequence.class, new XC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                    super.afterHookedMethod(param);
+                                if (oneClickActionButton != null)
+                                    oneClickActionButton.performClick();
+                                else
+                                    v.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                            }
+                        });
 
-
-                    if (param.args[0].toString().equals(getSingleClickActionString())) {
-                        singleClickActionButton = (View) param.thisObject;
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        XposedBridge.log(ex.toString());
                     }
-
                 }
-            });
-
-        } catch (Exception ex) {
-            XposedBridge.log("couldnt find touch2reply classes");
-            XposedBridge.log(ex.toString());
-
-        }
+            }
+        });
 
 
+        XposedHelpers.findAndHookMethod("android.support.v7.view.menu.ActionMenuItemView", loadPackageParam.classLoader, "setTitle", CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                XposedBridge.log("action menu class hook success");
+
+                if (param.args[0].toString().equals(getOneClickActionString())) {
+                    oneClickActionButton = (View) param.thisObject;
+                }
+
+            }
+        });
     }
-
 
     public void showToast(final String text) {
         (new Handler(Looper.getMainLooper())).post(new Runnable() {
@@ -858,7 +858,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
         individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
-        singleClickAction = sharedPreferences.getInt("singleClickAction", 3);
+        oneClickAction = sharedPreferences.getInt("oneClickAction", 3);
 
         enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
         replaceCallButton = sharedPreferences.getBoolean("replaceCallButton", false);
@@ -866,11 +866,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
         hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
 
-
     }
 
-    public String getSingleClickActionString() {
-        return modRes.getStringArray(R.array.singleclickactions)[singleClickAction];
+    public String getOneClickActionString() {
+        return modRes.getStringArray(R.array.oneclickactions)[oneClickAction];
     }
 
 
@@ -965,9 +964,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
         //Class msgstore = XposedHelpers.findClass("com.whatsapp.c.d",loadPackageParam.classLoader);
-
     }
-
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);

@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
         setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton");
 
         Spinner spinSingleClickActions = (Spinner)findViewById(R.id.spinsingleclickactions);
-        spinSingleClickActions.setSelection(sharedPreferences.getInt("singleClickAction", 3));
+        spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
 
         spinSingleClickActions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                editor.putInt("singleClickAction",position);
+                editor.putInt("oneClickAction",position);
                 editor.apply();
             }
 

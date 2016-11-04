@@ -69,7 +69,6 @@
 	<string name="hide_camera_btn">Hide Camera Button</string>
     <string name="hide_tabs_btn">Hide tabs</string>
     <string name="replace_call_btn">Replace call button</string>
-    <string name="clicktoreply">Click to Reply</string>
 
 
     <string name="color">Color</string>
@@ -93,7 +92,7 @@
         <item>2 Hours</item>
     </string-array>
 
-    <string-array name="singleclickactions">
+    <string-array name="oneclickactions">
         <item>Reply</item>
         <item>Info</item>
         <item>Forward</item>
@@ -115,8 +114,6 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
-    <string name="single_click_label">Single Click action</string>
-
-    <string name="wamenuitem_reply">Reply</string>
+    <string name="single_click_label">One Click action</string>
 
 </resources>

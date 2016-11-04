@@ -80,6 +80,13 @@
         <item>10 Minutos</item>
     </string-array>
 
+    <string-array name="oneclickactions">
+        <item>Responder</item>
+        <item>Info.</item>
+        <item>Reenviar</item>
+        <item>Inhabilitar</item>
+    </string-array>
+
     <string-array name="reminderlist">
         <item>15 Minutos</item>
         <item>30 Minutos</item>
@@ -102,7 +109,6 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
-    <string name="clicktoreply">Haga clic para responder</string>
-    <string name="wamenuitem_reply">Responder</string>
+    <string name="single_click_label">Acción de un solo clic</string>
 
 </resources>

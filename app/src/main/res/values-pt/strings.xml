@@ -77,6 +77,13 @@
         <item>10 Minutos</item>
     </string-array>
 
+    <string-array name="oneclickactions">
+        <item>Resp.</item>
+        <item>Dados</item>
+        <item>Encaminhar</item>
+        <item>Incapacitar</item>
+    </string-array>
+
     <string-array name="reminderlist">
         <item>15 Minutos</item>
         <item>30 Minutos</item>
@@ -101,7 +108,6 @@
     <string name="title_activity_color_chooser">Escolher a cor</string>
     <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
     <string name="hide_read_receipts">Desativar confirmações de leitura</string>
-    <string name="clicktoreply">Clique para Responder</string>
-    <string name="wamenuitem_reply">Responder</string>
+    <string name="single_click_label">Um clique ação</string>
 
 </resources>

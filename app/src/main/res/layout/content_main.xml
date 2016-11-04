@@ -239,7 +239,7 @@
             android:layout_alignBaseline="@id/tvsingleclickaction"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:entries="@array/singleclickactions" />
+            android:entries="@array/oneclickactions" />
 
     </RelativeLayout>
 
