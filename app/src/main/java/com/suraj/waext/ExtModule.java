@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.preference.ListPreference;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -963,7 +965,43 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
-        //Class msgstore = XposedHelpers.findClass("com.whatsapp.c.d",loadPackageParam.classLoader);
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.messaging.h", loadPackageParam.classLoader, "a",Message.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                XposedBridge.log("_____________________________________");
+
+                Message message  = (Message) param.args[0];
+                Bundle bundle = message.getData();
+
+                if(message.arg1 == 9 && message.arg2 == 0 )
+                    param.setResult(null);
+
+                /*
+                XposedBridge.log("" +message.arg1 + " " + message.arg2 + " " + message.toString());
+
+                for(String k : bundle.keySet())
+                    XposedBridge.log(k + " " + bundle.get(k));
+
+                //for(StackTraceElement stackTraceElement:new Exception().getStackTrace())
+                //   XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
+
+                XposedBridge.log("_____________________________________");
+
+                String className = new Exception().getStackTrace()[4].getClassName();
+
+                if(className.equals("com.whatsapp.xi") || className.equals("com.whatsapp.aae$a") ) {
+                    param.setResult(null);
+                    XposedBridge.log("skip " +message.arg1 + " " + message.arg2 + " "+ message.toString());
+                }
+
+                */
+            }
+        });
+
+
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
