@@ -120,5 +120,6 @@
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="single_click_label">azione uno scatto</string>
+    <string name="hide_delivery_receipts">Spegni rapporto di consegna</string>
 
 </resources>

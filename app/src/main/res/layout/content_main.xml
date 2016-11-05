@@ -159,22 +159,32 @@
             android:text="@string/hide_last_seen" />
 
         <CheckBox
-            android:id="@+id/chkboxreceipts"
+            android:id="@+id/chkboxreadreceipts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvhighlight"
             android:layout_alignStart="@id/tvhighlight"
             android:layout_below="@id/chkboxseen"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:text="@string/hide_read_receipts" />
 
+        <CheckBox
+            android:id="@+id/chkboxdeliveryreports"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxreadreceipts"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_delivery_receipts" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chkboxreceipts"
+            android:layout_below="@id/chkboxdeliveryreports"
             android:layout_margin="10dp"
             android:text="@string/layout_prefs"
             android:textSize="22sp" />

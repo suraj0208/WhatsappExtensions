@@ -110,5 +110,6 @@
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="single_click_label">Ein Klick-Aktion</string>
+    <string name="hide_delivery_receipts">Ausschalten Sendeberichte</string>
 
 </resources>

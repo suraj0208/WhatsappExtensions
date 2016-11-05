@@ -71,10 +71,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupPrivacyUI() {
         final CheckBox checkBoxSeen = (CheckBox) findViewById(R.id.chkboxseen);
-        final CheckBox checkBoxReceipts = (CheckBox) findViewById(R.id.chkboxreceipts);
+        final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
+        final CheckBox checkBoxDeliveryReports = (CheckBox)findViewById(R.id.chkboxdeliveryreports);
 
         setUpCheckBox(checkBoxSeen, "hideSeen");
-        setUpCheckBox(checkBoxReceipts, "hideReadReceipts");
+        setUpCheckBox(checkBoxReadReports, "hideReadReceipts");
+        setUpCheckBox(checkBoxDeliveryReports,"hideDeliveryReports");
     }
 
     private void setupLockUI() {

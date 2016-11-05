@@ -109,5 +109,6 @@
     <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
     <string name="hide_read_receipts">Desativar confirmações de leitura</string>
     <string name="single_click_label">Um clique ação</string>
+    <string name="hide_delivery_receipts">Desativar relatórios de entrega</string>
 
 </resources>

@@ -63,6 +63,7 @@
 	<string name="privacy_prefs">Privacy Preferences</string>
 	<string name="hide_last_seen">Hide last seen</string>
     <string name="hide_read_receipts">Turn off read receipts</string>
+    <string name="hide_delivery_receipts">Turn off delivery reports</string>
     <string name="req_restart">Requires Restart</string>
 	
 	<string name="layout_prefs">Layout Preferences</string>

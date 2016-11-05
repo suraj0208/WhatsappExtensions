@@ -110,5 +110,6 @@
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="single_click_label">Acción de un solo clic</string>
+    <string name="hide_delivery_receipts">Desactivar los informes de entrega</string>
 
 </resources>
