@@ -809,6 +809,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         } catch (XposedHelpers.ClassNotFoundError ex) {
             XposedBridge.log(ex.getStackTrace().toString());
+        } catch (NoSuchMethodError ex){
+            XposedBridge.log(ex.getStackTrace().toString());
+        } catch (Exception ex ){
+            XposedBridge.log(ex.getStackTrace().toString());
+        }catch (Error ex){
+            XposedBridge.log(ex.getStackTrace().toString());
         }
 
     }
