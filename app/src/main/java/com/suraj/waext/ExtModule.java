@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.XModuleResources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -34,7 +33,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -775,15 +773,17 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 
     public void hookMethodsForHideDeliveryReports(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod("com.whatsapp.messaging.h", loadPackageParam.classLoader, "a", Message.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
 
-                Message message = (Message) param.args[0];
+        try {
+            XposedHelpers.findAndHookMethod("com.whatsapp.messaging.j", loadPackageParam.classLoader, "a", Message.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
 
-                if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
-                    param.setResult(null);
+                    Message message = (Message) param.args[0];
+
+                    if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
+                        param.setResult(null);
 
                 /*
                 XposedBridge.log("" +message.arg1 + " " + message.arg2 + " " + message.toString());
@@ -804,8 +804,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
 
                 */
-            }
-        });
+                }
+            });
+
+        } catch (XposedHelpers.ClassNotFoundError ex) {
+            XposedBridge.log(ex.getStackTrace().toString());
+        }
+
     }
 
 
@@ -852,7 +857,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                if(param.args[0]==null){
+                if (param.args[0] == null) {
                     XposedBridge.log("actionmenu:Title null");
                     return;
                 }
