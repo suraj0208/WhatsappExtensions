@@ -47,13 +47,13 @@ public class MainActivity extends AppCompatActivity {
         setUpCheckBox(checkBoxHideTabs, "hideTabs");
         setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton");
 
-        Spinner spinSingleClickActions = (Spinner)findViewById(R.id.spinsingleclickactions);
+        Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
 
         spinSingleClickActions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                editor.putInt("oneClickAction",position);
+                editor.putInt("oneClickAction", position);
                 editor.apply();
             }
 
@@ -72,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
     private void setupPrivacyUI() {
         final CheckBox checkBoxSeen = (CheckBox) findViewById(R.id.chkboxseen);
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
-        final CheckBox checkBoxDeliveryReports = (CheckBox)findViewById(R.id.chkboxdeliveryreports);
+        final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
         setUpCheckBox(checkBoxSeen, "hideSeen");
         setUpCheckBox(checkBoxReadReports, "hideReadReceipts");
-        setUpCheckBox(checkBoxDeliveryReports,"hideDeliveryReports");
+        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports");
     }
 
     private void setupLockUI() {

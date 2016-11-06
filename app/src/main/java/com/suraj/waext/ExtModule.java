@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.XModuleResources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -774,16 +775,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 
     public void hookMethodsForHideDeliveryReports(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod("com.whatsapp.messaging.h", loadPackageParam.classLoader, "a",Message.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.whatsapp.messaging.h", loadPackageParam.classLoader, "a", Message.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                XposedBridge.log("_____________________________________");
+                Message message = (Message) param.args[0];
 
-                Message message  = (Message) param.args[0];
-
-                if(hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0 )
+                if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
                     param.setResult(null);
 
                 /*
@@ -853,7 +852,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                XposedBridge.log("action menu class hook success");
+                if(param.args[0]==null){
+                    XposedBridge.log("actionmenu:Title null");
+                    return;
+                }
 
                 if (param.args[0].toString().equals(getOneClickActionString())) {
                     oneClickActionButton = (View) param.thisObject;
