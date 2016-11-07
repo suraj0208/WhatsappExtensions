@@ -769,7 +769,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
-    public void hookMethodsForHideDeliveryReports(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    public void hookMethodsForHideDeliveryReports(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
 
         try {
             XposedHelpers.findAndHookMethod("com.whatsapp.messaging.j", loadPackageParam.classLoader, "a", Message.class, new XC_MethodHook() {
@@ -779,17 +779,17 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                     Message message = (Message) param.args[0];
 
-                    if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
+                    if (hideDeliveryReports && (message.arg1 == 9) && message.arg2 == 0)
                         param.setResult(null);
 
-                /*
-                XposedBridge.log("" +message.arg1 + " " + message.arg2 + " " + message.toString());
+                    //XposedBridge.log("" + message.arg1 + " " + message.arg2 + " " + message.toString());
 
+                    /*
                 for(String k : bundle.keySet())
                     XposedBridge.log(k + " " + bundle.get(k));
 
-                //for(StackTraceElement stackTraceElement:new Exception().getStackTrace())
-                //   XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
+                for(StackTraceElement stackTraceElement:new Exception().getStackTrace())
+                   XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
 
                 XposedBridge.log("_____________________________________");
 
@@ -805,13 +805,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             });
 
         } catch (XposedHelpers.ClassNotFoundError ex) {
-            XposedBridge.log(ex.getStackTrace().toString());
+            ex.printStackTrace();
         } catch (NoSuchMethodError ex) {
-            XposedBridge.log(ex.getStackTrace().toString());
+            ex.printStackTrace();
         } catch (Exception ex) {
-            XposedBridge.log(ex.getStackTrace().toString());
+            ex.printStackTrace();
         } catch (Error ex) {
-            XposedBridge.log(ex.getStackTrace().toString());
+            ex.printStackTrace();
         }
 
     }
@@ -1015,6 +1015,23 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
+
+        Class anr = XposedHelpers.findClass("com.whatsapp.anr$a", loadPackageParam.classLoader);
+        Class bx = XposedHelpers.findClass("com.whatsapp.protocol.bx", loadPackageParam.classLoader);
+
+        Class org = XposedHelpers.findClass("org.whispersystems.a.m", loadPackageParam.classLoader);
+        Class p2 = XposedHelpers.findClass("com.whatsapp.fieldstats.Events.l", loadPackageParam.classLoader);
+
+        //printMethodOfClass("com.whatsapp.App",loadPackageParam);
+
+        /*XposedHelpers.findAndHookMethod("com.whatsapp.App", loadPackageParam.classLoader, "a", bx,new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                XposedBridge.log("skipping a");
+                param.setResult(null);
+            }
+        });*/
 
 
     }
