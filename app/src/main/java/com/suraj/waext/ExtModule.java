@@ -118,7 +118,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     }
 
-    private void hookMethodsForHighLight(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    private void hookMethodsForHighLight(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
 
 
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
@@ -236,10 +236,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         if (result != null) {
 
-                            if (result.contains("@g.us")) {
-                                isGroup = true;
-                            } else
-                                isGroup = false;
+                            isGroup = result.contains("@g.us");
 
                             if (result.contains("@")) {
                                 contactNumber = result.split("@")[0];
@@ -809,11 +806,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         } catch (XposedHelpers.ClassNotFoundError ex) {
             XposedBridge.log(ex.getStackTrace().toString());
-        } catch (NoSuchMethodError ex){
+        } catch (NoSuchMethodError ex) {
             XposedBridge.log(ex.getStackTrace().toString());
-        } catch (Exception ex ){
+        } catch (Exception ex) {
             XposedBridge.log(ex.getStackTrace().toString());
-        }catch (Error ex){
+        } catch (Error ex) {
             XposedBridge.log(ex.getStackTrace().toString());
         }
 
@@ -1018,6 +1015,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
+
+
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
