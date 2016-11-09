@@ -104,7 +104,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private String contactNumber;
 
-    private Context context;
+    //private Context context;
     private View oneClickActionButton;
 
     private Thread thread;
@@ -260,6 +260,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public void hookConversationMethods(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         final Class conversationClass = XposedHelpers.findClass("com.whatsapp.Conversation", loadPackageParam.classLoader);
 
+        XposedHelpers.findAndHookMethod(conversationClass, "onPause", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                if (enableHideSeen)
+                    setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
+            }
+        });
+
         XposedHelpers.findAndHookMethod(conversationClass, "onResume", new XC_MethodHook() {
 
 
@@ -279,7 +289,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 try {
                     Thread.sleep(200);
-                    setSeenOff("0");
+                    setSeenOff("0", ((Activity) param.thisObject).getApplicationContext());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -364,6 +374,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
+
             }
 
         });
@@ -372,8 +383,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                ((Activity) param.thisObject).unregisterReceiver(unlockReceiver);
+                Activity activity = ((Activity) param.thisObject);
 
+                activity.unregisterReceiver(unlockReceiver);
+
+//                if (enableHideSeen)
+//                    setSeenOff("2", activity.getApplicationContext());
             }
 
         });
@@ -533,17 +548,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                Activity activity = (Activity) param.thisObject;
-
-                context = activity.getApplicationContext();
-
-
-                //if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
-                //    return;
-
-                if (enableHideSeen)
-                    setSeenOff("2");
-
                 if (thread == null || !thread.isAlive())
                     startDaemon();
 
@@ -555,10 +559,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-
-                Activity activity = (Activity) param.thisObject;
-                context = activity.getApplicationContext();
-
 
                 if (thread != null && thread.isAlive()) {
                     thread.interrupt();
@@ -578,8 +578,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     //XposedBridge.log("Thread started");
                     Thread.sleep(4000);
 
-                    if (enableHideSeen)
-                        setSeenOff("2");
+                    //if (enableHideSeen)
+                    //setSeenOff("2");
 
                     Thread.sleep(lockAfter * 1000 * 60);
                     ExtModule.templockedContacts.addAll(lockedContacts);
@@ -596,7 +596,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     }
 
-    private void setSeenOff(final String val) {
+    private void setSeenOff(final String val, final Context context) {
         if (context == null) {
             XposedBridge.log("WA context null");
             return;
@@ -779,7 +779,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                     Message message = (Message) param.args[0];
 
-                    if (hideDeliveryReports && (message.arg1 == 9) && message.arg2 == 0)
+                    if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
                         param.setResult(null);
 
                     //XposedBridge.log("" + message.arg1 + " " + message.arg2 + " " + message.toString());
@@ -813,12 +813,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (Error ex) {
             ex.printStackTrace();
         }
-
     }
 
-
     public void hookMethodsForClickToReply(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
-
         XposedHelpers.findAndHookMethod("android.widget.HeaderViewListAdapter", loadPackageParam.classLoader, "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -998,7 +995,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForHideDeliveryReports(loadPackageParam);
         //hookMethodsForUpdatePrefs(loadPackageParam);
 
-
         unlockReceiver = new UnlockReceiver();
 
         initPrefs();
@@ -1015,24 +1011,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
         }
-
-        Class anr = XposedHelpers.findClass("com.whatsapp.anr$a", loadPackageParam.classLoader);
-        Class bx = XposedHelpers.findClass("com.whatsapp.protocol.bx", loadPackageParam.classLoader);
-
-        Class org = XposedHelpers.findClass("org.whispersystems.a.m", loadPackageParam.classLoader);
-        Class p2 = XposedHelpers.findClass("com.whatsapp.fieldstats.Events.l", loadPackageParam.classLoader);
-
-        //printMethodOfClass("com.whatsapp.App",loadPackageParam);
-
-        /*XposedHelpers.findAndHookMethod("com.whatsapp.App", loadPackageParam.classLoader, "a", bx,new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                XposedBridge.log("skipping a");
-                param.setResult(null);
-            }
-        });*/
-
 
     }
 

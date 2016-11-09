@@ -4,7 +4,7 @@
 	
     <string name="title_activity_change_password">Modifica Password</string>
 	<string name="lock_prefs">Opzioni di Blocco</string>
-	<string name="lock_text">Blocca tutte le chat dopo la chiusura di WhatApp.</string>
+	<string name="lock_text">Blocca tutte le chat dopo la chiusura di WhatsApp.</string>
 
     <!-- translate from here -->
     <string name="lock_after">Blocca dopo </string>
@@ -25,7 +25,7 @@
     <string name="call_place_error">Impossibile effettuare la chiamata</string>
     <string name="chat_reopen_message">RiApri la chat per applicare i cambiamenti</string>
     <string name="whatsapp_restart_message">Riavvia WhatsApp per applicare i cambiamenti</string>
-    <string name="whatsapp_restart_message_long">Elimina WhatApp dalle applicazioni recenti e Riapri</string>
+    <string name="whatsapp_restart_message_long">Elimina WhatsApp dalle applicazioni recenti e Riapri</string>
     <string name="wait_message">Aspetta 2 minuti dopo l\'avvio e riprova</string>
     <!-- translate end -->
 
@@ -55,30 +55,32 @@
 
     <string name="reminder_prefs">Preferenze Promemoria</string>
 	<string name="enable_reminder">Abilita servizio promemoria</string>
-	<string name="reminder_text">Nota: Il servizio e\' gestito automaticamente dalla app. Utilizzare questa opzione se si desidera abilitare/disabilitare il servizio esplicitamente.</string>
+	<string name="reminder_text">Nota: Il servizio e\' gestito automaticamente dall\'app. Utilizzare questa opzione se si desidera abilitare/disabilitare il servizio esplicitamente.</string>
 	<string name="reminder_in">Ricordamelo dopo </string>
     <string name="reply_to">Rispondi a %1$s</string>
 
 
     <string name="highlight_prefs">Preferenze di Evidenziazione</string>
 	<string name="highlight_groups">Evidenzia Gruppi</string>
-	<string name="highlight_individual">Colore per evidenziare la chat individuale</string>
+	<string name="highlight_individual">Colore per evidenziare la chat singola</string>
 	<string name="select_color">Seleziona Colore</string>
 	
 	<string name="privacy_prefs">Preferenze Privacy</string>
-	<string name="hide_last_seen">Nascondere l\'ultima connessione</string>
-    <string name="hide_read_receipts">Disabilita notifiche di lettura</string>
+	<string name="hide_last_seen">Nascondi l\'ultima connessione</string>
+    <string name="hide_read_receipts">Disabilita rapporto di lettura</string>
     <string name="req_restart">Richiede il riavvio</string>
+	<string name="hide_delivery_receipts">Disabilita rapporto di consegna</string>
 	
 	<string name="layout_prefs">Preferenze Interfaccia</string>
 	<string name="hide_camera_btn">Nascondi il pulsante della fotocamera</string>
     <string name="hide_tabs_btn">Nascondi le schede</string>
     <string name="replace_call_btn">Sostituisci il pulsante di chiamata</string>
+	<string name="single_click_label">Azione su breve tocco messaggio</string>
 
 
     <string name="color">Colore</string>
-	<string name="cancel">Cancella</string>
-	<string name="clear">Annulla</string>
+	<string name="cancel">Annulla</string>
+	<string name="clear">Pulisci</string>
 	<string name="enter">Accetta</string>
 	<string name="default_password">Password preimpostata: 1234</string>
 	
@@ -101,7 +103,7 @@
         <item>15 Minuti</item>
         <item>30 Minuti</item>
         <item>1 Ora</item>
-        <item>2 Oras</item>
+        <item>2 Ora</item>
     </string-array>
 
     <array name="demo_colors">
@@ -119,7 +121,5 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
-    <string name="single_click_label">azione uno scatto</string>
-    <string name="hide_delivery_receipts">Spegni rapporto di consegna</string>
 
 </resources>
