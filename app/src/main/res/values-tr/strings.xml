@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">WhatsApp Eklentileri</string>
+    <string name="action_settings">Ayarlar</string>
+	
+    <string name="title_activity_change_password">Şifreyi Değiştir</string>
+	<string name="lock_prefs">Kilitleme Tercihleri</string>
+	<string name="lock_text">Siz whatsapp dan çıkınca tüm görüşmeleriniz kilitlenecek.</string>
+
+    
+    <string name="lock_after">Sonra Kilitlencek </string>
+    
+
+    <string name="change_password">Şifreyi Değiştir</string>
+
+    
+    <string name="enter_current_password">Şuanki şifreyi girin. Varsayılan Şifre: 1234</string>
+    <string name="enter_new_password">Yeni şifre girin</string>
+    <string name="confirm_password">Şifreyi onayla</string>
+    <string name="password_length_warning">Uzunluğu 4 den az olamaz</string>
+    <string name="password_mismatch">Şifreler eşleşmiyor</string>
+    <string name="password_incorrect">Geçersiz Şifre</string>
+    <string name="password_change_message">Şifre Değiştirildi</string>
+    <string name="lock_enable_message">Bu kişi için kilitleme etkin</string>
+    <string name="lock_disable_message">Bu kişi için kilitleme devre dışı</string>
+    <string name="call_place_error">Çağrı açılamadı</string>
+    <string name="chat_reopen_message">Etkileri görmek için sohbet yeniden açın</string>
+    <string name="whatsapp_restart_message">>Etkileri görmek için Whatsapp ı yeniden açın</string>
+    <string name="whatsapp_restart_message_long">Whatsapp ı önceki uygulamalardan kaldır.</string>
+    <string name="wait_message">açılmadan 2 dakika sonra tekrar deneyin</string>
+
+    
+    <string name="internal_error">Hatar</string>
+    <string name="bundle_null_error">Aktivite açılırken hata:Bundle geçersiz</string>
+    
+
+
+    <string name="select_picture">Resim Seç</string>
+
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">call</string>
+
+
+    <string name="menuitem_hide">Gizle</string>
+    <string name="menuitem_unhide">Göster</string>
+    <string name="menuitem_wallpaper_set">Duvar kağıdı</string>
+    <string name="menuitem_wallpaper_remove">Duvar Kağıdını Kaldır</string>
+    <string name="menuitem_reminder">Hatırlatıcı Ekle</string>
+    <string name="menuitem_lock">Kilitle</string>
+    <string name="menuitem_unlock">Kilidi Aç</string>
+    <string name="menuitem_highlight">Öne Çıkanlar</string>
+    <string name="menuitem_unhighlight">Öne Çıkmayanlar</string>
+
+    <string name="reminder_prefs">Hatırlatıcı seçenekleri</string>
+	<string name="enable_reminder">Hatırlatıcı servisini etkinleştir</string>
+	<string name="reminder_text">Not: Servis uygulama tarafından otomatik olarak başlatılır. Etkinleştir/Devre Dışı seçeneklerini kullanarak tercihinizi belirleyebilirsiniz.</string>
+	<string name="reminder_in">içinde Hatırlar </string>
+    <string name="reply_to">%1$s kişisini Cevapla</string>
+
+
+    <string name="highlight_prefs">Öne Çıkarılan ayarlar</string>
+	<string name="highlight_groups">Öne Çıkarılan Gruplar</string>
+	<string name="highlight_individual">Bireysel sohbet vurgu rengi</string>
+	<string name="select_color">Renk seç</string>
+	
+	<string name="privacy_prefs">Gizlilik Tercihleri</string>
+	<string name="hide_last_seen">Son görülmeyi gizle</string>
+    <string name="hide_read_receipts">Okundu bilgisini kapat</string>
+    <string name="hide_delivery_receipts">İletildi raporlarını kapat</string>
+    <string name="req_restart">Yeniden başlatmak gerektirir</string>
+	
+	<string name="layout_prefs">Düzen Tercihleri</string>
+	<string name="hide_camera_btn">Kamera butonunu gizle</string>
+    <string name="hide_tabs_btn">Sekmeleri gizle</string>
+    <string name="replace_call_btn">Arama düğmesini değiştir</string>
+
+
+    <string name="color">Renk</string>
+	<string name="cancel">İptal</string>
+	<string name="clear">Gir</string>
+	<string name="enter">Enter</string>
+	<string name="default_password">Varsayılan Şifre: 1234</string>
+	
+    <string-array name="minutelist">
+        <item>Hemen</item>
+        <item>1 Dakika</item>
+        <item>3 Dakika</item>
+        <item>5 Dakika</item>
+        <item>10 Dakika</item>
+    </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Dakika</item>
+        <item>30 Dakika</item>
+        <item>1 Saat</item>
+        <item>2 Saat</item>
+    </string-array>
+
+    <!--do not translate these strings see faq section on XDA thread-->
+    <string-array name="oneclickactions">
+        <item>Cevapla</item>
+        <item>Bilgi</item>
+        <item>İleri</item>
+        <item>Devre Dışı Bırak</item>
+    </string-array>
+
+    <array name="demo_colors">
+        <item>#9CCC65</item>
+        <item>#D4E157</item>
+        <item>#FFEE58</item>
+        <item>#FFCA28</item>
+        <item>#FFA726</item>
+        <item>#FF7043</item>
+        <item>#BDBDBD</item>
+        <item>#78909C</item>
+        <item>#29B6F6</item>
+        <item>#ef5350</item>
+        <item>#EC407A</item>
+        <item>#212121</item>
+    </array>
+    <string name="title_activity_color_chooser">RenkSeçmeAktivitesi</string>
+    <string name="single_click_label">Tek Tıklamada eylem</string>
+
+</resources>
