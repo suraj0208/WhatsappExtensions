@@ -6,9 +6,7 @@
 	<string name="lock_prefs">Blokkeervoorkeuren</string>
 	<string name="lock_text">Blokkeer alle chats wanneer je WhatsApp sluit.</string>
 
-    <!-- translate from here -->
     <string name="lock_after">Blokkeer na </string>
-    <!-- translate end -->
 
     <string name="change_password">Wijzig Wachtwoord</string>
 
@@ -27,17 +25,12 @@
     <string name="whatsapp_restart_message">Herstart WhatsApp om wijziging door te voeren</string>
     <string name="whatsapp_restart_message_long">Verwijder WhatsApp uit Recente Applicaties en herstart</string>
     <string name="wait_message">Wacht twee minuten na opstarten en probeer het opnieuw</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
     <string name="internal_error">Interne fout</string>
     <string name="bundle_null_error">Fout openen activiteit:Bundle null</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="select_picture">Kies afbeelding</string>
-    <!-- Translate end-->
 
 
     <!-- do not translate this string. see faq section on XDA thread -->
@@ -52,7 +45,6 @@
     <string name="menuitem_unlock">Deblokkeer</string>
     <string name="menuitem_highlight">Markeer</string>
     <string name="menuitem_unhighlight">Verwijder markering</string>
-    <!-- Translate end-->
 
     <string name="reminder_prefs">Herinnering voorkeuren</string>
 	<string name="enable_reminder">Herinneringen inschakelen</string>
