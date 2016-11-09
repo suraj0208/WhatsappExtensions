@@ -40,8 +40,9 @@
     <!-- Translate end-->
 
 
-    <!-- Translate -->
-    <string name="menuitem_call">Bel</string>
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">anruf</string>
+
     <string name="menuitem_hide">Verberg</string>
     <string name="menuitem_unhide">Zichtbaar</string>
     <string name="menuitem_wallpaper_set">Persoonlijke achtergrond</string>
@@ -99,6 +100,7 @@
         <item>2 Uren</item>
     </string-array>
 
+    <!--do not translate these strings see faq section on XDA thread-->
     <string-array name="oneclickactions">
         <item>Antworten</item>
         <item>Info</item>

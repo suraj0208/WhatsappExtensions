@@ -36,8 +36,10 @@
 
     <string name="select_picture">Select Picture</string>
 
-
+    <!-- do not translate this string. see faq section on XDA thread -->
     <string name="menuitem_call">call</string>
+
+
     <string name="menuitem_hide">Hide</string>
     <string name="menuitem_unhide">Unhide</string>
     <string name="menuitem_wallpaper_set">Custom Wallpaper</string>
@@ -93,6 +95,7 @@
         <item>2 Hours</item>
     </string-array>
 
+    <!--do not translate these strings see faq section on XDA thread-->
     <string-array name="oneclickactions">
         <item>Reply</item>
         <item>Info</item>

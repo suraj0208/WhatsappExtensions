@@ -30,8 +30,9 @@
 
     <string name="select_picture">Selecionar Imagem</string>
 
-
+    <!-- do not translate this string. see faq section on XDA thread -->
     <string name="menuitem_call">chamar</string>
+
     <string name="menuitem_hide">Ocultar</string>
     <string name="menuitem_unhide">Desocultar</string>
     <string name="menuitem_wallpaper_set">Imagem Personalizada</string>
@@ -77,6 +78,7 @@
         <item>10 Minutos</item>
     </string-array>
 
+    <!--do not translate these strings see faq section on XDA thread-->
     <string-array name="oneclickactions">
         <item>Resp.</item>
         <item>Dados</item>

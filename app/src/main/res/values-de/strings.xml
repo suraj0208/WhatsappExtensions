@@ -31,8 +31,9 @@
 
     <string name="select_picture">Bild auswählen</string>
 
-
+    <!-- do not translate this string. see faq section on XDA thread -->
     <string name="menuitem_call">anruf</string>
+
     <string name="menuitem_hide">Ausblenden</string>
     <string name="menuitem_unhide">Einblenden</string>
     <string name="menuitem_wallpaper_set">Benutzerdefinierter Hintergrund</string>
@@ -80,6 +81,7 @@
         <item>10 Minuten</item>
     </string-array>
 
+    <!--do not translate these strings see faq section on XDA thread-->
     <string-array name="oneclickactions">
         <item>Antworten</item>
         <item>Info</item>

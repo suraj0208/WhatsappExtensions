@@ -6,13 +6,10 @@
 	<string name="lock_prefs">Opzioni di Blocco</string>
 	<string name="lock_text">Blocca tutte le chat dopo la chiusura di WhatsApp.</string>
 
-    <!-- translate from here -->
     <string name="lock_after">Blocca dopo </string>
-    <!-- translate end -->
 
     <string name="change_password">Modifica Password</string>
 
-    <!-- translate from here -->
     <string name="enter_current_password">Immetti Password attuale. Password preimpostata: 1234</string>
     <string name="enter_new_password">Immetti Nuova Password</string>
     <string name="confirm_password">Conferma Password</string>
@@ -27,21 +24,16 @@
     <string name="whatsapp_restart_message">Riavvia WhatsApp per applicare i cambiamenti</string>
     <string name="whatsapp_restart_message_long">Elimina WhatsApp dalle applicazioni recenti e Riapri</string>
     <string name="wait_message">Aspetta 2 minuti dopo l\'avvio e riprova</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
     <string name="internal_error">Errore Interno</string>
     <string name="bundle_null_error">Errore Aprendo l\'Attivita\':Bundle null</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="select_picture">Seleziona l\'Immagine</string>
-    <!-- Translate end-->
 
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">chiama</string>
 
-    <!-- Translate -->
-    <string name="menuitem_call">Chiama</string>
     <string name="menuitem_hide">Nascondi</string>
     <string name="menuitem_unhide">Mostra</string>
     <string name="menuitem_wallpaper_set">Sfondo Personalizzato</string>
@@ -51,7 +43,6 @@
     <string name="menuitem_unlock">Sblocca</string>
     <string name="menuitem_highlight">Evidenzia</string>
     <string name="menuitem_unhighlight">Non Evidenziare</string>
-    <!-- Translate end-->
 
     <string name="reminder_prefs">Preferenze Promemoria</string>
 	<string name="enable_reminder">Abilita servizio promemoria</string>
@@ -92,6 +83,7 @@
         <item>10 Minuti</item>
     </string-array>
 
+    <!--do not translate these strings see faq section on XDA thread-->
     <string-array name="oneclickactions">
         <item>Rispondi</item>
         <item>Info</item>
