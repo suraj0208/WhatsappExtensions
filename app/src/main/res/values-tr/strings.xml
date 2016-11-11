@@ -29,7 +29,7 @@
     <string name="wait_message">açılmadan 2 dakika sonra tekrar deneyin</string>
 
     
-    <string name="internal_error">Hatar</string>
+    <string name="internal_error">Hata</string>
     <string name="bundle_null_error">Aktivite açılırken hata:Bundle geçersiz</string>
     
 
@@ -37,7 +37,7 @@
     <string name="select_picture">Resim Seç</string>
 
     <!-- do not translate this string. see faq section on XDA thread -->
-    <string name="menuitem_call">call</string>
+    <string name="menuitem_call">ara</string>
 
 
     <string name="menuitem_hide">Gizle</string>
