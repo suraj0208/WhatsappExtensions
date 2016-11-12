@@ -99,7 +99,7 @@
     <string-array name="oneclickactions">
         <item>Cevapla</item>
         <item>Bilgi</item>
-        <item>İleri</item>
+        <item>Yönlendir</item>
         <item>Devre Dışı Bırak</item>
     </string-array>
 
