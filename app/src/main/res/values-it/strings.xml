@@ -53,26 +53,26 @@
 
     <string name="highlight_prefs">Preferenze di Evidenziazione</string>
 	<string name="highlight_groups">Evidenzia Gruppi</string>
-	<string name="highlight_individual">Colore per evidenziare la chat singola</string>
+	<string name="highlight_individual">Evidenzia Chat singola</string>
 	<string name="select_color">Seleziona Colore</string>
 	
 	<string name="privacy_prefs">Preferenze Privacy</string>
 	<string name="hide_last_seen">Nascondi l\'ultima connessione</string>
-    <string name="hide_read_receipts">Disabilita rapporto di lettura</string>
+    <string name="hide_read_receipts">Disabilita conferma di lettura</string>
     <string name="req_restart">Richiede il riavvio</string>
-	<string name="hide_delivery_receipts">Disabilita rapporto di consegna</string>
+	<string name="hide_delivery_receipts">Disabilita conferma di consegna</string>
 	
 	<string name="layout_prefs">Preferenze Interfaccia</string>
 	<string name="hide_camera_btn">Nascondi il pulsante della fotocamera</string>
     <string name="hide_tabs_btn">Nascondi le schede</string>
     <string name="replace_call_btn">Sostituisci il pulsante di chiamata</string>
-	<string name="single_click_label">Azione su breve tocco messaggio</string>
+	<string name="single_click_label">Azione su tocco messaggio</string>
 
 
     <string name="color">Colore</string>
 	<string name="cancel">Annulla</string>
 	<string name="clear">Pulisci</string>
-	<string name="enter">Accetta</string>
+	<string name="enter">Conferma</string>
 	<string name="default_password">Password preimpostata: 1234</string>
 	
     <string-array name="minutelist">
@@ -88,14 +88,14 @@
         <item>Rispondi</item>
         <item>Info</item>
         <item>Inoltra</item>
-        <item>Disabilitare</item>
+        <item>Nessuna</item>
     </string-array>
 
     <string-array name="reminderlist">
         <item>15 Minuti</item>
         <item>30 Minuti</item>
         <item>1 Ora</item>
-        <item>2 Ora</item>
+        <item>2 Ore</item>
     </string-array>
 
     <array name="demo_colors">
