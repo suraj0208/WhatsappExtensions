@@ -176,15 +176,26 @@
             android:layout_alignLeft="@id/tvhighlight"
             android:layout_alignStart="@id/tvhighlight"
             android:layout_below="@id/chkboxreadreceipts"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:text="@string/hide_delivery_receipts" />
+
+        <CheckBox
+            android:id="@+id/chkboxalwaysonline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxdeliveryreports"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/always_online" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chkboxdeliveryreports"
+            android:layout_below="@id/chkboxalwaysonline"
             android:layout_margin="10dp"
             android:text="@string/layout_prefs"
             android:textSize="22sp" />
