@@ -29,9 +29,7 @@
     <string name="internal_error">Interne fout</string>
     <string name="bundle_null_error">Fout openen activiteit:Bundle null</string>
 
-
     <string name="select_picture">Kies afbeelding</string>
-
 
     <!-- do not translate this string. see faq section on XDA thread -->
     <string name="menuitem_call">bellen</string>
@@ -50,26 +48,25 @@
 	<string name="enable_reminder">Herinneringen inschakelen</string>
 	<string name="reminder_text">Notitie: Deze service wordt door de app zelf geregeld. Gebruik deze optie indien die service expliciet in- of uitgeschakeld moet worden.</string>
 	<string name="reminder_in">Herinner mij over </string>
-    <string name="reply_to">Antwoord op %1$s</string>
-
+   	<string name="reply_to">Antwoord op %1$s</string>
 
     <string name="highlight_prefs">Markeervoorkeuren</string>
 	<string name="highlight_groups">Markeer groepen</string>
 	<string name="highlight_individual">Individuele chat markeerkleur</string>
 	<string name="select_color">Kies kleur</string>
 	
-	<string name="privacy_prefs">Privacyvoorkeuren</string>
+    <string name="privacy_prefs">Privacyvoorkeuren</string>
 	<string name="hide_last_seen">Verberg laatst gezien</string>
-    <string name="hide_read_receipts">Schakel leesbevestiging uit</string>
-    <string name="req_restart">Herstart nodig</string>
+   	<string name="hide_read_receipts">Schakel leesbevestiging uit</string>
+   	<string name="req_restart">Herstart nodig</string>
 	<string name="hide_delivery_receipts">Schakel ontvangstbevestiging uit</string>
+	<string name="always_online">Altijd online inschakelen</string>
 	
-	<string name="layout_prefs">Layout voorkeuren</string>
+    <string name="layout_prefs">Layout voorkeuren</string>
 	<string name="hide_camera_btn">Verberg Camera knop</string>
-    <string name="hide_tabs_btn">Verberg tabbladen</string>
-    <string name="replace_call_btn">Vervang belknop</string>
+   	<string name="hide_tabs_btn">Verberg tabbladen</string>
+    	<string name="replace_call_btn">Vervang belknop</string>
 	<string name="single_click_label">One Click actie</string>
-
 
     <string name="color">Kleur</string>
 	<string name="cancel">Annuleer</string>
