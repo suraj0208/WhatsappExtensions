@@ -965,10 +965,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         if (sharedPreferences != null && sharedPreferences.getBoolean("hideTabs", false))
             initPackageResourcesParam.res.setReplacement("com.whatsapp", "dimen", "tab_height", modRes.fwd(R.dimen.tab_height));
 
-        /*initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target", modRes.fwd(R.mipmap.ic_black_tick_conv));
-        initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target_onmedia", modRes.fwd(R.mipmap.ic_black_tick_conv));
-        initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "msg_status_client_read", modRes.fwd(R.mipmap.ic_black_tick_main));
-        */
+        if (sharedPreferences != null && sharedPreferences.getBoolean("showBlackTicks", false)) {
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target", modRes.fwd(R.mipmap.ic_black_tick_conv));
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target_onmedia", modRes.fwd(R.mipmap.ic_black_tick_conv));
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "msg_status_client_read", modRes.fwd(R.mipmap.ic_black_tick_main));
+        }
 
     }
 
@@ -1018,7 +1019,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
 
-        printMethodOfClass("com.whatsapp.Main",loadPackageParam);
+        printMethodOfClass("com.whatsapp.Main", loadPackageParam);
 
         XposedHelpers.findAndHookMethod("com.whatsapp.Main", loadPackageParam.classLoader, "l", new XC_MethodHook() {
             @Override
