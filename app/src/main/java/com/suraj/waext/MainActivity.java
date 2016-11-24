@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,11 +42,12 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxHideCamera = (CheckBox) findViewById(R.id.chkboxhidecamera);
         CheckBox checkBoxHideTabs = (CheckBox) findViewById(R.id.chkboxhidetabs);
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
-        //CheckBox checkBoxClickToReply = (CheckBox)findViewById(R.id.chkboxclicktoreply);
+        CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
 
-        setUpCheckBox(checkBoxHideCamera, "hideCamera");
-        setUpCheckBox(checkBoxHideTabs, "hideTabs");
-        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton");
+        setUpCheckBox(checkBoxHideCamera, "hideCamera",false);
+        setUpCheckBox(checkBoxHideTabs, "hideTabs",true);
+        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton",false);
+        setUpCheckBox(checkBoxBlackTicks, "showBlackTicks",true);
 
         Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
@@ -74,9 +76,9 @@ public class MainActivity extends AppCompatActivity {
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
         final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
-        setUpCheckBox(checkBoxSeen, "hideSeen");
-        setUpCheckBox(checkBoxReadReports, "hideReadReceipts");
-        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports");
+        setUpCheckBox(checkBoxSeen, "hideSeen",false);
+        setUpCheckBox(checkBoxReadReports, "hideReadReceipts",false);
+        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports",false);
     }
 
     private void setupLockUI() {
@@ -168,11 +170,11 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        setUpCheckBox(checkBox, "enableHighlight");
+        setUpCheckBox(checkBox, "enableHighlight",false);
 
     }
 
-    private void setUpCheckBox(final CheckBox checkBox, final String prefname) {
+    private void setUpCheckBox(final CheckBox checkBox, final String prefname, final boolean toast) {
         if (sharedPreferences.getBoolean(prefname, false))
             checkBox.setChecked(true);
         else
@@ -202,7 +204,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 sendBroadcast(intent);
 
+                if(toast){
+                    Toast.makeText(MainActivity.this,R.string.req_restart,Toast.LENGTH_SHORT);
+                }
+
+
+
             }
         });
     }
+
 }
