@@ -76,9 +76,11 @@ public class MainActivity extends AppCompatActivity {
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
         final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
+
         setUpCheckBox(checkBoxSeen, "hideSeen",false);
         setUpCheckBox(checkBoxReadReports, "hideReadReceipts",false);
         setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports",false);
+        setUpCheckBox((CheckBox)findViewById(R.id.chkboxalwaysonline),"alwaysOnline",false);
     }
 
     private void setupLockUI() {

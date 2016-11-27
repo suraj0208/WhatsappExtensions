@@ -87,6 +87,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean hideReadReceipts = false;
     private static boolean replaceCallButton = false;
     private static boolean hideDeliveryReports = false;
+    private static boolean alwaysOnline = false;
 
 
     private static int highlightColor = Color.GRAY;
@@ -387,8 +388,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 activity.unregisterReceiver(unlockReceiver);
 
-//                if (enableHideSeen)
-//                    setSeenOff("2", activity.getApplicationContext());
+                if (enableHideSeen && alwaysOnline)
+                    setSeenOff("5", activity.getApplicationContext());
             }
 
         });
@@ -913,6 +914,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
         hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
         hideDeliveryReports = sharedPreferences.getBoolean("hideDeliveryReports", false);
+        alwaysOnline = sharedPreferences.getBoolean("alwaysOnline",false);
 
     }
 
@@ -1045,3 +1047,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         }
     }
 }
+/*
+Always online
+Lock for whatsapp web
+hide online status
+reduce logs
+custom read receipts
+ */
