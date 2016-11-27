@@ -186,7 +186,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             try {
                                 rl = (RelativeLayout) parent;
                             } catch (ClassCastException e) {
-                                XposedBridge.log("ClassCastException");
+                                XposedBridge.log("ClassCastException in hookMethodsForHighLight");
                             }
 
                             zerothChildrenHashMap.put(parent, rl.getChildAt(0));
@@ -653,7 +653,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 newContext = context.createPackageContext(ExtModule.PACKAGE_NAME, Context.CONTEXT_IGNORE_SECURITY);
 
                 newContext.registerReceiver(new UpdateReceiver(), new IntentFilter(ExtModule.PACKAGE_NAME + UPDATE_INTENT));
-                XposedBridge.log("Registed receiver for update");
+                //XposedBridge.log("Registed receiver for update");
 
             }
         });
@@ -730,7 +730,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         for (Field field : archiveClass.getDeclaredFields()) {
                             if (field.getType().getName().equals("boolean")) {
                                 archiveBooleanFieldName = field.getName();
-                                XposedBridge.log("s name set");
+                                //XposedBridge.log("s name set");
                                 exceptionThrown = false;
                             }
                         }
@@ -763,7 +763,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 if (hideReadReceipts) {
-                    XposedBridge.log("read receipts off");
+                    //XposedBridge.log("read receipts off");
                     param.setResult(null);
                 }
             }
@@ -947,7 +947,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         @Override
         public void onReceive(Context context, Intent intent) {
             initPrefs();
-            XposedBridge.log("Recieved intent");
+            //XposedBridge.log("Recieved intent");
         }
     }
 
@@ -1021,17 +1021,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
 
-        printMethodOfClass("com.whatsapp.Main", loadPackageParam);
-
-        XposedHelpers.findAndHookMethod("com.whatsapp.Main", loadPackageParam.classLoader, "l", new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-                //param.setResult(null);
-                XposedBridge.log("skipping");
-            }
-        });
-
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1048,7 +1037,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 }
 /*
-Always online
+Always online           -- testing remains
 Lock for whatsapp web
 hide online status
 reduce logs
