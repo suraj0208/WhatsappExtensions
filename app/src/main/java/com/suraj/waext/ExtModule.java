@@ -557,8 +557,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                XposedBridge.log((param.thisObject.getClass().getName()));
-
                 if (thread == null || !thread.isAlive())
                     startDaemon();
 
@@ -578,7 +576,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         AndroidAppHelper.currentApplication().startActivity(intent);
                         firstTime=false;
                     }else if(!firstTime && showLockScreen ){
-                        XposedBridge.log("finishing web activity");
                         ((Activity)param.thisObject).finish();
                     }
                 }
@@ -608,7 +605,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (enableHideSeen) {
                     setSeenOff("2", ((Activity)(param.thisObject)).getApplicationContext());
                 }else if (alwaysOnline){
-                    XposedBridge.log("always online");
                     setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
                 }
             }
@@ -988,7 +984,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
             templockedContacts.remove(contactNumber);
 
-            XposedBridge.log("Broadcast Received " + showLockScreen + " " + firstTime);
+            //XposedBridge.log("Broadcast Received " + showLockScreen + " " + firstTime);
         }
     }
 
