@@ -1085,24 +1085,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
-
-        XposedHelpers.findAndHookMethod("android.os.BaseBundle", loadPackageParam.classLoader, "putString", String.class, String.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                if(param.args[0].equals("jid")){
-
-                    for(StackTraceElement stackTraceElement: new Exception().getStackTrace()){
-                        XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
-                    }
-
-
-                }
-            }
-        });
-
-
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
