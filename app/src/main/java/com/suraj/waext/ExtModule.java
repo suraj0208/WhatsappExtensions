@@ -2,6 +2,7 @@ package com.suraj.waext;
 
 import android.app.Activity;
 import android.app.AndroidAppHelper;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,7 +17,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcel;
 import android.preference.ListPreference;
+import android.support.v4.app.NotificationCompat;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -568,15 +571,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                if(param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")){
-                    if(lockedContacts.size()>0 && firstTime && showLockScreen){
+                if (param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")) {
+                    if (lockedContacts.size() > 0 && firstTime && showLockScreen) {
                         Intent intent = new Intent();
                         intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         AndroidAppHelper.currentApplication().startActivity(intent);
-                        firstTime=false;
-                    }else if(!firstTime && showLockScreen ){
-                        ((Activity)param.thisObject).finish();
+                        firstTime = false;
+                    } else if (!firstTime && showLockScreen) {
+                        ((Activity) param.thisObject).finish();
                     }
                 }
 
@@ -587,12 +590,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
-        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.QrCodeActivity", loadPackageParam.classLoader,"onCreate",Bundle.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.QrCodeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                firstTime=true;
-                showLockScreen=true;
+                firstTime = true;
+                showLockScreen = true;
             }
         });
 
@@ -600,11 +603,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                ((Activity)(param.thisObject)).unregisterReceiver(unlockReceiver);
+                ((Activity) (param.thisObject)).unregisterReceiver(unlockReceiver);
 
                 if (enableHideSeen) {
-                    setSeenOff("2", ((Activity)(param.thisObject)).getApplicationContext());
-                }else if (alwaysOnline){
+                    setSeenOff("2", ((Activity) (param.thisObject)).getApplicationContext());
+                } else if (alwaysOnline) {
                     setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
                 }
             }
@@ -959,7 +962,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
         hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
         hideDeliveryReports = sharedPreferences.getBoolean("hideDeliveryReports", false);
-        alwaysOnline = sharedPreferences.getBoolean("alwaysOnline",false);
+        alwaysOnline = sharedPreferences.getBoolean("alwaysOnline", false);
 
     }
 
@@ -1066,6 +1069,40 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
 
+
+        XposedHelpers.findAndHookMethod("android.app.Notification.Builder", loadPackageParam.classLoader, "build", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                Notification notification = (Notification)(param.getResult());
+
+                for(String key: notification.extras.keySet())
+                    XposedBridge.log(key + " " + notification.extras.get(key));
+
+                XposedBridge.log(notification.extras.get(Notification.EXTRA_TEXT).toString());
+
+            }
+        });
+
+
+        XposedHelpers.findAndHookMethod("android.os.BaseBundle", loadPackageParam.classLoader, "putString", String.class, String.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                if(param.args[0].equals("jid")){
+
+                    for(StackTraceElement stackTraceElement: new Exception().getStackTrace()){
+                        XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
+                    }
+
+
+                }
+            }
+        });
+
+
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1081,11 +1118,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         }
     }
 }
+
 /*
-Always online           -- testing remains
+Always online           -- service remains
 Lock for whatsapp web   -- done
 hide online status
-reduce logs		-- done
+reduce logs		        -- done
 custom read receipts
 hide locked contact notifications
  */
