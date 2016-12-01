@@ -391,8 +391,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 //activity.unregisterReceiver(unlockReceiver);
 
-                if (enableHideSeen && alwaysOnline)
-                    setSeenOff("5", activity.getApplicationContext());
+                /*if (enableHideSeen) {
+                    setSeenOff("2", activity.getApplicationContext());
+                }else if (alwaysOnline){
+                    XposedBridge.log("always online");
+                    setSeenOff("5", ((Activity) param.thisObject).getApplicationContext());
+                }*/
+
             }
 
         });
@@ -599,6 +604,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 ((Activity)(param.thisObject)).unregisterReceiver(unlockReceiver);
+
+                if (enableHideSeen) {
+                    setSeenOff("2", ((Activity)(param.thisObject)).getApplicationContext());
+                }else if (alwaysOnline){
+                    XposedBridge.log("always online");
+                    setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
+                }
             }
         });
 
@@ -665,6 +677,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     ListPreference listPreference = (ListPreference) preferenceObject;
                     listPreference.setEntries(entryCharSequences);
                     listPreference.setEntryValues(entryValuesSequences);
+
 
                     XposedHelpers.callMethod(settingsObject, "a", preferenceObject, val);
 

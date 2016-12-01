@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setupPrivacyUI();
         setUpLayoutUI();
 
+
     }
 
     private void setUpLayoutUI() {
@@ -44,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
         CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
 
-        setUpCheckBox(checkBoxHideCamera, "hideCamera",false);
-        setUpCheckBox(checkBoxHideTabs, "hideTabs",true);
-        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton",false);
-        setUpCheckBox(checkBoxBlackTicks, "showBlackTicks",true);
+        setUpCheckBox(checkBoxHideCamera, "hideCamera", false, "",false, "");
+        setUpCheckBox(checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton", false, "",false,"");
+        setUpCheckBox(checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart),true, getApplicationContext().getString(R.string.req_restart));
 
         Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
@@ -76,11 +78,10 @@ public class MainActivity extends AppCompatActivity {
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
         final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
-
-        setUpCheckBox(checkBoxSeen, "hideSeen",false);
-        setUpCheckBox(checkBoxReadReports, "hideReadReceipts",false);
-        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports",false);
-        setUpCheckBox((CheckBox)findViewById(R.id.chkboxalwaysonline),"alwaysOnline",false);
+        setUpCheckBox(checkBoxSeen, "hideSeen", false, "",true,getApplicationContext().getString(R.string.restore_prefs));
+        setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "",false,"");
+        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "",false,"");
+        setUpCheckBox((CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden),true,getApplicationContext().getString(R.string.restore_prefs));
     }
 
     private void setupLockUI() {
@@ -172,11 +173,13 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        setUpCheckBox(checkBox, "enableHighlight",false);
+        setUpCheckBox(checkBox, "enableHighlight", false, "",false,"");
 
     }
 
-    private void setUpCheckBox(final CheckBox checkBox, final String prefname, final boolean toast) {
+    private void setUpCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage,final boolean offToast, final String offMessage) {
+
+
         if (sharedPreferences.getBoolean(prefname, false))
             checkBox.setChecked(true);
         else
@@ -194,23 +197,22 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }*/
 
-                if (checkBox.isChecked())
+                if (checkBox.isChecked()) {
                     editor.putBoolean(prefname, true);
-                else
+
+                    if (onToast){
+                        Toast.makeText(MainActivity.this, onMessage, Toast.LENGTH_SHORT).show();
+                    }
+
+                }else {
                     editor.putBoolean(prefname, false);
 
-                editor.apply();
-
-                Intent intent = new Intent();
-                intent.setAction(ExtModule.PACKAGE_NAME + ExtModule.UPDATE_INTENT);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                sendBroadcast(intent);
-
-                if(toast){
-                    Toast.makeText(MainActivity.this,R.string.req_restart,Toast.LENGTH_SHORT);
+                    if (offToast){
+                        Toast.makeText(MainActivity.this, offMessage, Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-
+                editor.apply();
 
             }
         });
