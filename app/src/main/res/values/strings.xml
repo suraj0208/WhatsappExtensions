@@ -120,6 +120,5 @@
 
     <string name="last_seen_hidden">Your last seen will be hidden.</string>
     <string name="restore_prefs">Restore your privacy preferences in WhatsApp.</string>
-    <string name="enable_profile_photo_zoom">Zoom profile photo</string>
 
 </resources>
