@@ -17,9 +17,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.Parcel;
 import android.preference.ListPreference;
-import android.support.v4.app.NotificationCompat;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -716,28 +714,31 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (!param.args[0].toString().equals("0"))
                     return;
 
+                try {                                       // a pretty naive try catch -- until I get the logs from GBwhatsapp
+                    View view = (View) param.thisObject;
 
-                View view = (View) param.thisObject;
+                    if (view.getTransitionName() == null) {
+                        if (enableHideCamera && param.thisObject instanceof ImageButton) {//param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
+                            View parent = (View) view.getParent();
 
-                if (view.getTransitionName() == null) {
-                    if (enableHideCamera && param.thisObject instanceof ImageButton) {//param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
-                        View parent = (View) view.getParent();
+                            if (parent instanceof LinearLayout) {
+                                StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
 
-                        if (parent instanceof LinearLayout) {
-                            StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
-
-                            if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
-                                view.setVisibility(View.GONE);
-
+                                if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
+                                    view.setVisibility(View.GONE);
+                            }
                         }
+                        return;
                     }
-                    return;
 
+                    if (param.thisObject instanceof ImageView) {
+                        new PhotoViewAttacher((ImageView) param.thisObject);
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
 
-                if (param.thisObject instanceof ImageView) {
-                    new PhotoViewAttacher((ImageView) param.thisObject);
-                }
             }
         });
     }
@@ -1069,22 +1070,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
 
-
-        XposedHelpers.findAndHookMethod("android.app.Notification.Builder", loadPackageParam.classLoader, "build", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                Notification notification = (Notification)(param.getResult());
-
-                for(String key: notification.extras.keySet())
-                    XposedBridge.log(key + " " + notification.extras.get(key));
-
-                XposedBridge.log(notification.extras.get(Notification.EXTRA_TEXT).toString());
-
-            }
-        });
-
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1102,7 +1087,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 }
 
 /*
-Always online           -- service remains
+Always online           -- done
 Lock for whatsapp web   -- done
 hide online status      -- if at all -- paid
 reduce logs		        -- done
