@@ -82,6 +82,14 @@ public class MainActivity extends AppCompatActivity {
         setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "",false,"");
         setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "",false,"");
         setUpCheckBox((CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden),true,getApplicationContext().getString(R.string.restore_prefs));
+
+        findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,WhiteListActivity.class));
+            }
+        });
+
     }
 
     private void setupLockUI() {

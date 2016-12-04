@@ -30,7 +30,6 @@
     <string name="bundle_null_error">Error Opening Activity:Bundle null</string>
 
 
-
     <string name="select_picture">Select Picture</string>
 
     <!-- do not translate this string. see faq section on XDA thread -->
@@ -118,7 +117,12 @@
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="single_click_label">One Click action</string>
 
+
+    <string name="add">Add</string>
+    <string name="whitelistinfo">Read Receipts will be enabled for these contacts :</string>
     <string name="last_seen_hidden">Your last seen will be hidden.</string>
     <string name="restore_prefs">Restore your privacy preferences in WhatsApp.</string>
+    <string name="free_version_notice">This feature will not work in free version.</string>
+    <string name="paid_version_notice">Pro version Active.</string>
 
 </resources>

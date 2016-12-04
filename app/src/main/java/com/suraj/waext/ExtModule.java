@@ -2,7 +2,6 @@ package com.suraj.waext;
 
 import android.app.Activity;
 import android.app.AndroidAppHelper;
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
