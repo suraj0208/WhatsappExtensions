@@ -27,13 +27,15 @@
         android:id="@+id/lstviewwhitelistcontacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvinforwhitelist" />
+        android:layout_below="@id/tvinforwhitelist"
+        android:layout_marginTop="10dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fbaddtowhitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true" />
 
 </RelativeLayout>

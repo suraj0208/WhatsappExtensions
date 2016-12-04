@@ -5,9 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,15 +19,18 @@ import java.util.List;
 public class WhiteListAdapter extends ArrayAdapter<String> {
     private List<String> whitelist = new ArrayList<>();
     private Context context;
-    private HashMap<String,String> numberToNameHashMap;
+    private HashMap<String, String> numberToNameHashMap;
+    private DeleteButtonListener deleteButtonListener;
 
-    public WhiteListAdapter(Context context, List<String> contacts) {
+    public WhiteListAdapter(Context context, List<String> contacts, DeleteButtonListener deleteButtonListener) {
         super(context, R.layout.contact_row);
 
-        this.context=context;
-        this.whitelist=contacts;
+        this.context = context;
+        this.whitelist = contacts;
         this.numberToNameHashMap = new WhatsAppContactManager().getNumberToNameHashMap();
+        this.deleteButtonListener = deleteButtonListener;
     }
+
 
     @Override
     public int getCount() {
@@ -36,7 +38,7 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -44,12 +46,26 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
 
         TextView contactName = (TextView) rowView.findViewById(R.id.tvcontactname);
 
-        if(numberToNameHashMap==null)
-            return super.getView(position,convertView,parent);
+        if (numberToNameHashMap == null)
+            return super.getView(position, convertView, parent);
 
         contactName.setText(numberToNameHashMap.get(whitelist.get(position)));
+
+
+        ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.imgbtnremovecontact);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                WhiteListAdapter.this.deleteButtonListener.deleteButtonPressed(position);
+            }
+        });
 
         return rowView;
 
     }
+}
+
+interface DeleteButtonListener {
+    void deleteButtonPressed(int position);
 }
