@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class ReminderActivity extends Activity {
 
-    private static HashMap<String, String> contactHashMap;
+    private static HashMap<String, Object> contactHashMap;
     private String contactName;
 
     @Override
@@ -36,7 +36,7 @@ public class ReminderActivity extends Activity {
 
             //if launched for setting up reminder
             if (contactNumber != null) {
-                contactName = contactHashMap.get(contactNumber);
+                contactName = contactHashMap.get(contactNumber).toString();
                 setContentView(R.layout.activity_reminder);
                 setUpForReminder();
 
@@ -155,7 +155,7 @@ public class ReminderActivity extends Activity {
         return 0;
     }
 
-    public HashMap<String, String> getContactsHashMap() {
+    public HashMap<String, Object> getContactsHashMap() {
         return  new WhatsAppContactManager().getNumberToNameHashMap();
     }
 

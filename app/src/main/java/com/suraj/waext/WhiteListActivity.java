@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class WhiteListActivity extends AppCompatActivity implements DeleteButtonListener {
@@ -23,8 +24,8 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
     private SharedPreferences.Editor editor;
     private WhiteListAdapter whiteListAdapter;
     private Set<String> whitelistSet;
-    private HashMap<String, String> numberToNameHashmap;
-    private HashMap<String, String> nameToNumberHashmap;
+    private HashMap<String, Object> numberToNameHashmap;
+    private HashMap<String, Object> nameToNumberHashmap;
 
     private ListView lstviewwhitelist;
 
@@ -73,7 +74,7 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
         }
 
         for (String number : whitelistSet)
-            whitelist.add(numberToNameHashmap.get(number));
+            whitelist.add(numberToNameHashmap.get(number).toString());
 
         Collections.sort(whitelist);
 
@@ -107,7 +108,14 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
             return;
         }
 
-        whitelistSet.remove(nameToNumberHashmap.get(whitelist.get(position)));
+        Object value = nameToNumberHashmap.get(whitelist.get(position));
+
+        if(value instanceof String)
+            whitelistSet.remove(value.toString());
+        else if (value instanceof List){
+            for(Object number:(List)value)
+                whitelistSet.remove(number.toString());
+        }
 
         whitelist.remove(position);
 

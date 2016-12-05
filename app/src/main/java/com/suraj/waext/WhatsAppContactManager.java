@@ -4,28 +4,30 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by suraj on 2/12/16.
  */
 public class WhatsAppContactManager {
 
-    public HashMap<String,String> getNumberToNameHashMap() {
+    public HashMap<String, Object> getNumberToNameHashMap() {
         return this.getHashMap(true);
     }
 
-    public HashMap<String,String> getNameToNumberHashMap() {
+    public HashMap<String, Object> getNameToNumberHashMap() {
         return this.getHashMap(false);
     }
 
-    private HashMap<String,String> getHashMap(boolean swap) {
+    private HashMap<String, Object> getHashMap(boolean swap) {
         Process process = null;
         Runtime runtime = Runtime.getRuntime();
         OutputStreamWriter outputStreamWriter;
 
-        HashMap<String, String> hashMap = new HashMap<>();
+        HashMap<String, Object> hashMap = new HashMap<>();
 
         try {
 
@@ -66,12 +68,30 @@ public class WhatsAppContactManager {
                 if (potential.length < 2)
                     continue;
 
-
                 if (swap)        // swap = true -> number to name hashmap
                     hashMap.put(potential[1].split("@")[0], potential[0]);
-                else            // swap = true -> name to number hashmap
-                    hashMap.put(potential[0], potential[1].split("@")[0]);
+                else {            // swap = true -> name to number hashmap
+                    Object value = hashMap.get(potential[0]);
 
+                    if (value != null) {
+                        List<String> numbers = new ArrayList<>();
+
+                        if (value instanceof String) {
+                            numbers.add(value.toString());
+                            numbers.add(potential[1].split("@")[0]);
+                        } else if (value instanceof List) {
+                            numbers = (List<String>)value;
+                            numbers.add(potential[1].split("@")[0]);
+                        }
+                        hashMap.put(potential[0],numbers);
+
+
+                    } else {
+                        hashMap.put(potential[0], potential[1].split("@")[0]);
+                    }
+
+
+                }
             }
 
 
