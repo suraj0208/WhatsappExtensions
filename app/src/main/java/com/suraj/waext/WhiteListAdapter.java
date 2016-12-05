@@ -19,7 +19,6 @@ import java.util.List;
 public class WhiteListAdapter extends ArrayAdapter<String> {
     private List<String> whitelist = new ArrayList<>();
     private Context context;
-    private HashMap<String, String> numberToNameHashMap;
     private DeleteButtonListener deleteButtonListener;
 
     public WhiteListAdapter(Context context, List<String> contacts, DeleteButtonListener deleteButtonListener) {
@@ -27,7 +26,6 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
 
         this.context = context;
         this.whitelist = contacts;
-        this.numberToNameHashMap = new WhatsAppContactManager().getNumberToNameHashMap();
         this.deleteButtonListener = deleteButtonListener;
     }
 
@@ -46,11 +44,7 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
 
         TextView contactName = (TextView) rowView.findViewById(R.id.tvcontactname);
 
-        if (numberToNameHashMap == null)
-            return super.getView(position, convertView, parent);
-
-        contactName.setText(numberToNameHashMap.get(whitelist.get(position)));
-
+        contactName.setText(whitelist.get(position));
 
         ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.imgbtnremovecontact);
 

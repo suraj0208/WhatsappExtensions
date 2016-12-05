@@ -20,6 +20,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
         android:background="@mipmap/ic_delete_black_24dp"
         android:text="Remove" />
 

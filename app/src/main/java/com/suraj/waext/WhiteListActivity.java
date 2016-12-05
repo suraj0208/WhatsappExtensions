@@ -4,11 +4,16 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +23,9 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
     private SharedPreferences.Editor editor;
     private WhiteListAdapter whiteListAdapter;
     private Set<String> whitelistSet;
+    private HashMap<String, String> numberToNameHashmap;
+    private HashMap<String, String> nameToNumberHashmap;
+
     private ListView lstviewwhitelist;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +38,11 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
         //tricky -- create new hashset -> getstringset returns a reference
         whitelistSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
 
-        whitelist = new ArrayList<>(whitelistSet);
+        WhatsAppContactManager whatsAppContactManager = new WhatsAppContactManager();
+        numberToNameHashmap = whatsAppContactManager.getNumberToNameHashMap();
+        nameToNumberHashmap = whatsAppContactManager.getNameToNumberHashMap();
+
+        buildArrayList();
 
         whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this);
 
@@ -49,6 +61,24 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
         });
     }
 
+    private void buildArrayList() {
+        if (whitelist == null)
+            whitelist = new ArrayList<>();
+
+        whitelist.clear();
+
+        if (numberToNameHashmap == null) {
+            Log.e("com.suraj.waext", "may be su failed");
+            return;
+        }
+
+        for (String number : whitelistSet)
+            whitelist.add(numberToNameHashmap.get(number));
+
+        Collections.sort(whitelist);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -58,7 +88,8 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
 
             whitelistSet.add(number);
 
-            whitelist = new ArrayList<>(whitelistSet);
+            buildArrayList();
+
             lstviewwhitelist.setAdapter(null);
             lstviewwhitelist.setAdapter(new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this));
 
@@ -71,7 +102,13 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
 
     @Override
     public void deleteButtonPressed(int position) {
-        whitelistSet.remove(whitelist.get(position));
+        if(nameToNumberHashmap == null || numberToNameHashmap==null){
+            Toast.makeText(getApplicationContext(),"Failed to get contact info. Make sure you have root",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        whitelistSet.remove(nameToNumberHashmap.get(whitelist.get(position)));
+
         whitelist.remove(position);
 
         lstviewwhitelist.setAdapter(null);
