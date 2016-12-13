@@ -2,6 +2,7 @@ package com.suraj.waext;
 
 import android.app.Activity;
 import android.app.AndroidAppHelper;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -78,6 +80,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static HashMap<View, View> zerothChildrenHashMap;
     private static HashMap<View, View> firstChildrenHashMap;
     private static HashMap<Object, String> tagToContactHashMap;
+    private static HashMap<String, Object> nameToNumberHashMap;
 
     private static boolean showLockScreen = false;
     private static boolean firstTime = true;
@@ -941,6 +944,86 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
     }
 
+    public void hookMethodsForHidingNotifications(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("android.app.Notification.Builder", loadPackageParam.classLoader, "build", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+
+
+                Notification notification = (Notification) (param.getResult());
+
+                String currentContact = notification.extras.get(Notification.EXTRA_TITLE).toString();
+
+                if (nameToNumberHashMap == null)
+                    return;
+
+                Object value = nameToNumberHashMap.get(currentContact);
+
+                boolean isLocked = false;
+
+                if (value instanceof String) {
+                    isLocked = lockedContacts.contains(value.toString());
+                } else if (value instanceof List) {
+                    for (Object number : (List) value) {
+
+                        if (lockedContacts.contains(number.toString())) {
+                            isLocked = true;
+                            break;
+                        }
+
+                    }
+                }
+
+                String xes = " ";
+
+                if (isLocked) {
+                    notification.extras.putString(Notification.EXTRA_TEXT, xes);
+                    notification.extras.putString(Notification.EXTRA_BIG_TEXT, xes);
+                    notification.extras.putStringArray(Notification.EXTRA_TEXT_LINES, new String[]{xes});
+                }
+
+                CharSequence[] notificationTexts = null;
+
+                if (notification.extras.get(Notification.EXTRA_TEXT_LINES) instanceof CharSequence[])
+                    notificationTexts = (CharSequence[]) notification.extras.get(Notification.EXTRA_TEXT_LINES);
+
+
+                if (notificationTexts == null)
+                    return;
+
+                String[] newSequences = new String[notificationTexts.length];
+
+
+                for (int i = 0; i < notificationTexts.length; i++) {
+                    String[] currentSplits = notificationTexts[i].toString().split(":");
+                    Object val = nameToNumberHashMap.get(currentSplits[0].trim());
+
+                    isLocked = false;
+                    if (val instanceof String)
+                        isLocked = lockedContacts.contains(val);
+
+                    else if (val instanceof List) {
+                        for (String number : (List<String>) val) {
+                            if (lockedContacts.contains(number)) {
+                                isLocked = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isLocked) {
+                        newSequences[i] = currentSplits[0] + ": " + xes;
+                    } else
+                        newSequences[i] = notificationTexts[i].toString();
+                }
+
+                notification.extras.putStringArray(Notification.EXTRA_TEXT_LINES, newSequences);
+            }
+        });
+    }
+
     public void showToast(final String text) {
         (new Handler(Looper.getMainLooper())).post(new Runnable() {
             @Override
@@ -1073,6 +1156,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForHideReadReceipts(loadPackageParam);
         hookMethodsForClickToReply(loadPackageParam);
         hookMethodsForHideDeliveryReports(loadPackageParam);
+        hookMethodsForHidingNotifications(loadPackageParam);
         //hookMethodsForUpdatePrefs(loadPackageParam);
 
         unlockReceiver = new UnlockReceiver();
@@ -1090,6 +1174,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             preferenceClass = XposedHelpers.findClass("com.whatsapp.preference.WaPrivacyPreference", loadPackageParam.classLoader);
         } catch (XposedHelpers.ClassNotFoundError error) {
             error.printStackTrace();
+        }
+
+        if(nameToNumberHashMap==null){
+            (new Thread(){
+                @Override
+                public void run() {
+                    nameToNumberHashMap = new WhatsAppContactManager().getNameToNumberHashMap();
+                }
+            }).start();
         }
 
     }

@@ -10,13 +10,6 @@
     tools:context="com.suraj.waext.WhiteListActivity">
 
     <TextView
-        android:id="@+id/tvpaidnotice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/free_version_notice" />
-
-
-    <TextView
         android:id="@+id/tvinforwhitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
