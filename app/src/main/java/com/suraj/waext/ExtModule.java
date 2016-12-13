@@ -64,6 +64,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
     public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
     public static final String UPDATE_INTENT = ".UPDATE_INTENT";
+    public static final String WHITELIST_PREFS_STRING = "rd_whitelist";
 
     public static String MODULE_PATH;
 
@@ -71,6 +72,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static HashSet<String> templockedContacts;
     private static HashSet<String> hiddenGroups;
     private static HashSet<String> highlightedChats;
+    private static HashSet<String> whitelistSet;
 
     private static HashMap<View, View> processedViewsHashMap;
     private static HashMap<View, View> zerothChildrenHashMap;
@@ -806,12 +808,32 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 
     public void hookMethodsForHideReadReceipts(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        final Class readReceiptsJobClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader);
+
         XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                if (hideReadReceipts) {
-                    //XposedBridge.log("read receipts off");
+                boolean shouldSend = false;
+
+                Field jidField = readReceiptsJobClass.getDeclaredField("jid");
+                Field participantField = readReceiptsJobClass.getDeclaredField("participant");
+
+                jidField.setAccessible(true);
+                participantField.setAccessible(true);
+
+                Object jidString = jidField.get(param.thisObject);
+                Object participantString = participantField.get(param.thisObject);
+
+
+                if (jidString != null)
+                    shouldSend = shouldSend || whitelistSet.contains(jidString.toString().split("@")[0]);
+
+                if (participantString != null)
+                    shouldSend = shouldSend || whitelistSet.contains(participantString.toString().split("@")[0]);
+
+
+                if (hideReadReceipts && !shouldSend) {
                     param.setResult(null);
                 }
             }
@@ -951,6 +973,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
         highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
         hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
+        whitelistSet = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.WHITELIST_PREFS_STRING, new HashSet<String>());
 
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
         individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
