@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -19,14 +18,14 @@ import java.util.List;
 public class WhiteListAdapter extends ArrayAdapter<String> {
     private List<String> whitelist = new ArrayList<>();
     private Context context;
-    private DeleteButtonListener deleteButtonListener;
+    private WhiteListContactRowManager whiteListContactRowManager;
 
-    public WhiteListAdapter(Context context, List<String> contacts, DeleteButtonListener deleteButtonListener) {
+    public WhiteListAdapter(Context context, List<String> contacts, WhiteListContactRowManager whiteListContactRowManager) {
         super(context, R.layout.contact_row);
 
         this.context = context;
         this.whitelist = contacts;
-        this.deleteButtonListener = deleteButtonListener;
+        this.whiteListContactRowManager = whiteListContactRowManager;
     }
 
 
@@ -41,25 +40,14 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View rowView = inflater.inflate(R.layout.contact_row, parent, false);
-
-        TextView contactName = (TextView) rowView.findViewById(R.id.tvcontactname);
-
-        contactName.setText(whitelist.get(position));
-
-        ImageButton imageButton = (ImageButton) rowView.findViewById(R.id.imgbtnremovecontact);
-
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WhiteListAdapter.this.deleteButtonListener.deleteButtonPressed(position);
-            }
-        });
+        this.whiteListContactRowManager.onInflateContactRow(rowView,whitelist,position);
 
         return rowView;
 
     }
 }
 
-interface DeleteButtonListener {
-    void deleteButtonPressed(int position);
+interface WhiteListContactRowManager
+{
+    void onInflateContactRow(View view,List<String> whitelist,int position);
 }
