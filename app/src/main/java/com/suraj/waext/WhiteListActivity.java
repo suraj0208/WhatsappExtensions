@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -18,16 +21,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WhiteListActivity extends AppCompatActivity implements DeleteButtonListener {
+public class WhiteListActivity extends AppCompatActivity implements WhiteListContactRowManager {
     private ArrayList<String> whitelist;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private WhiteListAdapter whiteListAdapter;
     private Set<String> whitelistSet;
+    private Set<Integer> deleteItemsSet;
     private HashMap<String, Object> numberToNameHashmap;
     private HashMap<String, Object> nameToNumberHashmap;
 
     private ListView lstviewwhitelist;
+    private CheckBox[] deleteCheckBoxes;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,17 +46,19 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
 
         final WhatsAppContactManager whatsAppContactManager = new WhatsAppContactManager();
 
-        (new AsyncTask<Void,Void,Void>(){
+        (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 numberToNameHashmap = whatsAppContactManager.getNumberToNameHashMap();
                 nameToNumberHashmap = whatsAppContactManager.getNameToNumberHashMap();
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+
                 buildArrayList();
 
                 whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this);
@@ -64,7 +71,8 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
 
         }).execute();
 
-        (findViewById(R.id.fbaddtowhitelist)).setOnClickListener(new View.OnClickListener() {
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fbaddtowhitelist);
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
@@ -73,16 +81,73 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
                 startActivityForResult(intent, 1);
             }
         });
+
+        (findViewById(R.id.imgbtnremovecontact)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fab.getVisibility() == View.VISIBLE) {
+                    for (CheckBox checkBox : deleteCheckBoxes)
+                        checkBox.setVisibility(View.VISIBLE);
+
+                    fab.setVisibility(View.INVISIBLE);
+                    v.setBackground(getDrawable(R.mipmap.ic_black_tick_conv));
+                } else {
+                    (new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... params) {
+                            for (int position : deleteItemsSet) {
+                                Object value = nameToNumberHashmap.get(whitelist.get(position));
+
+                                if (value instanceof String)
+                                    whitelistSet.remove(value.toString());
+                                else if (value instanceof List) {
+                                    for (Object number : (List) value)
+                                        whitelistSet.remove(number.toString());
+                                }
+
+                                whitelist.remove(position);
+                                deleteCheckBoxes = new CheckBox[whitelist.size()];
+                                deleteItemsSet = new HashSet<>();
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
+
+                            lstviewwhitelist.setAdapter(null);
+                            lstviewwhitelist.setAdapter(new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this));
+                            editor.putStringSet("rd_whitelist", whitelistSet);
+                            editor.apply();
+
+
+                        }
+                    }).execute();
+
+                    for (CheckBox checkBox : deleteCheckBoxes)
+                        checkBox.setVisibility(View.INVISIBLE);
+
+                    fab.setVisibility(View.VISIBLE);
+                    v.setBackground(getDrawable(R.mipmap.ic_delete_black_24dp));
+
+                }
+
+
+            }
+        });
     }
 
     private void buildArrayList() {
         if (whitelist == null)
             whitelist = new ArrayList<>();
-
-        whitelist.clear();
+        else
+            whitelist.clear();
 
         if (numberToNameHashmap == null) {
             Log.e("com.suraj.waext", "may be su failed");
+            WhiteListActivity.this.finish();
             return;
         }
 
@@ -90,6 +155,9 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
             whitelist.add(numberToNameHashmap.get(number).toString());
 
         Collections.sort(whitelist);
+
+        deleteCheckBoxes = new CheckBox[whitelist.size()];
+        deleteItemsSet = new HashSet<>();
 
     }
 
@@ -115,28 +183,27 @@ public class WhiteListActivity extends AppCompatActivity implements DeleteButton
     }
 
     @Override
-    public void deleteButtonPressed(int position) {
+    public void onInflateContactRow(View view, final List<String> whitelist, final int position) {
         if (nameToNumberHashmap == null || numberToNameHashmap == null) {
             Toast.makeText(getApplicationContext(), "Failed to get contact info. Make sure you have root", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Object value = nameToNumberHashmap.get(whitelist.get(position));
+        TextView contactName = (TextView) view.findViewById(R.id.tvcontactname);
+        contactName.setText(whitelist.get(position));
 
-        if (value instanceof String)
-            whitelistSet.remove(value.toString());
-        else if (value instanceof List) {
-            for (Object number : (List) value)
-                whitelistSet.remove(number.toString());
-        }
+        final CheckBox deleteCheckBox = (CheckBox) view.findViewById(R.id.chkboxdeletewhitelistcontact);
 
-        whitelist.remove(position);
+        deleteCheckBoxes[position] = deleteCheckBox;
 
-        lstviewwhitelist.setAdapter(null);
-        lstviewwhitelist.setAdapter(new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this));
-
-        editor.putStringSet("rd_whitelist", whitelistSet);
-
-        editor.apply();
+        deleteCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (deleteCheckBox.isChecked())
+                    deleteItemsSet.add(position);
+                else
+                    deleteItemsSet.remove(position);
+            }
+        });
     }
 }
