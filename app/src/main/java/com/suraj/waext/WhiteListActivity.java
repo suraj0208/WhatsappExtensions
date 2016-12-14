@@ -90,7 +90,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                         checkBox.setVisibility(View.VISIBLE);
 
                     fab.setVisibility(View.INVISIBLE);
-                    v.setBackground(getDrawable(R.mipmap.ic_black_tick_conv));
+                    v.setBackground(getDrawable(R.mipmap.ic_done_black_24dp));
                 } else {
                     (new AsyncTask<Void, Void, Void>() {
                         @Override

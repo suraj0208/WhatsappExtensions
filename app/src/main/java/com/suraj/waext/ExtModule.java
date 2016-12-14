@@ -1205,10 +1205,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 Always online           -- done
 reduce logs		        -- done
 zoom profile            -- done
+Lock for whatsapp web   -- done
+custom read receipts    -- done
+hide locked contact notifications   -- done
 
-Lock for whatsapp web   -- paid
-hide online status      -- if at all -- paid
-custom read receipts    -- paid
-hide locked contact notifications   -- paid
+hide online status      -- if at all -- not done
 
  */
