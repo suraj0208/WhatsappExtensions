@@ -62,7 +62,7 @@
     <string name="hide_last_seen">Hide last seen</string>
     <string name="hide_read_receipts">Turn off read receipts</string>
     <string name="hide_delivery_receipts">Turn off delivery reports</string>
-    <string name="always_online" translatable="false">Always show me online</string>
+    <string name="always_online">Always show me online</string>
     <string name="req_restart">Requires Restart</string>
 
     <string name="layout_prefs">Layout Preferences</string>
@@ -117,10 +117,11 @@
     <string name="title_activity_color_chooser">ColorChooserActivity</string>
     <string name="single_click_label">One Click action</string>
 
-
+    <!-- Translate these for v4.5 -->
     <string name="add">Add</string>
     <string name="whitelistinfo">Read Receipts WhiteList :</string>
-    <string name="last_seen_hidden">Your last seen will be hidden.</string>
+    <string name="last_seen_hidden">Your last seen will be hidden. Do not clear WhatsApp from recent Apps.</string>
     <string name="restore_prefs">Restore your privacy preferences in WhatsApp.</string>
+    <!-- Translate end for v4.5 -->
 
 </resources>
