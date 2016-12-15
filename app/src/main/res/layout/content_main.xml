@@ -111,12 +111,12 @@
 
         <Button
             android:id="@+id/btncolorchooser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/chkboxhighlight"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="@string/color" />
+            android:background="@mipmap/ic_settings_black_24dp" />
 
         <TextView
             android:id="@+id/tvindividualchat"
@@ -131,13 +131,13 @@
 
         <Button
             android:id="@+id/btnindividualcolorchooser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/tvindividualchat"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
-            android:text="@string/color" />
+            android:background="@mipmap/ic_settings_black_24dp" />
 
         <TextView
             android:id="@+id/tvlastseen"
