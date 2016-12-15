@@ -111,8 +111,8 @@
 
         <Button
             android:id="@+id/btncolorchooser"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/chkboxhighlight"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
@@ -131,8 +131,8 @@
 
         <Button
             android:id="@+id/btnindividualcolorchooser"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/tvindividualchat"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
@@ -172,8 +172,8 @@
 
         <ImageButton
             android:id="@+id/imgbtnreceiptsetting"
-            android:layout_width="27dp"
-            android:layout_height="27dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBottom="@id/chkboxreadreceipts"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"

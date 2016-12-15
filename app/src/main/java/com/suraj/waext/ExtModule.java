@@ -194,7 +194,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             try {
                                 rl = (RelativeLayout) parent;
                             } catch (ClassCastException e) {
-                                XposedBridge.log("ClassCastException in hookMethodsForHighLight");
+                                //XposedBridge.log("ClassCastException in hookMethodsForHighLight");
                             }
 
                             zerothChildrenHashMap.put(parent, rl.getChildAt(0));
@@ -1209,6 +1209,6 @@ Lock for whatsapp web   -- done
 custom read receipts    -- done
 hide locked contact notifications   -- done
 
-hide online status      -- if at all -- not done
+hide online status      -- not done
 
  */
