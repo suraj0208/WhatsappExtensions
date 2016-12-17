@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">WhatsApp Extensions</string>
     <string name="action_settings">Instellingen</string>
-	
+
     <string name="title_activity_change_password">Wijzig wachtwoord</string>
-	<string name="lock_prefs">Blokkeervoorkeuren</string>
-	<string name="lock_text">Blokkeer alle chats wanneer je WhatsApp sluit.</string>
+    <string name="lock_prefs">Blokkeervoorkeuren</string>
+    <string name="lock_text">Blokkeer alle chats wanneer je WhatsApp sluit.</string>
 
     <string name="lock_after">Blokkeer na </string>
 
@@ -45,35 +45,35 @@
     <string name="menuitem_unhighlight">Verwijder markering</string>
 
     <string name="reminder_prefs">Herinneringsvoorkeuren</string>
-	<string name="enable_reminder">Herinneringen inschakelen</string>
-	<string name="reminder_text">Notitie: Deze service wordt door de app zelf geregeld. Gebruik deze optie indien die service expliciet in- of uitgeschakeld moet worden.</string>
-	<string name="reminder_in">Herinner mij over </string>
-   	<string name="reply_to">Antwoord op %1$s</string>
+    <string name="enable_reminder">Herinneringen inschakelen</string>
+    <string name="reminder_text">Notitie: Deze service wordt door de app zelf geregeld. Gebruik deze optie indien die service expliciet in- of uitgeschakeld moet worden.</string>
+    <string name="reminder_in">Herinner mij over </string>
+    <string name="reply_to">Antwoord op %1$s</string>
 
     <string name="highlight_prefs">Markeervoorkeuren</string>
-	<string name="highlight_groups">Markeer groepen</string>
-	<string name="highlight_individual">Individuele chat markeerkleur</string>
-	<string name="select_color">Kies kleur</string>
-	
+    <string name="highlight_groups">Markeer groepen</string>
+    <string name="highlight_individual">Individuele chat markeerkleur</string>
+    <string name="select_color">Kies kleur</string>
+
     <string name="privacy_prefs">Privacyvoorkeuren</string>
-	<string name="hide_last_seen">Verberg laatst gezien</string>
-   	<string name="hide_read_receipts">Schakel leesbevestiging uit</string>
-   	<string name="req_restart">Herstart nodig</string>
-	<string name="hide_delivery_receipts">Schakel ontvangstbevestiging uit</string>
-	<string name="always_online">Altijd online inschakelen</string>
-	
+    <string name="hide_last_seen">Verberg laatst gezien</string>
+    <string name="hide_read_receipts">Schakel leesbevestiging uit</string>
+    <string name="req_restart">Herstart nodig</string>
+    <string name="hide_delivery_receipts">Schakel ontvangstbevestiging uit</string>
+    <string name="always_online">Altijd online inschakelen</string>
+
     <string name="layout_prefs">Layout voorkeuren</string>
-	<string name="hide_camera_btn">Verberg Camera knop</string>
-   	<string name="hide_tabs_btn">Verberg tabbladen</string>
-    	<string name="replace_call_btn">Vervang belknop</string>
-	<string name="single_click_label">One Click actie</string>
+    <string name="hide_camera_btn">Verberg Camera knop</string>
+    <string name="hide_tabs_btn">Verberg tabbladen</string>
+    <string name="replace_call_btn">Vervang belknop</string>
+    <string name="single_click_label">One Click actie</string>
 
     <string name="color">Kleur</string>
-	<string name="cancel">Annuleer</string>
-	<string name="clear">Reset</string>
-	<string name="enter">Accepteer</string>
-	<string name="default_password">Standaard wachtwoord: 1234</string>
-	
+    <string name="cancel">Annuleer</string>
+    <string name="clear">Reset</string>
+    <string name="enter">Accepteer</string>
+    <string name="default_password">Standaard wachtwoord: 1234</string>
+
     <string-array name="minutelist">
         <item>Onmiddelijk</item>
         <item>1 Minuut</item>
@@ -112,13 +112,12 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">KleurenkiezerActivity</string>
-	
+
     <!-- Translate these for v4.5 -->
-      <string name="add">Voeg toe</string>
-      <string name="whitelistinfo">Whitelist leesbevestiging :</string>
-      <string name="last_seen_hidden">Je laatst gezien wordt verborgen.</string>
-      <string name="last_seen_hidden">Je laatst gezien wordt verborgen. Wis Whatsapp niet uit de recente Apps.</string>
-      <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
+    <string name="add">Voeg toe</string>
+    <string name="whitelistinfo">Whitelist leesbevestiging :</string>
+    <string name="last_seen_hidden">Je laatst gezien wordt verborgen. Wis Whatsapp niet uit de recente Apps.</string>
+    <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
     <!-- Translate end for v4.5 -->
 
 </resources>
