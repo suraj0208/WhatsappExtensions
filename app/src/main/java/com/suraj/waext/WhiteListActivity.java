@@ -85,6 +85,12 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         (findViewById(R.id.imgbtnremovecontact)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (whitelist.size() == 0) {
+                    Toast.makeText(getApplicationContext(), "List is empty.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+
                 if (fab.getVisibility() == View.VISIBLE) {
                     for (CheckBox checkBox : deleteCheckBoxes)
                         checkBox.setVisibility(View.VISIBLE);
