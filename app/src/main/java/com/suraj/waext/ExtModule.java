@@ -2,6 +2,7 @@ package com.suraj.waext;
 
 import android.app.Activity;
 import android.app.AndroidAppHelper;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -15,11 +16,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.preference.ListPreference;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -31,6 +36,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -59,17 +65,22 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public static final String PACKAGE_NAME = "com.suraj.waext";
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
     public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
+    public static final String UPDATE_INTENT = ".UPDATE_INTENT";
+    public static final String WHITELIST_PREFS_STRING = "rd_whitelist";
+
     public static String MODULE_PATH;
 
     private static HashSet<String> lockedContacts;
     private static HashSet<String> templockedContacts;
     private static HashSet<String> hiddenGroups;
     private static HashSet<String> highlightedChats;
+    private static HashSet<String> whitelistSet;
 
     private static HashMap<View, View> processedViewsHashMap;
     private static HashMap<View, View> zerothChildrenHashMap;
     private static HashMap<View, View> firstChildrenHashMap;
     private static HashMap<Object, String> tagToContactHashMap;
+    private static HashMap<String, Object> nameToNumberHashMap;
 
     private static boolean showLockScreen = false;
     private static boolean firstTime = true;
@@ -78,10 +89,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean isGroup = false;
     private static boolean exceptionThrown = true;
     private static boolean enableHideCamera = false;
+    private static boolean hideReadReceipts = false;
+    private static boolean replaceCallButton = false;
+    private static boolean hideDeliveryReports = false;
+    private static boolean alwaysOnline = false;
 
 
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
+    private static int oneClickAction = 3;
 
     private String archiveBooleanFieldName;
 
@@ -94,7 +110,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private String contactNumber;
 
-    private Context context;
+    //private Context context;
+    private View oneClickActionButton;
 
     private Thread thread;
 
@@ -107,17 +124,20 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     }
 
-    private void hookMethodsForHighLight(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+    private void hookMethodsForHighLight(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
 
 
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                updateHighlightColor();
+                initPrefs();
                 TypedValue a = new TypedValue();
 
                 AndroidAppHelper.currentApplication().getApplicationContext().getTheme().resolveAttribute(android.R.attr.textColor, a, true);
                 originalColor = a.data;
+
+                ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
+
             }
         });
 
@@ -131,7 +151,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         String tag = param.args[0].toString();
 
-                        boolean localIsGroup = tag.toString().contains("@g.us");
+                        boolean localIsGroup = tag.contains("@g.us");
 
                         View parent = processedViewsHashMap.get(param.thisObject);
 
@@ -148,7 +168,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                     contact = contact.replace("+", "");
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
-                                    XposedBridge.log("ArrayIndexOutofBound");
+                                    //XposedBridge.log("ArrayIndexOutofBound");
                                     ex.printStackTrace();
                                 }
 
@@ -174,7 +194,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             try {
                                 rl = (RelativeLayout) parent;
                             } catch (ClassCastException e) {
-                                XposedBridge.log("ClassCastException");
+                                //XposedBridge.log("ClassCastException in hookMethodsForHighLight");
                             }
 
                             zerothChildrenHashMap.put(parent, rl.getChildAt(0));
@@ -211,17 +231,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         );
     }
 
-    private void updateHighlightColor() {
-        sharedPreferences.reload();
-        sharedPreferences.makeWorldReadable();
-
-        highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
-        individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
-
-        enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
-        enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
-    }
-
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod(Intent.class, "getStringExtra", String.class, new XC_MethodHook() {
             @Override
@@ -236,10 +245,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         if (result != null) {
 
-                            if (result.contains("@g.us")) {
-                                isGroup = true;
-                            } else
-                                isGroup = false;
+                            isGroup = result.contains("@g.us");
 
                             if (result.contains("@")) {
                                 contactNumber = result.split("@")[0];
@@ -263,6 +269,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public void hookConversationMethods(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         final Class conversationClass = XposedHelpers.findClass("com.whatsapp.Conversation", loadPackageParam.classLoader);
 
+        XposedHelpers.findAndHookMethod(conversationClass, "onPause", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                if (enableHideSeen)
+                    setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
+            }
+        });
+
         XposedHelpers.findAndHookMethod(conversationClass, "onResume", new XC_MethodHook() {
 
 
@@ -282,7 +298,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 try {
                     Thread.sleep(200);
-                    setSeenOff("0");
+                    setSeenOff("0", ((Activity) param.thisObject).getApplicationContext());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -298,8 +314,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 //XposedBridge.log("onCreateOptionMenu");
 
+
                 //skip call button for group chats
-                if (!contactNumber.contains("-")) {
+                if (!isGroup && !replaceCallButton) {
                     MenuItem callMenuItem = ((Menu) param.args[0]).add(modRes.getString(R.string.menuitem_call));
                     callMenuItem.setIcon(android.R.drawable.ic_menu_search);
                     callMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
@@ -339,6 +356,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.afterHookedMethod(param);
                 Menu menu = (Menu) param.args[0];
 
+
                 File f = new File(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
 
                 if (f.exists() && !f.isDirectory())
@@ -360,20 +378,30 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
-        XposedHelpers.findAndHookMethod(conversationClass, "onCreate", Bundle.class, new XC_MethodHook() {
+        /*XposedHelpers.findAndHookMethod(conversationClass, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 ((Activity) param.thisObject).registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
+
             }
 
-        });
+        });*/
 
         XposedHelpers.findAndHookMethod(conversationClass, "onDestroy", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                ((Activity) param.thisObject).unregisterReceiver(unlockReceiver);
+                Activity activity = ((Activity) param.thisObject);
+
+                //activity.unregisterReceiver(unlockReceiver);
+
+                /*if (enableHideSeen) {
+                    setSeenOff("2", activity.getApplicationContext());
+                }else if (alwaysOnline){
+                    XposedBridge.log("always online");
+                    setSeenOff("5", ((Activity) param.thisObject).getApplicationContext());
+                }*/
 
             }
 
@@ -389,6 +417,19 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 //important: param.setResult(false) to prevent call to original method
 
                 Intent intent;
+
+                if (title.equals("Info")) {
+                    Toast.makeText(AndroidAppHelper.currentApplication(), "info info info", Toast.LENGTH_SHORT);
+                    param.setResult(false);
+                }
+
+                String callTitle = modRes.getString(R.string.menuitem_call);
+                String capCallTitle = title.substring(0, 1).toUpperCase() + callTitle.substring(1);
+
+
+                if (replaceCallButton && title.equals(capCallTitle)) {
+                    title = callTitle;
+                }
 
                 if (title.equals(modRes.getString(R.string.menuitem_lock))) {
                     lockedContacts.add(contactNumber);
@@ -521,17 +562,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                Activity activity = (Activity) param.thisObject;
-
-                context = activity.getApplicationContext();
-
-
-                //if (!activity.getClass().getName().equals("com.whatsapp.HomeActivity"))
-                //    return;
-
-                if (enableHideSeen)
-                    setSeenOff("2");
-
                 if (thread == null || !thread.isAlive())
                     startDaemon();
 
@@ -539,20 +569,52 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
 
         XposedHelpers.findAndHookMethod(Activity.class, "onResume", new XC_MethodHook() {
-
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                Activity activity = (Activity) param.thisObject;
-                context = activity.getApplicationContext();
-
+                if (param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")) {
+                    if (lockedContacts.size() > 0 && firstTime && showLockScreen) {
+                        Intent intent = new Intent();
+                        intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        AndroidAppHelper.currentApplication().startActivity(intent);
+                        firstTime = false;
+                    } else if (!firstTime && showLockScreen) {
+                        ((Activity) param.thisObject).finish();
+                    }
+                }
 
                 if (thread != null && thread.isAlive()) {
                     thread.interrupt();
                 }
+
             }
         });
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.QrCodeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                firstTime = true;
+                showLockScreen = true;
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onDestroy", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                ((Activity) (param.thisObject)).unregisterReceiver(unlockReceiver);
+
+                if (enableHideSeen) {
+                    setSeenOff("2", ((Activity) (param.thisObject)).getApplicationContext());
+                } else if (alwaysOnline) {
+                    setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
+                }
+            }
+        });
+
     }
 
 
@@ -566,8 +628,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     //XposedBridge.log("Thread started");
                     Thread.sleep(4000);
 
-                    if (enableHideSeen)
-                        setSeenOff("2");
+                    //if (enableHideSeen)
+                    //setSeenOff("2");
 
                     Thread.sleep(lockAfter * 1000 * 60);
                     ExtModule.templockedContacts.addAll(lockedContacts);
@@ -584,7 +646,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     }
 
-    private void setSeenOff(final String val) {
+    private void setSeenOff(final String val, final Context context) {
         if (context == null) {
             XposedBridge.log("WA context null");
             return;
@@ -617,12 +679,347 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     listPreference.setEntries(entryCharSequences);
                     listPreference.setEntryValues(entryValuesSequences);
 
+
                     XposedHelpers.callMethod(settingsObject, "a", preferenceObject, val);
 
                 } catch (Throwable e) {
                     e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    Context newContext;
+
+    private void hookMethodsForUpdatePrefs(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.BootReceiver", loadPackageParam.classLoader, "onReceive", Context.class, Intent.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                Context context = (Context) param.args[0];
+
+                //Context appContext = AndroidAppHelper.currentApplication().getApplicationContext(); // context.getApplicationContext();
+
+                newContext = context.createPackageContext(ExtModule.PACKAGE_NAME, Context.CONTEXT_IGNORE_SECURITY);
+
+                newContext.registerReceiver(new UpdateReceiver(), new IntentFilter(ExtModule.PACKAGE_NAME + UPDATE_INTENT));
+                //XposedBridge.log("Registed receiver for update");
+
+            }
+        });
+    }
+
+    private void hookMethodsForCameraAndZoom(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("android.view.View", loadPackageParam.classLoader, "setVisibility", int.class, new de.robv.android.xposed.XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                if (!param.args[0].toString().equals("0"))
+                    return;
+
+                try {                                       // a pretty naive try catch -- until I get the logs from GBwhatsapp
+                    View view = (View) param.thisObject;
+
+                    if (view.getTransitionName() == null) {
+                        if (enableHideCamera && param.thisObject instanceof ImageButton) {//param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
+                            View parent = (View) view.getParent();
+
+                            if (parent instanceof LinearLayout) {
+                                StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
+
+                                if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
+                                    view.setVisibility(View.GONE);
+                            }
+                        }
+                        return;
+                    }
+
+                    if (param.thisObject instanceof ImageView) {
+                        new PhotoViewAttacher((ImageView) param.thisObject);
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+    }
+
+    private void hookMethodsForWallPaper(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("com.whatsapp.wallpaper.WallPaperView", loadPackageParam.classLoader, "setDrawable", Drawable.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                Drawable drawable = Drawable.createFromPath(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
+
+                if (drawable != null)
+                    param.args[0] = drawable;
+
+            }
+        });
+    }
+
+    private void hookMethodsForHideGroup(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                if (param.args[0] == null) {
                     return;
                 }
+
+                if (param.getResult() == null) {
+                    return;
+                }
+
+                if (exceptionThrown) {
+                    if (param.args[0].toString().contains("@")) {
+                        archiveClass = param.getResult().getClass();
+
+                        for (Field field : archiveClass.getDeclaredFields()) {
+                            if (field.getType().getName().equals("boolean")) {
+                                archiveBooleanFieldName = field.getName();
+                                //XposedBridge.log("s name set");
+                                exceptionThrown = false;
+                            }
+                        }
+                    } else {
+                        return;
+                    }
+
+                }
+
+                if (!(archiveClass != null && archiveClass.isInstance(param.getResult()))) {
+                    return;
+                }
+
+                if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
+                    return;
+
+                Field f = param.getResult().getClass().getDeclaredField(archiveBooleanFieldName);
+                f.setAccessible(true);
+                f.set(param.getResult(), true);
+
+                //XposedBridge.log(param.args[0] + " " + param.getResult().getClass().getName());
+
+            }
+        });
+    }
+
+    public void hookMethodsForHideReadReceipts(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        final Class readReceiptsJobClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader);
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                boolean shouldSend = false;
+
+                Field jidField = readReceiptsJobClass.getDeclaredField("jid");
+                Field participantField = readReceiptsJobClass.getDeclaredField("participant");
+
+                jidField.setAccessible(true);
+                participantField.setAccessible(true);
+
+                Object jidString = jidField.get(param.thisObject);
+                Object participantString = participantField.get(param.thisObject);
+
+
+                if (jidString != null)
+                    shouldSend = shouldSend || whitelistSet.contains(jidString.toString().split("@")[0]);
+
+                if (participantString != null)
+                    shouldSend = shouldSend || whitelistSet.contains(participantString.toString().split("@")[0]);
+
+
+                if (hideReadReceipts && !shouldSend) {
+                    param.setResult(null);
+                }
+            }
+        });
+    }
+
+    public void hookMethodsForHideDeliveryReports(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+
+        try {
+            XposedHelpers.findAndHookMethod("com.whatsapp.messaging.h", loadPackageParam.classLoader, "a", Message.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+
+                    Message message = (Message) param.args[0];
+
+                    if (hideDeliveryReports && message.arg1 == 9 && message.arg2 == 0)
+                        param.setResult(null);
+
+                    //XposedBridge.log("" + message.arg1 + " " + message.arg2 + " " + message.toString());
+
+                    /*
+                for(String k : bundle.keySet())
+                    XposedBridge.log(k + " " + bundle.get(k));
+
+                for(StackTraceElement stackTraceElement:new Exception().getStackTrace())
+                   XposedBridge.log(stackTraceElement.getClassName() + " " + stackTraceElement.getMethodName());
+
+                XposedBridge.log("_____________________________________");
+
+                String className = new Exception().getStackTrace()[4].getClassName();
+
+                if(className.equals("com.whatsapp.xi") || className.equals("com.whatsapp.aae$a") ) {
+                    param.setResult(null);
+                    XposedBridge.log("skip " +message.arg1 + " " + message.arg2 + " "+ message.toString());
+                }
+
+                */
+                }
+            });
+
+        } catch (XposedHelpers.ClassNotFoundError ex) {
+            ex.printStackTrace();
+        } catch (NoSuchMethodError ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } catch (Error ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void hookMethodsForClickToReply(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("android.widget.HeaderViewListAdapter", loadPackageParam.classLoader, "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                if (param.args[2] != null && !param.args[2].getClass().getName().equals("com.whatsapp.ConversationListView"))
+                    return;
+
+                if (param.args[1] != null) {
+                    try {
+                        ((View) param.args[1]).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                if (oneClickAction == 3)
+                                    return;
+
+                                oneClickActionButton = null;
+
+                                v.performLongClick();
+
+                                if (oneClickActionButton != null)
+                                    oneClickActionButton.performClick();
+                                else
+                                    v.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                            }
+                        });
+
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        XposedBridge.log(ex.toString());
+                    }
+                }
+            }
+        });
+
+
+        XposedHelpers.findAndHookMethod("android.support.v7.view.menu.ActionMenuItemView", loadPackageParam.classLoader, "setTitle", CharSequence.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+                if (param.args[0] == null) {
+                    XposedBridge.log("actionmenu:Title null");
+                    return;
+                }
+
+                if (param.args[0].toString().equals(getOneClickActionString())) {
+                    oneClickActionButton = (View) param.thisObject;
+                }
+
+            }
+        });
+    }
+
+    public void hookMethodsForHidingNotifications(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod("android.app.Notification.Builder", loadPackageParam.classLoader, "build", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+
+
+
+                Notification notification = (Notification) (param.getResult());
+
+                String currentContact = notification.extras.get(Notification.EXTRA_TITLE).toString();
+
+                if (nameToNumberHashMap == null)
+                    return;
+
+                Object value = nameToNumberHashMap.get(currentContact);
+
+                boolean isLocked = false;
+
+                if (value instanceof String) {
+                    isLocked = lockedContacts.contains(value.toString());
+                } else if (value instanceof List) {
+                    for (Object number : (List) value) {
+
+                        if (lockedContacts.contains(number.toString())) {
+                            isLocked = true;
+                            break;
+                        }
+
+                    }
+                }
+
+                String xes = " ";
+
+                if (isLocked) {
+                    notification.extras.putString(Notification.EXTRA_TEXT, xes);
+                    notification.extras.putString(Notification.EXTRA_BIG_TEXT, xes);
+                    notification.extras.putStringArray(Notification.EXTRA_TEXT_LINES, new String[]{xes});
+                }
+
+                CharSequence[] notificationTexts = null;
+
+                if (notification.extras.get(Notification.EXTRA_TEXT_LINES) instanceof CharSequence[])
+                    notificationTexts = (CharSequence[]) notification.extras.get(Notification.EXTRA_TEXT_LINES);
+
+
+                if (notificationTexts == null)
+                    return;
+
+                String[] newSequences = new String[notificationTexts.length];
+
+
+                for (int i = 0; i < notificationTexts.length; i++) {
+                    String[] currentSplits = notificationTexts[i].toString().split(":");
+                    Object val = nameToNumberHashMap.get(currentSplits[0].trim());
+
+                    isLocked = false;
+                    if (val instanceof String)
+                        isLocked = lockedContacts.contains(val);
+
+                    else if (val instanceof List) {
+                        for (String number : (List<String>) val) {
+                            if (lockedContacts.contains(number)) {
+                                isLocked = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (isLocked) {
+                        newSequences[i] = currentSplits[0] + ": " + xes;
+                    } else
+                        newSequences[i] = notificationTexts[i].toString();
+                }
+
+                notification.extras.putStringArray(Notification.EXTRA_TEXT_LINES, newSequences);
             }
         });
     }
@@ -659,12 +1056,24 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
         highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
         hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
+        whitelistSet = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.WHITELIST_PREFS_STRING, new HashSet<String>());
 
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
+        individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
+        oneClickAction = sharedPreferences.getInt("oneClickAction", 3);
 
+        enableHighlight = sharedPreferences.getBoolean("enableHighlight", false);
+        replaceCallButton = sharedPreferences.getBoolean("replaceCallButton", false);
         enableHideSeen = sharedPreferences.getBoolean("hideSeen", false);
         enableHideCamera = sharedPreferences.getBoolean("hideCamera", false);
+        hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
+        hideDeliveryReports = sharedPreferences.getBoolean("hideDeliveryReports", false);
+        alwaysOnline = sharedPreferences.getBoolean("alwaysOnline", false);
 
+    }
+
+    public String getOneClickActionString() {
+        return modRes.getStringArray(R.array.oneclickactions)[oneClickAction];
     }
 
 
@@ -684,108 +1093,18 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
             templockedContacts.remove(contactNumber);
 
-            //XposedBridge.log("Broadcast Received");
+            //XposedBridge.log("Broadcast Received " + showLockScreen + " " + firstTime);
         }
     }
 
-    private void hookMethodsForCameraAndZoom(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod("android.view.View", loadPackageParam.classLoader, "setVisibility", int.class, new de.robv.android.xposed.XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                if (!param.args[0].toString().equals("0"))
-                    return;
-
-
-                View view = (View) param.thisObject;
-
-                if (view.getTransitionName() == null) {
-                    if (enableHideCamera && param.thisObject.getClass().getName().equals("android.support.v7.widget.x")) {
-                        View parent = (View) view.getParent();
-
-                        if (parent instanceof LinearLayout) {
-                            StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
-
-                            if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
-                                view.setVisibility(View.GONE);
-
-                        }
-                    }
-                    return;
-
-                }
-
-                if (param.thisObject instanceof ImageView) {
-                    new PhotoViewAttacher((ImageView) param.thisObject);
-                }
-            }
-        });
+    class UpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            initPrefs();
+            //XposedBridge.log("Recieved intent");
+        }
     }
 
-    private void hookMethodsForWallPaper(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod("com.whatsapp.wallpaper.WallPaperView", loadPackageParam.classLoader, "setDrawable", Drawable.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                Drawable drawable = Drawable.createFromPath(Environment.getExternalStorageDirectory() + ExtModule.WALLPAPER_DIR + contactNumber + ".jpg");
-
-                if (drawable != null)
-                    param.args[0] = drawable;
-
-            }
-        });
-    }
-
-    private void hookMethodsForHideGroup(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-
-                if (param.args[0] == null) {
-                    return;
-                }
-
-                if (param.getResult() == null) {
-                    return;
-                }
-
-                if (exceptionThrown) {
-                    if (param.args[0].toString().contains("@")) {
-                        archiveClass = param.getResult().getClass();
-
-                        for (Field field : archiveClass.getDeclaredFields()) {
-                            if (field.getType().getName().equals("boolean")) {
-                                archiveBooleanFieldName = field.getName();
-                                XposedBridge.log("s name set");
-                                exceptionThrown = false;
-                            }
-                        }
-                    } else {
-                        return;
-                    }
-
-                }
-
-                if (!(archiveClass != null && archiveClass.isInstance(param.getResult()))) {
-                    return;
-                }
-
-
-                if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
-                    return;
-
-                Field f = param.getResult().getClass().getDeclaredField(archiveBooleanFieldName);
-                f.setAccessible(true);
-                f.set(param.getResult(), true);
-
-                //XposedBridge.log(param.args[0] + " " + param.getResult().getClass().getName());
-
-            }
-        });
-    }
 
     @Override
     public void initZygote(IXposedHookZygoteInit.StartupParam startupParam) throws Throwable {
@@ -798,6 +1117,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             return;
 
         modRes = XModuleResources.createInstance(MODULE_PATH, initPackageResourcesParam.res);
+
+        if (sharedPreferences != null && sharedPreferences.getBoolean("hideTabs", false))
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "dimen", "tab_height", modRes.fwd(R.dimen.tab_height));
+
+        if (sharedPreferences != null && sharedPreferences.getBoolean("showBlackTicks", false)) {
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target", modRes.fwd(R.mipmap.ic_black_tick_conv));
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "message_got_read_receipt_from_target_onmedia", modRes.fwd(R.mipmap.ic_black_tick_conv));
+            initPackageResourcesParam.res.setReplacement("com.whatsapp", "drawable", "msg_status_client_read", modRes.fwd(R.mipmap.ic_black_tick_main));
+        }
+
     }
 
 
@@ -824,10 +1153,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForWallPaper(loadPackageParam);
         hookMethodsForHideGroup(loadPackageParam);
         hookMethodsForCameraAndZoom(loadPackageParam);
+        hookMethodsForHideReadReceipts(loadPackageParam);
+        hookMethodsForClickToReply(loadPackageParam);
+        hookMethodsForHideDeliveryReports(loadPackageParam);
+        hookMethodsForHidingNotifications(loadPackageParam);
+        //hookMethodsForUpdatePrefs(loadPackageParam);
 
         unlockReceiver = new UnlockReceiver();
 
         initPrefs();
+
         templockedContacts = new HashSet<>();
         templockedContacts.addAll(lockedContacts);
 
@@ -841,17 +1176,23 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             error.printStackTrace();
         }
 
+        if(nameToNumberHashMap==null){
+            (new Thread(){
+                @Override
+                public void run() {
+                    nameToNumberHashMap = new WhatsAppContactManager().getNameToNumberHashMap();
+                }
+            }).start();
+        }
+
     }
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);
-
         Method[] methods = cls.getDeclaredMethods();
-
 
         for (Method method : methods) {
             String m = method.getName();
-
             for (Class p : method.getParameterTypes()) {
                 m = m + " " + p.getName();
             }
@@ -859,3 +1200,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         }
     }
 }
+
+/*
+Always online           -- done
+reduce logs		        -- done
+zoom profile            -- done
+Lock for whatsapp web   -- done
+custom read receipts    -- done
+hide locked contact notifications   -- done
+
+hide online status      -- not done
+
+ */

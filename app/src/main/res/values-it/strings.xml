@@ -1,0 +1,124 @@
+<resources>
+    <string name="app_name">WhatsApp Extensions</string>
+    <string name="action_settings">Configurazione</string>
+	
+    <string name="title_activity_change_password">Modifica Password</string>
+	<string name="lock_prefs">Opzioni di Blocco</string>
+	<string name="lock_text">Blocca tutte le chat dopo la chiusura di WhatsApp.</string>
+
+    <string name="lock_after">Blocca dopo </string>
+
+    <string name="change_password">Modifica Password</string>
+
+    <string name="enter_current_password">Immetti Password attuale. Password preimpostata: 1234</string>
+    <string name="enter_new_password">Immetti Nuova Password</string>
+    <string name="confirm_password">Conferma Password</string>
+    <string name="password_length_warning">Lunghezza massima 4 caratteri</string>
+    <string name="password_mismatch">Le password non corrispondono</string>
+    <string name="password_incorrect">Password errata</string>
+    <string name="password_change_message">Password modificata</string>
+    <string name="lock_enable_message">Blocco attivato per questo contattato</string>
+    <string name="lock_disable_message">Blocco disattivato per questo contattato</string>
+    <string name="call_place_error">Impossibile effettuare la chiamata</string>
+    <string name="chat_reopen_message">RiApri la chat per applicare i cambiamenti</string>
+    <string name="whatsapp_restart_message">Riavvia WhatsApp per applicare i cambiamenti</string>
+    <string name="whatsapp_restart_message_long">Elimina WhatsApp dalle applicazioni recenti e Riapri</string>
+    <string name="wait_message">Aspetta 2 minuti dopo l\'avvio e riprova</string>
+
+    <string name="internal_error">Errore Interno</string>
+    <string name="bundle_null_error">Errore Aprendo l\'Attivita\':Bundle null</string>
+
+
+    <string name="select_picture">Seleziona l\'Immagine</string>
+
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">chiama</string>
+
+    <string name="menuitem_hide">Nascondi</string>
+    <string name="menuitem_unhide">Mostra</string>
+    <string name="menuitem_wallpaper_set">Sfondo Personalizzato</string>
+    <string name="menuitem_wallpaper_remove">Elimina Sfondo</string>
+    <string name="menuitem_reminder">Aggiungi Promemoria</string>
+    <string name="menuitem_lock">Blocca</string>
+    <string name="menuitem_unlock">Sblocca</string>
+    <string name="menuitem_highlight">Evidenzia</string>
+    <string name="menuitem_unhighlight">Non Evidenziare</string>
+
+    <string name="reminder_prefs">Preferenze Promemoria</string>
+	<string name="enable_reminder">Abilita servizio promemoria</string>
+	<string name="reminder_text">Nota: Il servizio e\' gestito automaticamente dall\'app. Utilizzare questa opzione se si desidera abilitare/disabilitare il servizio esplicitamente.</string>
+	<string name="reminder_in">Ricordamelo dopo </string>
+    <string name="reply_to">Rispondi a %1$s</string>
+
+
+    <string name="highlight_prefs">Preferenze di Evidenziazione</string>
+	<string name="highlight_groups">Evidenzia Gruppi</string>
+	<string name="highlight_individual">Evidenzia Chat singola</string>
+	<string name="select_color">Seleziona Colore</string>
+	
+	<string name="privacy_prefs">Preferenze Privacy</string>
+	<string name="hide_last_seen">Nascondi l\'ultima connessione</string>
+    <string name="hide_read_receipts">Disabilita conferma di lettura</string>
+    <string name="always_online">Mostrami sempre online</string>
+    <string name="req_restart">Richiede il riavvio</string>
+	<string name="hide_delivery_receipts">Disabilita conferma di consegna</string>
+	
+	<string name="layout_prefs">Preferenze Interfaccia</string>
+	<string name="hide_camera_btn">Nascondi il pulsante della fotocamera</string>
+    <string name="hide_tabs_btn">Nascondi le schede</string>
+    <string name="replace_call_btn">Sostituisci il pulsante di chiamata</string>
+	<string name="single_click_label">Azione su Tocco</string>
+
+
+    <string name="color">Colore</string>
+	<string name="cancel">Annulla</string>
+	<string name="clear">Pulisci</string>
+	<string name="enter">Conferma</string>
+	<string name="default_password">Password preimpostata: 1234</string>
+	
+    <string-array name="minutelist">
+        <item>Immediatamente</item>
+        <item>1 Minuto</item>
+        <item>3 Minuti</item>
+        <item>5 Minuti</item>
+        <item>10 Minuti</item>
+    </string-array>
+
+    <!--do not translate these strings see faq section on XDA thread-->
+    <string-array name="oneclickactions">
+        <item>Rispondi</item>
+        <item>Info</item>
+        <item>Inoltra</item>
+        <item>Nessuna</item>
+    </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Minuti</item>
+        <item>30 Minuti</item>
+        <item>1 Ora</item>
+        <item>2 Ore</item>
+    </string-array>
+
+    <array name="demo_colors">
+        <item>#9CCC65</item>
+        <item>#D4E157</item>
+        <item>#FFEE58</item>
+        <item>#FFCA28</item>
+        <item>#FFA726</item>
+        <item>#FF7043</item>
+        <item>#BDBDBD</item>
+        <item>#78909C</item>
+        <item>#29B6F6</item>
+        <item>#ef5350</item>
+        <item>#EC407A</item>
+        <item>#212121</item>
+    </array>
+    <string name="title_activity_color_chooser">SceltaColoreAttività</string>
+
+
+    <string name="add">Aggiungi</string>
+    <string name="whitelistinfo">WhiteList per conferma di lettura :</string>
+    <string name="last_seen_hidden">La tua ultima connessione sarà nascosta. Non eliminare WhatsApp dalle App recenti.</string>
+    <string name="restore_prefs">Ripristina le tue preferenze privacy in WhatsApp.</string>
+
+</resources>

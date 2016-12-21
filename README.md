@@ -16,11 +16,12 @@ Xposed module link:
 
 http://repo.xposed.info/module/com.suraj.waext
 
+
+## Contribute / Discuss
+
 clone the project:
 
 git clone https://<span></span>github.com/suraj0208/WhatsappExtensions.git
-
-## Contribute / Discuss
 
 join the discussion:
 

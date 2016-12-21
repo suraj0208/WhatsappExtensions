@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="@dimen/activity_horizontal_margin">
+
         <TextView
             android:id="@+id/tvlockprefs"
             android:layout_width="match_parent"
@@ -110,12 +111,12 @@
 
         <Button
             android:id="@+id/btncolorchooser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/chkboxhighlight"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="@string/color" />
+            android:background="@mipmap/ic_settings_black_24dp" />
 
         <TextView
             android:id="@+id/tvindividualchat"
@@ -130,13 +131,13 @@
 
         <Button
             android:id="@+id/btnindividualcolorchooser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignBaseline="@id/tvindividualchat"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="10dp"
-            android:text="@string/color" />
+            android:background="@mipmap/ic_settings_black_24dp" />
 
         <TextView
             android:id="@+id/tvlastseen"
@@ -144,7 +145,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/tvindividualchat"
             android:layout_margin="10dp"
-            android:text="@string/last_seen_prefs"
+            android:text="@string/privacy_prefs"
             android:textSize="22sp" />
 
         <CheckBox
@@ -154,24 +155,57 @@
             android:layout_alignLeft="@id/tvhighlight"
             android:layout_alignStart="@id/tvhighlight"
             android:layout_below="@id/tvlastseen"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:text="@string/hide_last_seen" />
 
-        <TextView
-            android:id="@+id/tvrebootnotice"
+        <CheckBox
+            android:id="@+id/chkboxreadreceipts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/chkboxseen"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxseen"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_read_receipts" />
+
+        <ImageButton
+            android:id="@+id/imgbtnreceiptsetting"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignBottom="@id/chkboxreadreceipts"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:text="@string/req_restart" />
+            android:background="@mipmap/ic_settings_black_24dp" />
+
+        <CheckBox
+            android:id="@+id/chkboxdeliveryreports"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxreadreceipts"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_delivery_receipts" />
+
+        <CheckBox
+            android:id="@+id/chkboxalwaysonline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxdeliveryreports"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/always_online" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chkboxseen"
+            android:layout_below="@id/chkboxalwaysonline"
             android:layout_margin="10dp"
             android:text="@string/layout_prefs"
             android:textSize="22sp" />
@@ -185,6 +219,60 @@
             android:layout_below="@id/tvlayoutprefs"
             android:layout_marginTop="5dp"
             android:text="@string/hide_camera_btn" />
+
+        <CheckBox
+            android:id="@+id/chkboxhidetabs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxhidecamera"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_tabs_btn" />
+
+
+        <CheckBox
+            android:id="@+id/chkboxreplacecallbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxhidetabs"
+            android:layout_marginTop="5dp"
+            android:text="@string/replace_call_btn" />
+
+        <CheckBox
+            android:id="@+id/chkboxblackticks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/chkboxreplacecallbtn"
+            android:layout_alignStart="@id/chkboxreplacecallbtn"
+            android:layout_below="@id/chkboxreplacecallbtn"
+            android:layout_marginTop="5dp"
+            android:text="Show black ticks instead of blue" />
+
+        <TextView
+            android:id="@+id/tvsingleclickaction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/chkboxreplacecallbtn"
+            android:layout_alignStart="@id/chkboxreplacecallbtn"
+            android:layout_below="@id/chkboxblackticks"
+            android:layout_marginLeft="7dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/single_click_label" />
+
+        <Spinner
+            android:id="@+id/spinsingleclickactions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/tvsingleclickaction"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:entries="@array/oneclickactions" />
+
+
     </RelativeLayout>
 
 </ScrollView>

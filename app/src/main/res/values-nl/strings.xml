@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">WhatsApp Extensions</string>
+    <string name="action_settings">Instellingen</string>
+
+    <string name="title_activity_change_password">Wijzig wachtwoord</string>
+    <string name="lock_prefs">Blokkeervoorkeuren</string>
+    <string name="lock_text">Blokkeer alle chats wanneer je WhatsApp sluit.</string>
+
+    <string name="lock_after">Blokkeer na </string>
+
+    <string name="change_password">Wijzig Wachtwoord</string>
+
+    <!-- translate from here -->
+    <string name="enter_current_password">Voer wachtwoord in. Standaard: 1234</string>
+    <string name="enter_new_password">Voer nieuw wachtwoord in</string>
+    <string name="confirm_password">Bevestig wachtwoord</string>
+    <string name="password_length_warning">Maximale lengte is 4</string>
+    <string name="password_mismatch">Wachtwoorden zijn niet gelijk</string>
+    <string name="password_incorrect">Wachtwoord onjuist</string>
+    <string name="password_change_message">Wachtwoord gewijzigd</string>
+    <string name="lock_enable_message">Blokkering ingeschakeld voor dit contact</string>
+    <string name="lock_disable_message">Blokkering uitgeschakeld voor dit contact</string>
+    <string name="call_place_error">Kon niet bellen</string>
+    <string name="chat_reopen_message">Heropen chat om wijziging door te voeren</string>
+    <string name="whatsapp_restart_message">Herstart WhatsApp om wijziging door te voeren</string>
+    <string name="whatsapp_restart_message_long">Verwijder WhatsApp uit Recente Applicaties en herstart</string>
+    <string name="wait_message">Wacht twee minuten na opstarten en probeer het opnieuw</string>
+
+    <string name="internal_error">Interne fout</string>
+    <string name="bundle_null_error">Fout openen activiteit:Bundle null</string>
+
+    <string name="select_picture">Kies afbeelding</string>
+
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">bellen</string>
+
+    <string name="menuitem_hide">Verberg</string>
+    <string name="menuitem_unhide">Zichtbaar</string>
+    <string name="menuitem_wallpaper_set">Persoonlijke achtergrond</string>
+    <string name="menuitem_wallpaper_remove">Verwijder achtergrond</string>
+    <string name="menuitem_reminder">Herinnering toevoegen</string>
+    <string name="menuitem_lock">Blokkeer</string>
+    <string name="menuitem_unlock">Deblokkeer</string>
+    <string name="menuitem_highlight">Markeer</string>
+    <string name="menuitem_unhighlight">Verwijder markering</string>
+
+    <string name="reminder_prefs">Herinneringsvoorkeuren</string>
+    <string name="enable_reminder">Herinneringen inschakelen</string>
+    <string name="reminder_text">Notitie: Deze service wordt door de app zelf geregeld. Gebruik deze optie indien die service expliciet in- of uitgeschakeld moet worden.</string>
+    <string name="reminder_in">Herinner mij over </string>
+    <string name="reply_to">Antwoord op %1$s</string>
+
+    <string name="highlight_prefs">Markeervoorkeuren</string>
+    <string name="highlight_groups">Markeer groepen</string>
+    <string name="highlight_individual">Individuele chat markeerkleur</string>
+    <string name="select_color">Kies kleur</string>
+
+    <string name="privacy_prefs">Privacyvoorkeuren</string>
+    <string name="hide_last_seen">Verberg laatst gezien</string>
+    <string name="hide_read_receipts">Schakel leesbevestiging uit</string>
+    <string name="req_restart">Herstart nodig</string>
+    <string name="hide_delivery_receipts">Schakel ontvangstbevestiging uit</string>
+    <string name="always_online">Altijd online inschakelen</string>
+
+    <string name="layout_prefs">Layout voorkeuren</string>
+    <string name="hide_camera_btn">Verberg Camera knop</string>
+    <string name="hide_tabs_btn">Verberg tabbladen</string>
+    <string name="replace_call_btn">Vervang belknop</string>
+    <string name="single_click_label">One Click actie</string>
+
+    <string name="color">Kleur</string>
+    <string name="cancel">Annuleer</string>
+    <string name="clear">Reset</string>
+    <string name="enter">Accepteer</string>
+    <string name="default_password">Standaard wachtwoord: 1234</string>
+
+    <string-array name="minutelist">
+        <item>Onmiddelijk</item>
+        <item>1 Minuut</item>
+        <item>3 Minuten</item>
+        <item>5 Minuten</item>
+        <item>10 Minuten</item>
+    </string-array>
+
+    <string-array name="reminderlist">
+        <item>15 Minuten</item>
+        <item>30 Minuten</item>
+        <item>1 Uur</item>
+        <item>2 Uren</item>
+    </string-array>
+
+    <!--do not translate these strings see faq section on XDA thread-->
+    <string-array name="oneclickactions">
+        <item>Beantwoorden</item>
+        <item>Informatie</item>
+        <item>Doorsturen</item>
+        <item>Disable</item>
+    </string-array>
+
+    <array name="demo_colors">
+        <item>#9CCC65</item>
+        <item>#D4E157</item>
+        <item>#FFEE58</item>
+        <item>#FFCA28</item>
+        <item>#FFA726</item>
+        <item>#FF7043</item>
+        <item>#BDBDBD</item>
+        <item>#78909C</item>
+        <item>#29B6F6</item>
+        <item>#ef5350</item>
+        <item>#EC407A</item>
+        <item>#212121</item>
+    </array>
+    <string name="title_activity_color_chooser">KleurenkiezerActivity</string>
+
+    <!-- Translate these for v4.5 -->
+    <string name="add">Voeg toe</string>
+    <string name="whitelistinfo">Whitelist leesbevestiging :</string>
+    <string name="last_seen_hidden">Je laatst gezien wordt verborgen. Wis Whatsapp niet uit de recente Apps.</string>
+    <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
+    <!-- Translate end for v4.5 -->
+
+</resources>

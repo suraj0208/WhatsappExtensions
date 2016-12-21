@@ -3,13 +3,16 @@ package com.suraj.waext;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,55 +34,62 @@ public class MainActivity extends AppCompatActivity {
         setupLockUI();
         setupReminderUI();
         setupHighlightUI();
-        setupSeenUI();
+        setupPrivacyUI();
         setUpLayoutUI();
+
 
     }
 
     private void setUpLayoutUI() {
-        final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxhidecamera);
+        CheckBox checkBoxHideCamera = (CheckBox) findViewById(R.id.chkboxhidecamera);
+        CheckBox checkBoxHideTabs = (CheckBox) findViewById(R.id.chkboxhidetabs);
+        CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
+        CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
 
-        if(sharedPreferences.getBoolean("hideCamera",false))
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
+        setUpCheckBox(checkBoxHideCamera, "hideCamera", false, "",false, "");
+        setUpCheckBox(checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton", false, "",false,"");
+        setUpCheckBox(checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart),true, getApplicationContext().getString(R.string.req_restart));
 
-        checkBox.setOnClickListener(new View.OnClickListener() {
+        Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
+        spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
+
+        spinSingleClickActions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                if(checkBox.isChecked())
-                    editor.putBoolean("hideCamera",true);
-                else
-                    editor.putBoolean("hideCamera",false);
-
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                editor.putInt("oneClickAction", position);
                 editor.apply();
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+
+        //setUpCheckBox(checkBoxClickToReply, "enableClickToReply");
+
 
     }
 
-    private void setupSeenUI() {
-        final CheckBox checkBox = (CheckBox)findViewById(R.id.chkboxseen);
 
-        if(sharedPreferences.getBoolean("hideSeen",false)){
-            checkBox.setChecked(true);
-        }else{
-            checkBox.setChecked(false);
-        }
+    private void setupPrivacyUI() {
+        final CheckBox checkBoxSeen = (CheckBox) findViewById(R.id.chkboxseen);
+        final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
+        final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
+        setUpCheckBox(checkBoxSeen, "hideSeen", false, "",true,getApplicationContext().getString(R.string.restore_prefs));
+        setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "",false,"");
+        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "",false,"");
+        setUpCheckBox((CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden),true,getApplicationContext().getString(R.string.restore_prefs));
 
-        checkBox.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkBox.isChecked()){
-                    editor.putBoolean("hideSeen",true);
-                }else{
-                    editor.putBoolean("hideSeen",false);
-                }
-                editor.apply();
-
+                startActivity(new Intent(MainActivity.this,WhiteListActivity.class));
             }
         });
+
     }
 
     private void setupLockUI() {
@@ -152,8 +162,8 @@ public class MainActivity extends AppCompatActivity {
         btnchooser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new  Intent(MainActivity.this, ColorChooserActivity.class);
-                intent.putExtra("groupOrIndividual","highlightColor");
+                Intent intent = new Intent(MainActivity.this, ColorChooserActivity.class);
+                intent.putExtra("groupOrIndividual", "highlightColor");
                 startActivity(intent);
 
             }
@@ -163,35 +173,57 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnindividualcolorchooser).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent  intent = new Intent(MainActivity.this,ColorChooserActivity.class);
-                intent.putExtra("groupOrIndividual","individualHighlightColor");
+                Intent intent = new Intent(MainActivity.this, ColorChooserActivity.class);
+                intent.putExtra("groupOrIndividual", "individualHighlightColor");
                 startActivity(intent);
             }
         });
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        if (sharedPreferences.getBoolean("enableHighlight", false)) {
+        setUpCheckBox(checkBox, "enableHighlight", false, "",false,"");
+
+    }
+
+    private void setUpCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage,final boolean offToast, final String offMessage) {
+
+
+        if (sharedPreferences.getBoolean(prefname, false))
             checkBox.setChecked(true);
-            //btnchooser.setEnabled(true);
-        } else {
+        else
             checkBox.setChecked(false);
-            //btnchooser.setEnabled(false);
-        }
+
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                long t = SystemClock.elapsedRealtime();
+
+                /*if (t < 2 * 60 * 1000) {
+                    checkBox.setChecked(!checkBox.isChecked());
+                    Toast.makeText(getApplicationContext(), R.string.wait_message, Toast.LENGTH_SHORT).show();
+                    return;
+                }*/
+
                 if (checkBox.isChecked()) {
-                    editor.putBoolean("enableHighlight", true);
-                    //btnchooser.setEnabled(true);
-                } else {
-                    editor.putBoolean("enableHighlight", false);
-                    //btnchooser.setEnabled(false);
+                    editor.putBoolean(prefname, true);
+
+                    if (onToast){
+                        Toast.makeText(MainActivity.this, onMessage, Toast.LENGTH_SHORT).show();
+                    }
+
+                }else {
+                    editor.putBoolean(prefname, false);
+
+                    if (offToast){
+                        Toast.makeText(MainActivity.this, offMessage, Toast.LENGTH_SHORT).show();
+                    }
                 }
+
                 editor.apply();
+
             }
         });
-
-
     }
+
 }

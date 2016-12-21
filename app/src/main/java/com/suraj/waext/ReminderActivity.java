@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class ReminderActivity extends Activity {
 
-    private static HashMap<String, String> contactHashMap;
+    private static HashMap<String, Object> contactHashMap;
     private String contactName;
 
     @Override
@@ -36,7 +36,7 @@ public class ReminderActivity extends Activity {
 
             //if launched for setting up reminder
             if (contactNumber != null) {
-                contactName = contactHashMap.get(contactNumber);
+                contactName = contactHashMap.get(contactNumber).toString();
                 setContentView(R.layout.activity_reminder);
                 setUpForReminder();
 
@@ -155,66 +155,8 @@ public class ReminderActivity extends Activity {
         return 0;
     }
 
-    public HashMap<String, String> getContactsHashMap() {
-        Process process = null;
-        Runtime runtime = Runtime.getRuntime();
-        OutputStreamWriter outputStreamWriter;
-
-        HashMap<String, String> hashMap = new HashMap<>();
-
-        try {
-
-            String command = "/data/data/com.whatsapp/databases/wa.db 'Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1';";
-            process = runtime.exec("su");
-
-            outputStreamWriter = new OutputStreamWriter(process.getOutputStream());
-
-            outputStreamWriter.write("sqlite3 " + command);
-
-            outputStreamWriter.flush();
-            outputStreamWriter.close();
-            outputStreamWriter.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            process.waitFor();
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            String s;
-            StringBuffer op = new StringBuffer();
-
-            while ((s = bufferedReader.readLine()) != null) {
-                op.append(s + "\n");
-            }
-
-            String arr[] = op.toString().split("\n");
-
-            Arrays.sort(arr);
-
-            for (String contact : arr) {
-                String potential[] = contact.split("\\|");
-                //Log.i("con", potential[0]);
-
-                if (potential.length < 2)
-                    continue;
-
-                hashMap.put(potential[1].split("@")[0], potential[0]);
-
-            }
-
-
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return hashMap;
-
+    public HashMap<String, Object> getContactsHashMap() {
+        return  new WhatsAppContactManager().getNumberToNameHashMap();
     }
 
 }

@@ -69,12 +69,11 @@
             android:name=".ColorChooserActivity"
             android:label="@string/title_activity_color_chooser"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name="com.soundcloud.android.crop.CropImageActivity" />
-
         <activity
             android:name=".CropActivity"
             android:exported="true" />
+        <activity android:name=".WhiteListActivity"></activity>
     </application>
 
 </manifest>

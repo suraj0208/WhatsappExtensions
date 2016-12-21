@@ -6,13 +6,10 @@
 	<string name="lock_prefs">Preferências de bloqueio</string>
 	<string name="lock_text">Bloquear todas as conversas depois de sair WhatsApp.</string>
 	
-	<!-- translate from here -->
     <string name="lock_after">Bloquear Após </string>
-    <!-- translate end -->
 
     <string name="change_password">Mudar Senha</string>
 
-    <!-- translate from here -->
     <string name="enter_current_password">Insira a senha atual. senha padrão: 1234</string>
     <string name="enter_new_password">Insira a nova senha</string>
     <string name="confirm_password">Confirme a senha</string>
@@ -26,21 +23,16 @@
     <string name="chat_reopen_message">Reabrir conversar para ver os efeitos</string>
     <string name="whatsapp_restart_message">Reinicie WhatsApp para entrar em vigor</string>
     <string name="whatsapp_restart_message_long">Remover WhatsApp de aplicativos recentes e abri-lo novamente</string>
-    <!-- translate end -->
 
-    <!-- Translate -->
     <string name="internal_error">Erro interno</string>
     <string name="bundle_null_error">Erro ao abrir Activity:Bundle null</string>
-    <!-- Translate end-->
 
 
-    <!-- Translate -->
     <string name="select_picture">Selecionar Imagem</string>
-    <!-- Translate end-->
 
+    <!-- do not translate this string. see faq section on XDA thread -->
+    <string name="menuitem_call">chamar</string>
 
-    <!-- Translate -->
-    <string name="menuitem_call">Chamar</string>
     <string name="menuitem_hide">Ocultar</string>
     <string name="menuitem_unhide">Desocultar</string>
     <string name="menuitem_wallpaper_set">Imagem Personalizada</string>
@@ -50,8 +42,7 @@
     <string name="menuitem_unlock">Desbloquear</string>
     <string name="menuitem_highlight">Cor de Destaque</string>
     <string name="menuitem_unhighlight">Rem. Cor de destaque</string>
-    <!-- Translate end-->
-	
+
 	<string name="reminder_prefs">Preferências de lembrete</string>
 	<string name="enable_reminder">Ativar serviço de lembretes</string>
 	<string name="reminder_text">Nota: O serviço é tratado pelo aplicativo automaticamente. Use esta opção se você deseja ativar/desativar o serviço de forma explícita.</string>
@@ -63,14 +54,17 @@
 	<string name="highlight_individual">Cor do chat individual</string>
 	<string name="select_color">Selecione a cor</string>
 
-	<string name="last_seen_prefs">Preferências de visto por último</string>
+	<string name="privacy_prefs">Preferências de Privacidade</string>
 	<string name="hide_last_seen">Ocultar visto por último</string>
 	<string name="req_restart">Requer reinício</string>
 
 	<string name="layout_prefs">Preferências de Layout</string>
 	<string name="hide_camera_btn">Ocultar botão da câmera</string>
+    <string name="hide_tabs_btn">ocultar guias</string>
+    <string name="replace_call_btn">Substituir botão de chamada</string>
 
-	<string name="color">Cor</string>
+
+    <string name="color">Cor</string>
 	<string name="cancel">Cancelar</string>
 	<string name="clear">Limpar</string>
 	<string name="enter">Confirmar</string>
@@ -82,6 +76,14 @@
         <item>3 Minutos</item>
         <item>5 Minutos</item>
         <item>10 Minutos</item>
+    </string-array>
+
+    <!--do not translate these strings see faq section on XDA thread-->
+    <string-array name="oneclickactions">
+        <item>Resp.</item>
+        <item>Dados</item>
+        <item>Encaminhar</item>
+        <item>Incapacitar</item>
     </string-array>
 
     <string-array name="reminderlist">
@@ -106,5 +108,9 @@
         <item>#212121</item>
     </array>
     <string name="title_activity_color_chooser">Escolher a cor</string>
+    <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
+    <string name="hide_read_receipts">Desativar confirmações de leitura</string>
+    <string name="single_click_label">Um clique ação</string>
+    <string name="hide_delivery_receipts">Desativar relatórios de entrega</string>
 
 </resources>
