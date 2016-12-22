@@ -110,7 +110,15 @@
     <string name="title_activity_color_chooser">Escolher a cor</string>
     <string name="wait_message">por favor, espere 2 minutos e tente novamente</string>
     <string name="hide_read_receipts">Desativar confirmações de leitura</string>
-    <string name="single_click_label">Um clique ação</string>
+    <string name="single_click_label">Ação em clique único</string>
     <string name="hide_delivery_receipts">Desativar relatórios de entrega</string>
+	
+	<!-- Translate these for v4.5 -->
+    <string name="add">Adicionar</string>
+    <string name="whitelistinfo">Leitura da Lista Branca :</string>
+    <string name="last_seen_hidden">Seu último visto será escondido. Não remova o WhatsApp dos aplicativos recentes.</string>
+    <string name="restore_prefs">Restaurar suas preferências de privacidade no WhatsApp.</string>
+    <string name="always_online">Sempre me mostre online </string>
+    <!-- Translate end for v4.5 -->
 
 </resources>
