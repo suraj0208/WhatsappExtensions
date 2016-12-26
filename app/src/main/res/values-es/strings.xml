@@ -117,7 +117,7 @@
 <!-- Translate these for v4.5 -->
     <string name="add">Añadir</string>
     <string name="whitelistinfo">Lista Blanca Informes Lectura :</string>
-    <string name="last_seen_hidden">Tu última conexión será ocultada. No eliminar WhatsApp de los recientes.</string>
+    <string name="last_seen_hidden">No eliminar WhatsApp de los recientes.</string>
     <string name="restore_prefs">Restaura tus opciones de privacidad en WhatsApp.</string>
     <!-- Translate end for v4.5 -->
 

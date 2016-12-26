@@ -118,7 +118,7 @@
 
     <string name="add">Aggiungi</string>
     <string name="whitelistinfo">WhiteList per conferma di lettura :</string>
-    <string name="last_seen_hidden">La tua ultima connessione sarà nascosta. Non eliminare WhatsApp dalle App recenti.</string>
+    <string name="last_seen_hidden">Non eliminare WhatsApp dalle App recenti.</string>
     <string name="restore_prefs">Ripristina le tue preferenze privacy in WhatsApp.</string>
 
 </resources>

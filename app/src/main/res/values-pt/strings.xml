@@ -116,7 +116,7 @@
 	<!-- Translate these for v4.5 -->
     <string name="add">Adicionar</string>
     <string name="whitelistinfo">Leitura da Lista Branca :</string>
-    <string name="last_seen_hidden">Seu último visto será escondido. Não remova o WhatsApp dos aplicativos recentes.</string>
+    <string name="last_seen_hidden">Não remova o WhatsApp dos aplicativos recentes.</string>
     <string name="restore_prefs">Restaurar suas preferências de privacidade no WhatsApp.</string>
     <string name="always_online">Sempre me mostre online </string>
     <!-- Translate end for v4.5 -->

@@ -116,7 +116,7 @@
     <!-- Translate these for v4.5 -->
     <string name="add">Voeg toe</string>
     <string name="whitelistinfo">Whitelist leesbevestiging :</string>
-    <string name="last_seen_hidden">Je laatst gezien wordt verborgen. Wis Whatsapp niet uit de recente Apps.</string>
+    <string name="last_seen_hidden">Wis Whatsapp niet uit de recente Apps.</string>
     <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
     <!-- Translate end for v4.5 -->
 

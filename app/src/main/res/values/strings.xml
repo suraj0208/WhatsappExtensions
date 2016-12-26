@@ -119,7 +119,7 @@
     <!-- Translate these for v4.5 -->
     <string name="add">Add</string>
     <string name="whitelistinfo">Read Receipts WhiteList :</string>
-    <string name="last_seen_hidden">Your last seen will be hidden. Do not clear WhatsApp from recent Apps.</string>
+    <string name="last_seen_hidden">Do not clear WhatsApp from recent Apps.</string>
     <string name="restore_prefs">Restore your privacy preferences in WhatsApp.</string>
     <string name="always_online">Always show me online</string>
     <!-- Translate end for v4.5 -->
