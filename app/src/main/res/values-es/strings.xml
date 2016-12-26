@@ -119,6 +119,7 @@
     <string name="whitelistinfo">Lista Blanca Informes Lectura :</string>
     <string name="last_seen_hidden">No eliminar WhatsApp de los recientes.</string>
     <string name="restore_prefs">Restaura tus opciones de privacidad en WhatsApp.</string>
+    <string name="always_online">Siempre muéstreme en línea</string>
     <!-- Translate end for v4.5 -->
 
 </resources>

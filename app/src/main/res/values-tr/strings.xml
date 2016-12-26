@@ -120,4 +120,13 @@
     <string name="title_activity_color_chooser">RenkSeçmeAktivitesi</string>
     <string name="single_click_label">Tek Tıklamada eylem</string>
 
+    <!-- Translate these for v4.5 -->
+    <string name="always_online">Bana her zaman çevrimiçi göster</string>
+    <string name="last_seen_hidden">WhatsApp\'ı son Apps\'tan silmeyin.</string>
+    <string name="restore_prefs">WhatsApp\'de gizlilik tercihlerinizi geri yükleyin.</string>
+    <string name="whitelistinfo">Okundu Makbuzları WhiteList:</string>
+    <string name="add">Eklemek</string>
+    <!-- Translate end for v4.5 -->
+
+
 </resources>
