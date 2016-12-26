@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, getApplicationContext().getString(R.string.last_seen_hidden), Toast.LENGTH_SHORT).show();
 
                     if(!checkBoxSeen.isChecked())
-                        checkBox.performClick();
+                        checkBoxSeen.performClick();
 
                 } else {
                     editor.putBoolean("alwaysOnline", false);
