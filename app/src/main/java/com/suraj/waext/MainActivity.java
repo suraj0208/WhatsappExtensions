@@ -80,28 +80,8 @@ public class MainActivity extends AppCompatActivity {
         setUpCheckBox(checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
         setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "", false, "");
         setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
+        setUpCheckBox((CheckBox)findViewById(R.id.chkboxalwaysonline),"alwaysOnline",true,getApplicationContext().getString(R.string.last_seen_hidden),false,"");
 
-        findViewById(R.id.chkboxalwaysonline).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CheckBox checkBox = (CheckBox) v;
-
-                if (checkBox.isChecked()) {
-                    editor.putBoolean("alwaysOnline", true);
-                    Toast.makeText(MainActivity.this, getApplicationContext().getString(R.string.last_seen_hidden), Toast.LENGTH_SHORT).show();
-
-                    if(!checkBoxSeen.isChecked())
-                        checkBoxSeen.performClick();
-
-                } else {
-                    editor.putBoolean("alwaysOnline", false);
-                    Toast.makeText(MainActivity.this, getApplicationContext().getString(R.string.restore_prefs), Toast.LENGTH_SHORT).show();
-                }
-
-                editor.apply();
-
-            }
-        });
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
             @Override

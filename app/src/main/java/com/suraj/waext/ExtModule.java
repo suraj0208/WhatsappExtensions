@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -98,6 +99,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
     private static int oneClickAction = 3;
+    private static int whatsappPrivacyLastSeen = 0;
 
     private String archiveBooleanFieldName;
 
@@ -116,6 +118,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private Thread thread;
 
     private XSharedPreferences sharedPreferences;
+    private XSharedPreferences whatsappPreferences;
 
     private UnlockReceiver unlockReceiver;
     private XModuleResources modRes;
@@ -605,12 +608,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                ((Activity) (param.thisObject)).unregisterReceiver(unlockReceiver);
+                Activity activity = ((Activity) (param.thisObject));
+                activity.unregisterReceiver(unlockReceiver);
 
-                if (enableHideSeen) {
-                    setSeenOff("2", ((Activity) (param.thisObject)).getApplicationContext());
-                } else if (alwaysOnline) {
-                    setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
+                if (alwaysOnline) {
+                    setSeenOff(Integer.toString(whatsappPrivacyLastSeen), activity.getApplicationContext());
                 }
             }
         });
@@ -889,6 +891,31 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         }
     }
 
+    private void hookMethodsForAlwaysOnline(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        if (settingClass == null)
+            return;
+
+        XposedHelpers.findAndHookMethod(settingClass, "a", Preference.class, Object.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                if (whatsappPreferences != null) {
+
+                    if (!(param.args[0] instanceof ListPreference)) {
+                        return;
+                    }
+
+                    ListPreference listPreference = (ListPreference) param.args[0];
+
+                    if (listPreference.getKey().equals("privacy_last_seen")) {
+                        whatsappPrivacyLastSeen = Integer.parseInt(param.args[1].toString());
+                    }
+                }
+            }
+        });
+
+    }
+
     public void hookMethodsForClickToReply(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("android.widget.HeaderViewListAdapter", loadPackageParam.classLoader, "getView", int.class, View.class, ViewGroup.class, new XC_MethodHook() {
             @Override
@@ -949,7 +976,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-
 
 
                 Notification notification = (Notification) (param.getResult());
@@ -1072,6 +1098,42 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     }
 
+    private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        templockedContacts = new HashSet<>();
+        templockedContacts.addAll(lockedContacts);
+
+        //value of timer after which contact is to locked
+        lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
+
+        if (nameToNumberHashMap == null) {
+            (new Thread() {
+                @Override
+                public void run() {
+                    nameToNumberHashMap = new WhatsAppContactManager().getNameToNumberHashMap();
+                }
+            }).start();
+        }
+
+        whatsappPreferences = new XSharedPreferences("com.whatsapp", "com.whatsapp_preferences");
+
+
+        if (whatsappPreferences != null) {
+            whatsappPreferences.makeWorldReadable();
+            whatsappPrivacyLastSeen = whatsappPreferences.getInt("privacy_last_seen", 0);
+        } else {
+            XposedBridge.log("whatsapp prefs null");
+        }
+
+        try {
+            settingClass = XposedHelpers.findClass("com.whatsapp.SettingsPrivacy", loadPackageParam.classLoader);
+            preferenceClass = XposedHelpers.findClass("com.whatsapp.preference.WaPrivacyPreference", loadPackageParam.classLoader);
+        } catch (XposedHelpers.ClassNotFoundError error) {
+            error.printStackTrace();
+        }
+
+    }
+
+
     public String getOneClickActionString() {
         return modRes.getStringArray(R.array.oneclickactions)[oneClickAction];
     }
@@ -1163,27 +1225,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         initPrefs();
 
-        templockedContacts = new HashSet<>();
-        templockedContacts.addAll(lockedContacts);
+        initVars(loadPackageParam);
+        //call it here
+        hookMethodsForAlwaysOnline(loadPackageParam);
 
-        //value of timer after which contact is to locked
-        lockAfter = getLockAfter(sharedPreferences.getInt("lockAfter", 2));
-
-        try {
-            settingClass = XposedHelpers.findClass("com.whatsapp.SettingsPrivacy", loadPackageParam.classLoader);
-            preferenceClass = XposedHelpers.findClass("com.whatsapp.preference.WaPrivacyPreference", loadPackageParam.classLoader);
-        } catch (XposedHelpers.ClassNotFoundError error) {
-            error.printStackTrace();
-        }
-
-        if(nameToNumberHashMap==null){
-            (new Thread(){
-                @Override
-                public void run() {
-                    nameToNumberHashMap = new WhatsAppContactManager().getNameToNumberHashMap();
-                }
-            }).start();
-        }
 
     }
 
