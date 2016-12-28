@@ -63,7 +63,7 @@ public class WhatsAppContactManager {
 
             Arrays.sort(arr);
 
-            Log.i("com.suraj","in contact mngr arr len :"+arr.length);
+            //Log.i("com.suraj","in contact mngr arr len :"+arr.length);
 
 
             for (String contact : arr) {
@@ -80,7 +80,7 @@ public class WhatsAppContactManager {
                     if (value != null) {
                         List<String> numbers = new ArrayList<>();
 
-                        Log.i("com.suraj","building list");
+                        //Log.i("com.suraj","building list");
 
 
                         if (value instanceof String) {
@@ -95,7 +95,7 @@ public class WhatsAppContactManager {
 
                     } else {
                         hashMap.put(potential[0], potential[1].split("@")[0]);
-                        Log.i("com.suraj","inserting single");
+                        //Log.i("com.suraj","inserting single");
 
                     }
 
@@ -105,11 +105,11 @@ public class WhatsAppContactManager {
 
 
         }  catch (IOException e) {
-            Log.e("com.suraj","in mgnr io exception");
+            //Log.e("com.suraj","in mgnr io exception");
             e.printStackTrace();
         } catch (Exception e){
             e.printStackTrace();
-            Log.e("com.suraj","in mgnr io exception");
+            //Log.e("com.suraj","in mgnr io exception");
         }
 
         return hashMap;
