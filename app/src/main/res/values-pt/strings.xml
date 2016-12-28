@@ -119,12 +119,12 @@
     <string name="always_online">Sempre me mostre online </string>
 
     <!-- Translate these for 4.6 -->
-    <string name="listtype_black">BlackList</string>
-    <string name="listtype_white">WhiteList</string>
-    <string name="whitelistinfo">Use this as %1$s</string>
-    <string name="hide_notifs">Hide notifications for locked contacts</string>
-    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
-    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <string name="listtype_black">Lista Negra</string>
+    <string name="listtype_white">Lista Branca</string>
+    <string name="whitelistinfo">Use isto como %1$s</string>
+    <string name="hide_notifs">Ocultar notificações para contatos bloqueados</string>
+    <string name="lock_whatsapp_web">Bloquear WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 pode está faltando. Por favor, consulte FAQ na XDA</string>
     <!-- Translate end for v4.6 -->
 
 </resources>
