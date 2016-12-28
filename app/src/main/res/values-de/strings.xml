@@ -116,13 +116,15 @@
 
     <!-- Translate these for v4.5 -->
     <string name="add">Hinzufügen</string>
-    <string name="whitelistinfo">"Gelesen" senden an :</string>
     <string name="last_seen_hidden">Schließe WhatsApp nicht aus der "letzte Apps"-Liste.</string>
     <string name="restore_prefs">Einstellungen wiederherstellen.</string>
     <string name="always_online">Immer als "online" anzeigen</string>
     <!-- Translate end for v4.5 -->
 
     <!-- Translate these for 4.6 -->
+    <string name="listtype_black">BlackList</string>
+    <string name="listtype_white">WhiteList</string>
+    <string name="whitelistinfo">Use this as %1$s</string>
     <string name="hide_notifs">Hide notifications for locked contacts</string>
     <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
     <!-- Translate end for v4.6 -->

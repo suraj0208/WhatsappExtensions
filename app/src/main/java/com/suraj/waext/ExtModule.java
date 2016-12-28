@@ -94,8 +94,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean replaceCallButton = false;
     private static boolean hideDeliveryReports = false;
     private static boolean alwaysOnline = false;
-    private static boolean hideNotifs;
-    private static boolean lockWAWeb;
+    private static boolean hideNotifs = false;
+    private static boolean lockWAWeb = false;
+    private static boolean blackOrWhite = true;
 
 
     private static int highlightColor = Color.GRAY;
@@ -135,7 +136,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                initPrefs();
+
+                (new Thread() {
+                    @Override
+                    public void run() {
+                        initPrefs();
+                    }
+                }).start();
+
                 TypedValue a = new TypedValue();
 
                 AndroidAppHelper.currentApplication().getApplicationContext().getTheme().resolveAttribute(android.R.attr.textColor, a, true);
@@ -579,7 +587,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.afterHookedMethod(param);
 
                 if (param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")) {
-                    if(!lockWAWeb)
+                    if (!lockWAWeb)
                         return;
 
                     if (lockedContacts.size() > 0 && firstTime && showLockScreen) {
@@ -605,7 +613,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
 
-                if(!lockWAWeb)
+                if (!lockWAWeb)
                     return;
 
                 firstTime = true;
@@ -846,6 +854,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (participantString != null)
                     shouldSend = shouldSend || whitelistSet.contains(participantString.toString().split("@")[0]);
 
+                //blackOrWhite = true -> whitelist else blacklist
+                if (!blackOrWhite) {
+                    shouldSend = !shouldSend;
+                }
 
                 if (hideReadReceipts && !shouldSend) {
                     param.setResult(null);
@@ -986,7 +998,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                if(!hideNotifs)
+                if (!hideNotifs)
                     return;
 
                 Notification notification = (Notification) (param.getResult());
@@ -1108,6 +1120,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         alwaysOnline = sharedPreferences.getBoolean("alwaysOnline", false);
         hideNotifs = sharedPreferences.getBoolean("hideNotifs", false);
         lockWAWeb = sharedPreferences.getBoolean("lockWAWeb", false);
+        blackOrWhite = sharedPreferences.getBoolean("blackOrWhite", true);
     }
 
     private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {

@@ -11,8 +11,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,6 +47,31 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
         //tricky -- create new hashset -> getstringset returns a reference
         whitelistSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
+
+        final Switch switchBlackWhite = (Switch)findViewById(R.id.switchBlackWhite);
+        final TextView tvwhitelistinfo = (TextView)findViewById(R.id.tvinforwhitelist);
+
+        if(sharedPreferences.getBoolean("blackOrWhite",true)) {
+            switchBlackWhite.setChecked(true);
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
+        }else{
+            switchBlackWhite.setChecked(false);
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+        }
+
+        switchBlackWhite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(switchBlackWhite.isChecked()){
+                    editor.putBoolean("blackOrWhite",true);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
+                }else{
+                    editor.putBoolean("blackOrWhite",false);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+                }
+                editor.apply();
+            }
+        });
 
         final WhatsAppContactManager whatsAppContactManager = new WhatsAppContactManager();
 
