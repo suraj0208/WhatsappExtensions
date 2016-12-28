@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -101,20 +102,27 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                     (new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
-                            for (int position : deleteItemsSet) {
-                                Object value = nameToNumberHashmap.get(whitelist.get(position));
+                            int i=0;
 
-                                if (value instanceof String)
-                                    whitelistSet.remove(value.toString());
-                                else if (value instanceof List) {
-                                    for (Object number : (List) value)
-                                        whitelistSet.remove(number.toString());
+                            for (Iterator<String> iterator = whitelist.iterator(); iterator.hasNext();) {
+                                String name = iterator.next();
+                                if (deleteItemsSet.contains(i)) {
+
+                                    Object value = nameToNumberHashmap.get(name);
+
+                                    if (value instanceof String)
+                                        whitelistSet.remove(value.toString());
+                                    else if (value instanceof List) {
+                                        for (Object number : (List) value)
+                                            whitelistSet.remove(number.toString());
+                                    }
+                                    iterator.remove();
                                 }
 
-                                whitelist.remove(position);
-                                deleteCheckBoxes = new CheckBox[whitelist.size()];
-                                deleteItemsSet = new HashSet<>();
+                                i++;
                             }
+
+                            deleteItemsSet.clear();
 
                             return null;
                         }
