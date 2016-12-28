@@ -102,9 +102,9 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                     (new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
-                            int i=0;
+                            int i = 0;
 
-                            for (Iterator<String> iterator = whitelist.iterator(); iterator.hasNext();) {
+                            for (Iterator<String> iterator = whitelist.iterator(); iterator.hasNext(); ) {
                                 String name = iterator.next();
                                 if (deleteItemsSet.contains(i)) {
 
@@ -165,9 +165,16 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             return;
         }
 
-        for (String number : whitelistSet)
-            whitelist.add(numberToNameHashmap.get(number).toString());
+        for (String number : whitelistSet) {
+            if (numberToNameHashmap.get(number) != null)
+                whitelist.add(numberToNameHashmap.get(number).toString());
+            else{
+                Log.i("com.suraj","in whitelist act: .get null " + numberToNameHashmap.size());
+                Log.i("com.suraj","whitelist set size " + whitelistSet.size());
 
+            }
+
+        }
         Collections.sort(whitelist);
 
         deleteCheckBoxes = new CheckBox[whitelist.size()];

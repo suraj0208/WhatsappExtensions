@@ -39,6 +39,7 @@
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlockdesc"
+            android:layout_marginTop="8dp"
             android:text="@string/lock_after" />
 
         <Spinner
@@ -46,24 +47,44 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/tvlockafter"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
             android:entries="@array/minutelist" />
 
         <Button
             android:id="@+id/btnchangepass"
-            android:layout_width="match_parent"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignBaseline="@id/spinminutes"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@mipmap/ic_settings_black_24dp" />
+
+        <CheckBox
+            android:id="@+id/chkboxHideNotifs"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tvlockafter"
-            android:layout_marginBottom="10dp"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/btnchangepass"
+            android:layout_marginTop="8dp"
+            android:text="@string/hide_notifs" />
+
+        <CheckBox
+            android:id="@+id/chkboxLockWAWeb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxHideNotifs"
             android:layout_marginTop="5dp"
-            android:text="@string/change_password" />
+            android:text="@string/lock_whatsapp_web" />
 
         <TextView
             android:id="@+id/tvservicestatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/btnchangepass"
+            android:layout_below="@id/chkboxLockWAWeb"
             android:layout_margin="10dp"
             android:text="@string/reminder_prefs"
             android:textSize="22sp" />

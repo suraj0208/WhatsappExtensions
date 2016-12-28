@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
                 }
 
         );
+
+        setUpCheckBox((CheckBox)findViewById(R.id.chkboxHideNotifs),"hideNotifs",false,"",false,"");
+        setUpCheckBox((CheckBox)findViewById(R.id.chkboxLockWAWeb),"lockWAWeb",false,"",false,"");
+
     }
 
 

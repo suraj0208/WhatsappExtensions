@@ -128,5 +128,9 @@
     <string name="add">Eklemek</string>
     <!-- Translate end for v4.5 -->
 
+    <!-- Translate these for 4.6 -->
+    <string name="hide_notifs">Hide notifications for locked contacts</string>
+    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <!-- Translate end for v4.6 -->
 
 </resources>

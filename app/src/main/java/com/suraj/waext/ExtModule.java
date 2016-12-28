@@ -94,6 +94,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean replaceCallButton = false;
     private static boolean hideDeliveryReports = false;
     private static boolean alwaysOnline = false;
+    private static boolean hideNotifs;
+    private static boolean lockWAWeb;
 
 
     private static int highlightColor = Color.GRAY;
@@ -577,6 +579,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.afterHookedMethod(param);
 
                 if (param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")) {
+                    if(!lockWAWeb)
+                        return;
+
                     if (lockedContacts.size() > 0 && firstTime && showLockScreen) {
                         Intent intent = new Intent();
                         intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
@@ -599,6 +604,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
+
+                if(!lockWAWeb)
+                    return;
+
                 firstTime = true;
                 showLockScreen = true;
             }
@@ -977,6 +986,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
+                if(!hideNotifs)
+                    return;
 
                 Notification notification = (Notification) (param.getResult());
 
@@ -1095,7 +1106,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hideReadReceipts = sharedPreferences.getBoolean("hideReadReceipts", false);
         hideDeliveryReports = sharedPreferences.getBoolean("hideDeliveryReports", false);
         alwaysOnline = sharedPreferences.getBoolean("alwaysOnline", false);
-
+        hideNotifs = sharedPreferences.getBoolean("hideNotifs", false);
+        lockWAWeb = sharedPreferences.getBoolean("lockWAWeb", false);
     }
 
     private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {

@@ -1,5 +1,7 @@
 package com.suraj.waext;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -47,20 +49,22 @@ public class WhatsAppContactManager {
         }
 
         try {
-            process.waitFor();
 
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String s;
-            StringBuffer op = new StringBuffer();
+            StringBuilder op = new StringBuilder();
 
             while ((s = bufferedReader.readLine()) != null) {
-                op.append(s + "\n");
+                op.append(s).append("\n");
             }
 
             String arr[] = op.toString().split("\n");
 
             Arrays.sort(arr);
+
+            Log.i("com.suraj","in contact mngr arr len :"+arr.length);
+
 
             for (String contact : arr) {
                 String potential[] = contact.split("\\|");
@@ -76,6 +80,9 @@ public class WhatsAppContactManager {
                     if (value != null) {
                         List<String> numbers = new ArrayList<>();
 
+                        Log.i("com.suraj","building list");
+
+
                         if (value instanceof String) {
                             numbers.add(value.toString());
                             numbers.add(potential[1].split("@")[0]);
@@ -88,6 +95,8 @@ public class WhatsAppContactManager {
 
                     } else {
                         hashMap.put(potential[0], potential[1].split("@")[0]);
+                        Log.i("com.suraj","inserting single");
+
                     }
 
 
@@ -95,10 +104,12 @@ public class WhatsAppContactManager {
             }
 
 
-        } catch (InterruptedException e) {
+        }  catch (IOException e) {
+            Log.e("com.suraj","in mgnr io exception");
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e){
             e.printStackTrace();
+            Log.e("com.suraj","in mgnr io exception");
         }
 
         return hashMap;
