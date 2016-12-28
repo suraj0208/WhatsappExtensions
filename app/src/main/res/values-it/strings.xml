@@ -122,7 +122,7 @@
     <string name="restore_prefs">Ripristina le tue preferenze privacy in WhatsApp.</string>
 
     <!-- Translate these for 4.6 -->
-    <string name="hide_notifs">Hide notifications for locked contacts</string>
-    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <string name="hide_notifs">Nascondi notifiche per i contatti bloccati</string>
+    <string name="lock_whatsapp_web">Blocca WhatsApp Web</string>
     <!-- Translate end for v4.6 -->
 </resources>
