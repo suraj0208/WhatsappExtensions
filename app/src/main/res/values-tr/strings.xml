@@ -119,12 +119,10 @@
     <string name="title_activity_color_chooser">RenkSeçmeAktivitesi</string>
     <string name="single_click_label">Tek Tıklamada eylem</string>
 
-    <!-- Translate these for v4.5 -->
     <string name="always_online">Bana her zaman çevrimiçi göster</string>
     <string name="last_seen_hidden">WhatsApp\'ı son Apps\'tan silmeyin.</string>
     <string name="restore_prefs">WhatsApp\'de gizlilik tercihlerinizi geri yükleyin.</string>
     <string name="add">Eklemek</string>
-    <!-- Translate end for v4.5 -->
 
     <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
@@ -132,6 +130,7 @@
     <string name="whitelistinfo">Use this as %1$s</string>
     <string name="hide_notifs">Hide notifications for locked contacts</string>
     <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
     <!-- Translate end for v4.6 -->
 
 </resources>

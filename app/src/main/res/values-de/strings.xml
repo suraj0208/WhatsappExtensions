@@ -114,12 +114,10 @@
     <string name="single_click_label">Ein Klick-Aktion</string>
     <string name="hide_delivery_receipts">Ausschalten Sendeberichte</string>
 
-    <!-- Translate these for v4.5 -->
     <string name="add">Hinzufügen</string>
     <string name="last_seen_hidden">Schließe WhatsApp nicht aus der "letzte Apps"-Liste.</string>
     <string name="restore_prefs">Einstellungen wiederherstellen.</string>
     <string name="always_online">Immer als "online" anzeigen</string>
-    <!-- Translate end for v4.5 -->
 
     <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
@@ -127,6 +125,7 @@
     <string name="whitelistinfo">Use this as %1$s</string>
     <string name="hide_notifs">Hide notifications for locked contacts</string>
     <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
     <!-- Translate end for v4.6 -->
 
 </resources>

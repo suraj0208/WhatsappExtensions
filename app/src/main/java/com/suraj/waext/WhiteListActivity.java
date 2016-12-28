@@ -196,9 +196,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         for (String number : whitelistSet) {
             if (numberToNameHashmap.get(number) != null)
                 whitelist.add(numberToNameHashmap.get(number).toString());
-            else{
-                //Log.i("com.suraj","in whitelist act: .get null " + numberToNameHashmap.size());
-                //Log.i("com.suraj","whitelist set size " + whitelistSet.size());
+            else if(numberToNameHashmap.size()==0){
+                Toast.makeText(getApplicationContext(),getString(R.string.sqliteMissing),Toast.LENGTH_SHORT).show();
             }
 
         }

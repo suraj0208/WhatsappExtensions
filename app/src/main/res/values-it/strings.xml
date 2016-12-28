@@ -126,5 +126,6 @@
     <string name="whitelistinfo">Use this as %1$s</string>
     <string name="hide_notifs">Nascondi notifiche per i contatti bloccati</string>
     <string name="lock_whatsapp_web">Blocca WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
     <!-- Translate end for v4.6 -->
 </resources>
