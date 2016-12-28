@@ -115,11 +115,11 @@
     <string name="hide_delivery_receipts">Ausschalten Sendeberichte</string>
 
     <!-- Translate these for v4.5 -->
-    <string name="add">Add</string>
-    <string name="whitelistinfo">Re"Gelesen"-Benachrichtigungen WhiteList :</string>
-    <string name="last_seen_hidden">WhatsApp aus aktuellen Apps nicht löschen.</string>
-    <string name="restore_prefs">Stellen Sie Ihre Privatsphäre-Einstellungen in WhatsApp wieder her.</string>
-    <string name="always_online">Zeigen Sie mich immer online</string>
+    <string name="add">Hinzufügen</string>
+    <string name="whitelistinfo">"Gelesen" senden an :</string>
+    <string name="last_seen_hidden">Schließe WhatsApp nicht aus der "letzte Apps"-Liste.</string>
+    <string name="restore_prefs">Einstellungen wiederherstellen.</string>
+    <string name="always_online">Immer als "online" anzeigen</string>
     <!-- Translate end for v4.5 -->
 
 </resources>
