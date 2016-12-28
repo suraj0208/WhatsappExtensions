@@ -113,11 +113,17 @@
     </array>
     <string name="title_activity_color_chooser">KleurenkiezerActivity</string>
 
-    <!-- Translate these for v4.5 -->
     <string name="add">Voeg toe</string>
-    <string name="whitelistinfo">Whitelist leesbevestiging :</string>
-    <string name="last_seen_hidden">Je laatst gezien wordt verborgen. Wis Whatsapp niet uit de recente Apps.</string>
+    <string name="last_seen_hidden">Wis Whatsapp niet uit de recente Apps.</string>
     <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
-    <!-- Translate end for v4.5 -->
+
+    <!-- Translate these for 4.6 -->
+    <string name="listtype_black">BlackList</string>
+    <string name="listtype_white">WhiteList</string>
+    <string name="whitelistinfo">Use this as %1$s</string>
+    <string name="hide_notifs">Hide notifications for locked contacts</string>
+    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <!-- Translate end for v4.6 -->
 
 </resources>

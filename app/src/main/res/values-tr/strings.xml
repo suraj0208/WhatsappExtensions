@@ -1,18 +1,18 @@
 <resources>
     <string name="app_name">WhatsApp Eklentileri</string>
     <string name="action_settings">Ayarlar</string>
-	
-    <string name="title_activity_change_password">Şifreyi Değiştir</string>
-	<string name="lock_prefs">Kilitleme Tercihleri</string>
-	<string name="lock_text">Siz whatsapp dan çıkınca tüm görüşmeleriniz kilitlenecek.</string>
 
-    
+    <string name="title_activity_change_password">Şifreyi Değiştir</string>
+    <string name="lock_prefs">Kilitleme Tercihleri</string>
+    <string name="lock_text">Siz whatsapp dan çıkınca tüm görüşmeleriniz kilitlenecek.</string>
+
+
     <string name="lock_after">Sonra Kilitlencek </string>
-    
+
 
     <string name="change_password">Şifreyi Değiştir</string>
 
-    
+
     <string name="enter_current_password">Şuanki şifreyi girin. Varsayılan Şifre: 1234</string>
     <string name="enter_new_password">Yeni şifre girin</string>
     <string name="confirm_password">Şifreyi onayla</string>
@@ -28,10 +28,9 @@
     <string name="whatsapp_restart_message_long">Whatsapp ı önceki uygulamalardan kaldır.</string>
     <string name="wait_message">açılmadan 2 dakika sonra tekrar deneyin</string>
 
-    
+
     <string name="internal_error">Hata</string>
     <string name="bundle_null_error">Aktivite açılırken hata:Bundle geçersiz</string>
-    
 
 
     <string name="select_picture">Resim Seç</string>
@@ -51,35 +50,35 @@
     <string name="menuitem_unhighlight">Öne Çıkmayanlar</string>
 
     <string name="reminder_prefs">Hatırlatıcı seçenekleri</string>
-	<string name="enable_reminder">Hatırlatıcı servisini etkinleştir</string>
-	<string name="reminder_text">Not: Servis uygulama tarafından otomatik olarak başlatılır. Etkinleştir/Devre Dışı seçeneklerini kullanarak tercihinizi belirleyebilirsiniz.</string>
-	<string name="reminder_in">içinde Hatırlar </string>
+    <string name="enable_reminder">Hatırlatıcı servisini etkinleştir</string>
+    <string name="reminder_text">Not: Servis uygulama tarafından otomatik olarak başlatılır. Etkinleştir/Devre Dışı seçeneklerini kullanarak tercihinizi belirleyebilirsiniz.</string>
+    <string name="reminder_in">içinde Hatırlar </string>
     <string name="reply_to">%1$s kişisini Cevapla</string>
 
 
     <string name="highlight_prefs">Öne Çıkarılan ayarlar</string>
-	<string name="highlight_groups">Öne Çıkarılan Gruplar</string>
-	<string name="highlight_individual">Bireysel sohbet vurgu rengi</string>
-	<string name="select_color">Renk seç</string>
-	
-	<string name="privacy_prefs">Gizlilik Tercihleri</string>
-	<string name="hide_last_seen">Son görülmeyi gizle</string>
+    <string name="highlight_groups">Öne Çıkarılan Gruplar</string>
+    <string name="highlight_individual">Bireysel sohbet vurgu rengi</string>
+    <string name="select_color">Renk seç</string>
+
+    <string name="privacy_prefs">Gizlilik Tercihleri</string>
+    <string name="hide_last_seen">Son görülmeyi gizle</string>
     <string name="hide_read_receipts">Okundu bilgisini kapat</string>
     <string name="hide_delivery_receipts">İletildi raporlarını kapat</string>
     <string name="req_restart">Yeniden başlatmak gerektirir</string>
-	
-	<string name="layout_prefs">Düzen Tercihleri</string>
-	<string name="hide_camera_btn">Kamera butonunu gizle</string>
+
+    <string name="layout_prefs">Düzen Tercihleri</string>
+    <string name="hide_camera_btn">Kamera butonunu gizle</string>
     <string name="hide_tabs_btn">Sekmeleri gizle</string>
     <string name="replace_call_btn">Arama düğmesini değiştir</string>
 
 
     <string name="color">Renk</string>
-	<string name="cancel">İptal</string>
-	<string name="clear">Gir</string>
-	<string name="enter">Enter</string>
-	<string name="default_password">Varsayılan Şifre: 1234</string>
-	
+    <string name="cancel">İptal</string>
+    <string name="clear">Gir</string>
+    <string name="enter">Enter</string>
+    <string name="default_password">Varsayılan Şifre: 1234</string>
+
     <string-array name="minutelist">
         <item>Hemen</item>
         <item>1 Dakika</item>
@@ -119,5 +118,19 @@
     </array>
     <string name="title_activity_color_chooser">RenkSeçmeAktivitesi</string>
     <string name="single_click_label">Tek Tıklamada eylem</string>
+
+    <string name="always_online">Bana her zaman çevrimiçi göster</string>
+    <string name="last_seen_hidden">WhatsApp\'ı son Apps\'tan silmeyin.</string>
+    <string name="restore_prefs">WhatsApp\'de gizlilik tercihlerinizi geri yükleyin.</string>
+    <string name="add">Eklemek</string>
+
+    <!-- Translate these for 4.6 -->
+    <string name="listtype_black">BlackList</string>
+    <string name="listtype_white">WhiteList</string>
+    <string name="whitelistinfo">Use this as %1$s</string>
+    <string name="hide_notifs">Hide notifications for locked contacts</string>
+    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <!-- Translate end for v4.6 -->
 
 </resources>

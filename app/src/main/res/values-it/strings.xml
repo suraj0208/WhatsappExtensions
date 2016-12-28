@@ -117,8 +117,15 @@
 
 
     <string name="add">Aggiungi</string>
-    <string name="whitelistinfo">WhiteList per conferma di lettura :</string>
-    <string name="last_seen_hidden">La tua ultima connessione sarà nascosta. Non eliminare WhatsApp dalle App recenti.</string>
+    <string name="last_seen_hidden">Non eliminare WhatsApp dalle App recenti.</string>
     <string name="restore_prefs">Ripristina le tue preferenze privacy in WhatsApp.</string>
 
+    <!-- Translate these for 4.6 -->
+    <string name="listtype_black">BlackList</string>
+    <string name="listtype_white">WhiteList</string>
+    <string name="whitelistinfo">Use this as %1$s</string>
+    <string name="hide_notifs">Nascondi notifiche per i contatti bloccati</string>
+    <string name="lock_whatsapp_web">Blocca WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <!-- Translate end for v4.6 -->
 </resources>

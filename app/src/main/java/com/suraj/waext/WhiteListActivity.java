@@ -11,13 +11,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +47,31 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
         //tricky -- create new hashset -> getstringset returns a reference
         whitelistSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
+
+        final Switch switchBlackWhite = (Switch)findViewById(R.id.switchBlackWhite);
+        final TextView tvwhitelistinfo = (TextView)findViewById(R.id.tvinforwhitelist);
+
+        if(sharedPreferences.getBoolean("blackOrWhite",true)) {
+            switchBlackWhite.setChecked(true);
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
+        }else{
+            switchBlackWhite.setChecked(false);
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+        }
+
+        switchBlackWhite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(switchBlackWhite.isChecked()){
+                    editor.putBoolean("blackOrWhite",true);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
+                }else{
+                    editor.putBoolean("blackOrWhite",false);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+                }
+                editor.apply();
+            }
+        });
 
         final WhatsAppContactManager whatsAppContactManager = new WhatsAppContactManager();
 
@@ -101,20 +130,27 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                     (new AsyncTask<Void, Void, Void>() {
                         @Override
                         protected Void doInBackground(Void... params) {
-                            for (int position : deleteItemsSet) {
-                                Object value = nameToNumberHashmap.get(whitelist.get(position));
+                            int i = 0;
 
-                                if (value instanceof String)
-                                    whitelistSet.remove(value.toString());
-                                else if (value instanceof List) {
-                                    for (Object number : (List) value)
-                                        whitelistSet.remove(number.toString());
+                            for (Iterator<String> iterator = whitelist.iterator(); iterator.hasNext(); ) {
+                                String name = iterator.next();
+                                if (deleteItemsSet.contains(i)) {
+
+                                    Object value = nameToNumberHashmap.get(name);
+
+                                    if (value instanceof String)
+                                        whitelistSet.remove(value.toString());
+                                    else if (value instanceof List) {
+                                        for (Object number : (List) value)
+                                            whitelistSet.remove(number.toString());
+                                    }
+                                    iterator.remove();
                                 }
 
-                                whitelist.remove(position);
-                                deleteCheckBoxes = new CheckBox[whitelist.size()];
-                                deleteItemsSet = new HashSet<>();
+                                i++;
                             }
+
+                            deleteItemsSet.clear();
 
                             return null;
                         }
@@ -157,9 +193,14 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             return;
         }
 
-        for (String number : whitelistSet)
-            whitelist.add(numberToNameHashmap.get(number).toString());
+        for (String number : whitelistSet) {
+            if (numberToNameHashmap.get(number) != null)
+                whitelist.add(numberToNameHashmap.get(number).toString());
+            else if(numberToNameHashmap.size()==0){
+                Toast.makeText(getApplicationContext(),getString(R.string.sqliteMissing),Toast.LENGTH_SHORT).show();
+            }
 
+        }
         Collections.sort(whitelist);
 
         deleteCheckBoxes = new CheckBox[whitelist.size()];

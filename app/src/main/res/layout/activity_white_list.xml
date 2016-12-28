@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingTop="10dp"
     tools:context="com.suraj.waext.WhiteListActivity">
 
     <TextView
@@ -14,7 +14,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
-        android:text="@string/whitelistinfo" />
+        android:text="Use this as a " />
+
 
     <ImageButton
         android:id="@+id/imgbtnremovecontact"
@@ -27,11 +28,21 @@
         android:layout_marginRight="10dp"
         android:background="@mipmap/ic_delete_black_24dp" />
 
+    <Switch
+        android:id="@+id/switchBlackWhite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvinforwhitelist"
+        android:layout_marginEnd="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@id/imgbtnremovecontact"
+        android:layout_toStartOf="@id/imgbtnremovecontact" />
+
     <ListView
         android:id="@+id/lstviewwhitelistcontacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvinforwhitelist"
+        android:layout_below="@id/switchBlackWhite"
         android:layout_marginTop="10dp" />
 
     <android.support.design.widget.FloatingActionButton
