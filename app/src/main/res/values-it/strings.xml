@@ -123,9 +123,9 @@
     <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
     <string name="listtype_white">WhiteList</string>
-    <string name="whitelistinfo">Use this as %1$s</string>
+    <string name="whitelistinfo">Usa questo come %1$s</string>
     <string name="hide_notifs">Nascondi notifiche per i contatti bloccati</string>
     <string name="lock_whatsapp_web">Blocca WhatsApp Web</string>
-    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <string name="sqliteMissing">Potrebbe mancare Sqlite3. Si prega di fare riferimento alle FAQ su XDA</string>
     <!-- Translate end for v4.6 -->
 </resources>
