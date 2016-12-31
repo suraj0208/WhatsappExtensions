@@ -117,13 +117,14 @@
     <string name="last_seen_hidden">Wis Whatsapp niet uit de recente Apps.</string>
     <string name="restore_prefs">Herstel je privacyvoorkeuren in WhatsApp.</string>
 
-    <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
     <string name="listtype_white">WhiteList</string>
     <string name="whitelistinfo">Gebruik dit als %1$s</string>
     <string name="hide_notifs">Verberg meldingen voor geblokkeerde contacten</string>
     <string name="lock_whatsapp_web">Blokkeer WhatsApp Web</string>
     <string name="sqliteMissing">Sqlite3 ontbreekt. Kijk bij de FAQ op XDA</string>
-    <!-- Translate end for v4.6 -->
+
+    <string name="replace_ticks">Show black ticks instead of blue</string>
+
 
 </resources>

@@ -130,5 +130,8 @@
     <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
     <!-- Translate end for v4.6 -->
 
+    <!-- not translated for > 4.6 -->
+    <string name="replace_ticks">Show black ticks instead of blue</string>
+    <!-- end -->
 
 </resources>

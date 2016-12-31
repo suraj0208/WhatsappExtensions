@@ -120,12 +120,13 @@
     <string name="last_seen_hidden">Non eliminare WhatsApp dalle App recenti.</string>
     <string name="restore_prefs">Ripristina le tue preferenze privacy in WhatsApp.</string>
 
-    <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
     <string name="listtype_white">WhiteList</string>
     <string name="whitelistinfo">Usa questo come %1$s</string>
     <string name="hide_notifs">Nascondi notifiche per i contatti bloccati</string>
     <string name="lock_whatsapp_web">Blocca WhatsApp Web</string>
     <string name="sqliteMissing">Potrebbe mancare Sqlite3. Si prega di fare riferimento alle FAQ su XDA</string>
-    <!-- Translate end for v4.6 -->
+
+    <string name="replace_ticks">Show black ticks instead of blue</string>
+
 </resources>
