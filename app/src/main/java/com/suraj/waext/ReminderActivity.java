@@ -8,11 +8,7 @@ import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.Arrays;
+
 import java.util.HashMap;
 
 public class ReminderActivity extends Activity {
@@ -156,7 +152,7 @@ public class ReminderActivity extends Activity {
     }
 
     public HashMap<String, Object> getContactsHashMap() {
-        return  new WhatsAppContactManager().getNumberToNameHashMap();
+        return  new WhatsAppDatabaseHelper().getNumberToNameHashMap();
     }
 
 }

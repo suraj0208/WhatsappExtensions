@@ -15,8 +15,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -73,13 +71,12 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             }
         });
 
-        final WhatsAppContactManager whatsAppContactManager = new WhatsAppContactManager();
 
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                numberToNameHashmap = whatsAppContactManager.getNumberToNameHashMap();
-                nameToNumberHashmap = whatsAppContactManager.getNameToNumberHashMap();
+                numberToNameHashmap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
+                nameToNumberHashmap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
 
                 return null;
             }

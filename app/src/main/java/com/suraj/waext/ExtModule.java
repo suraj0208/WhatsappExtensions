@@ -1134,7 +1134,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             (new Thread() {
                 @Override
                 public void run() {
-                    nameToNumberHashMap = new WhatsAppContactManager().getNameToNumberHashMap();
+                    nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
                 }
             }).start();
         }

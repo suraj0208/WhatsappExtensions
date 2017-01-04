@@ -27,6 +27,7 @@ public class LockPreferencesService extends IntentService {
 
         int action = intent.getIntExtra("action",0);
 
+
         switch (action){
             case 0:
                 editor.putStringSet("lockedContacts", (Set) intent.getSerializableExtra("lockedContacts"));
