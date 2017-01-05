@@ -22,14 +22,14 @@ public class WhatsAppDatabaseHelper {
     }
 
 
-    private static String[] execSQL(String dbName, String query) {
+    public static String[] execSQL(String dbName, String query) {
         Process process = null;
         Runtime runtime = Runtime.getRuntime();
         OutputStreamWriter outputStreamWriter;
 
         try {
 
-            String command = "/data/data/com.whatsapp/databases/" + dbName + " " + "'" + query + "'" + ";";
+            String command = dbName + " " + "'" + query + "'" + ";";
             process = runtime.exec("su");
 
             outputStreamWriter = new OutputStreamWriter(process.getOutputStream());
@@ -67,9 +67,9 @@ public class WhatsAppDatabaseHelper {
     private static HashMap<String, Object> getContactsHashMap(boolean swap) {
         HashMap<String, Object> hashMap = new HashMap<>();
 
-        String[] arr = execSQL("wa.db", "Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1");
+        String[] arr = execSQL("/data/data/com.whatsapp/databases/wa.db", "Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1");
 
-        if(arr==null)
+        if (arr == null)
             return null;
 
         for (String contact : arr) {
@@ -101,5 +101,4 @@ public class WhatsAppDatabaseHelper {
         }
         return hashMap;
     }
-
 }
