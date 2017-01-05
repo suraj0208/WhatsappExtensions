@@ -1,5 +1,7 @@
 package com.suraj.waext;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,7 +30,6 @@ public class WhatsAppDatabaseHelper {
         OutputStreamWriter outputStreamWriter;
 
         try {
-
             String command = dbName + " " + "'" + query + "'" + ";";
             process = runtime.exec("su");
 
@@ -44,8 +45,27 @@ public class WhatsAppDatabaseHelper {
             e.printStackTrace();
         }
 
-        try {
+        final InputStreamReader errorStreamReader = new InputStreamReader(process.getErrorStream());
 
+        (new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    BufferedReader bufferedReader = new BufferedReader(errorStreamReader);
+                    String s;
+                    while ((s = bufferedReader.readLine()) != null) {
+                        Log.d("com.suraj.waext", "WhatsAppDBHelper:" + s);
+                    }
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+        }).start();
+
+        try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String s;
@@ -59,7 +79,6 @@ public class WhatsAppDatabaseHelper {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         return null;
 
     }
@@ -80,7 +99,7 @@ public class WhatsAppDatabaseHelper {
 
             if (swap)        // swap = true -> number to name hashmap
                 hashMap.put(potential[1].split("@")[0], potential[0]);
-            else {            // swap = true -> name to number hashmap
+            else {            // swap = false -> name to number hashmap
                 Object value = hashMap.get(potential[0]);
 
                 if (value != null) {
