@@ -15,12 +15,8 @@ public class WhatsAppChatBackupManager {
     public static final String WAEXT_MESSAGEDB_PATH = "/sdcard/test.db";
 
     private long max_message_id = 0;
-    Context context;
-
 
     public void backupChat(String jid) {
-
-        System.out.println("com.suraj.waext.begin");
 
         BackupDatabaseHelper backupDatabaseHelper = new BackupDatabaseHelper();
 
@@ -33,7 +29,6 @@ public class WhatsAppChatBackupManager {
             //backupDatabaseHelper.execSQL(query);
         }
 
-        System.out.println("com.suraj.waext.end");
     }
 
     public void restoreChat(String jid){
@@ -43,6 +38,11 @@ public class WhatsAppChatBackupManager {
         StringBuilder query = new StringBuilder();
 
         for(String value:values){
+
+            //appending multiple sql queries in single string -- avoiding multiple su calls
+            //assuming length will not exceed 2^31-1
+            //if it does... umm well lets hope it doesnt
+
             query.append("INSERT OR IGNORE INTO messages VALUES (").append(value).append(");");
         }
 
@@ -57,7 +57,6 @@ public class WhatsAppChatBackupManager {
 
         if (last_msg_row.length > 0) {
             max_message_id = Long.parseLong(last_msg_row[0].split("\\|")[0]);
-            System.out.println(max_message_id);
         } else {
             Log.i("com.suraj.waext", "unable to set max_message_id");
         }
@@ -74,10 +73,10 @@ public class WhatsAppChatBackupManager {
         }
 
         String[] message_rows = WhatsAppDatabaseHelper.execSQL(dbname, "select * from messages where key_remote_jid like " + '"' + '%' + jid + '%' + '"' + ";");
-        System.out.println(message_rows.length);
+
 
         for (int j=0;j<message_rows.length;j++) {
-            System.out.println(message_rows[j]);
+
             String[] fields = message_rows[j].split("\\|", -1);
 
             StringBuilder values = new StringBuilder();
@@ -125,8 +124,5 @@ class BackupDatabaseHelper {
         backupDatabase.execSQL(query);
     }
 
-    public void restore(String jid){
-
-    }
 
 }
