@@ -101,10 +101,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.whatsapp", "com.whatsapp.ContactPicker"));
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivityForResult(intent, 1);
+                startActivityForResult(new Intent(WhiteListActivity.this,WhatsAppContactPickerActivity.class), 1);
             }
         });
 

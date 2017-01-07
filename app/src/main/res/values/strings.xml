@@ -132,6 +132,7 @@
 
     <!-- not translated for > 4.6 -->
     <string name="replace_ticks">Show black ticks instead of blue</string>
+    <string name="picker_activity_text">Pick a Contact</string>
     <!-- end -->
 
 </resources>

@@ -23,6 +23,22 @@ public class WhatsAppDatabaseHelper {
         return getContactsHashMap(false);
     }
 
+    public static HashMap<String,String> getGroupInfoHashMap(){
+        String arr[] = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db","select jid,display_name from wa_contacts where jid like "+ '"' + "%@g.us" + '"');
+
+        HashMap<String,String> hashMap = new HashMap<>();
+
+        for(String row:arr){
+            String splts[] = row.split("\\|",-1);
+
+            if(splts.length > 0)
+                hashMap.put(splts[1],splts[0]);
+
+        }
+
+        return hashMap;
+
+    }
 
     public static String[] execSQL(String dbName, String query) {
         Process process = null;
@@ -86,7 +102,7 @@ public class WhatsAppDatabaseHelper {
     private static HashMap<String, Object> getContactsHashMap(boolean swap) {
         HashMap<String, Object> hashMap = new HashMap<>();
 
-        String[] arr = execSQL("/data/data/com.whatsapp/databases/wa.db", "Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1");
+        String[] arr = execSQL("/data/data/com.whatsapp/databases/wa.db", "Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1 and jid like " + '"' + "%@s.whatsapp.net" + '"');
 
         if (arr == null)
             return null;
@@ -120,4 +136,5 @@ public class WhatsAppDatabaseHelper {
         }
         return hashMap;
     }
+
 }

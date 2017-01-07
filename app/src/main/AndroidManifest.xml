@@ -73,7 +73,10 @@
         <activity
             android:name=".CropActivity"
             android:exported="true" />
-        <activity android:name=".WhiteListActivity"></activity>
+        <activity android:name=".WhiteListActivity" />
+        <activity android:name=".WhatsAppContactPickerActivity"
+            android:label="@string/picker_activity_text">
+        </activity>
     </application>
 
 </manifest>
