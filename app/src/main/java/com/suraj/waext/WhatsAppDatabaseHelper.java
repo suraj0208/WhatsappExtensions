@@ -23,7 +23,7 @@ public class WhatsAppDatabaseHelper {
         return getContactsHashMap(false);
     }
 
-    public static List<HashMap<String,String>> getGroupInfoHashMap(){
+    public static List<HashMap<String,String>> getGroupInfoHashMaps(){
         String arr[] = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db","select jid,display_name from wa_contacts where jid like "+ '"' + "%@g.us" + '"');
 
         List<HashMap<String,String>> hashMaps = new ArrayList<>(2);

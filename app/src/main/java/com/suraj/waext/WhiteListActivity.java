@@ -77,7 +77,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             protected Void doInBackground(Void... params) {
                 numberToNameHashMap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
                 nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-                groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMap();
+                groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMaps();
                 return null;
             }
 
