@@ -23,20 +23,24 @@ public class WhatsAppDatabaseHelper {
         return getContactsHashMap(false);
     }
 
-    public static HashMap<String,String> getGroupInfoHashMap(){
+    public static List<HashMap<String,String>> getGroupInfoHashMap(){
         String arr[] = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db","select jid,display_name from wa_contacts where jid like "+ '"' + "%@g.us" + '"');
 
-        HashMap<String,String> hashMap = new HashMap<>();
+        List<HashMap<String,String>> hashMaps = new ArrayList<>(2);
+
+        hashMaps.add(new HashMap<String, String>());
+        hashMaps.add(new HashMap<String, String>());
 
         for(String row:arr){
             String splts[] = row.split("\\|",-1);
 
-            if(splts.length > 0)
-                hashMap.put(splts[1],splts[0]);
-
+            if(splts.length > 0) {
+                hashMaps.get(0).put(splts[0].split("@")[0], splts[1]);
+                hashMaps.get(1).put(splts[1],splts[0].split("@")[0]);
+            }
         }
 
-        return hashMap;
+        return hashMaps;
 
     }
 

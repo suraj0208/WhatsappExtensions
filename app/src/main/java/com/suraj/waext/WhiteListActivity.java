@@ -1,6 +1,5 @@
 package com.suraj.waext;
 
-import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -24,16 +23,17 @@ import java.util.List;
 import java.util.Set;
 
 public class WhiteListActivity extends AppCompatActivity implements WhiteListContactRowManager {
-    private ArrayList<String> whitelist;
+    private ArrayList<String> whiteList;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private WhiteListAdapter whiteListAdapter;
-    private Set<String> whitelistSet;
+    private Set<String> whiteListSet;
     private Set<Integer> deleteItemsSet;
-    private HashMap<String, Object> numberToNameHashmap;
-    private HashMap<String, Object> nameToNumberHashmap;
+    private HashMap<String, Object> numberToNameHashMap;
+    private HashMap<String, Object> nameToNumberHashMap;
+    private List<HashMap<String, String>> groupInfoHashMaps;
 
-    private ListView lstviewwhitelist;
+    private ListView lstviewWhiteList;
     private CheckBox[] deleteCheckBoxes;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,28 +44,28 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         editor = sharedPreferences.edit();
 
         //tricky -- create new hashset -> getstringset returns a reference
-        whitelistSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
+        whiteListSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
 
-        final Switch switchBlackWhite = (Switch)findViewById(R.id.switchBlackWhite);
-        final TextView tvwhitelistinfo = (TextView)findViewById(R.id.tvinforwhitelist);
+        final Switch switchBlackWhite = (Switch) findViewById(R.id.switchBlackWhite);
+        final TextView tvwhitelistinfo = (TextView) findViewById(R.id.tvinforwhitelist);
 
-        if(sharedPreferences.getBoolean("blackOrWhite",true)) {
+        if (sharedPreferences.getBoolean("blackOrWhite", true)) {
             switchBlackWhite.setChecked(true);
-            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
-        }else{
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo, getString(R.string.listtype_white)));
+        } else {
             switchBlackWhite.setChecked(false);
-            tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+            tvwhitelistinfo.setText(getString(R.string.whitelistinfo, getString(R.string.listtype_black)));
         }
 
         switchBlackWhite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(switchBlackWhite.isChecked()){
-                    editor.putBoolean("blackOrWhite",true);
-                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_white)));
-                }else{
-                    editor.putBoolean("blackOrWhite",false);
-                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo,getString(R.string.listtype_black)));
+                if (switchBlackWhite.isChecked()) {
+                    editor.putBoolean("blackOrWhite", true);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo, getString(R.string.listtype_white)));
+                } else {
+                    editor.putBoolean("blackOrWhite", false);
+                    tvwhitelistinfo.setText(getString(R.string.whitelistinfo, getString(R.string.listtype_black)));
                 }
                 editor.apply();
             }
@@ -75,9 +75,9 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         (new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                numberToNameHashmap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
-                nameToNumberHashmap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-
+                numberToNameHashMap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
+                nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
+                groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMap();
                 return null;
             }
 
@@ -87,11 +87,11 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
                 buildArrayList();
 
-                whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this);
+                whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whiteList, WhiteListActivity.this);
 
-                lstviewwhitelist = (ListView) findViewById(R.id.lstviewwhitelistcontacts);
+                lstviewWhiteList = (ListView) findViewById(R.id.lstviewwhitelistcontacts);
 
-                lstviewwhitelist.setAdapter(whiteListAdapter);
+                lstviewWhiteList.setAdapter(whiteListAdapter);
 
             }
 
@@ -101,14 +101,14 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(WhiteListActivity.this,WhatsAppContactPickerActivity.class), 1);
+                startActivityForResult(new Intent(WhiteListActivity.this, WhatsAppContactPickerActivity.class), 1);
             }
         });
 
         (findViewById(R.id.imgbtnremovecontact)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (whitelist.size() == 0) {
+                if (whiteList.size() == 0) {
                     Toast.makeText(getApplicationContext(), "List is empty.", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -126,17 +126,20 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                         protected Void doInBackground(Void... params) {
                             int i = 0;
 
-                            for (Iterator<String> iterator = whitelist.iterator(); iterator.hasNext(); ) {
+                            for (Iterator<String> iterator = whiteList.iterator(); iterator.hasNext(); ) {
                                 String name = iterator.next();
                                 if (deleteItemsSet.contains(i)) {
 
-                                    Object value = nameToNumberHashmap.get(name);
+                                    Object value = nameToNumberHashMap.get(name);
+
+                                    if (value == null)// value is null -- it may be a group
+                                        value = groupInfoHashMaps.get(1).get(name);
 
                                     if (value instanceof String)
-                                        whitelistSet.remove(value.toString());
+                                        whiteListSet.remove(value.toString());
                                     else if (value instanceof List) {
                                         for (Object number : (List) value)
-                                            whitelistSet.remove(number.toString());
+                                            whiteListSet.remove(number.toString());
                                     }
                                     iterator.remove();
                                 }
@@ -153,9 +156,9 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                         protected void onPostExecute(Void aVoid) {
                             super.onPostExecute(aVoid);
 
-                            lstviewwhitelist.setAdapter(null);
-                            lstviewwhitelist.setAdapter(new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this));
-                            editor.putStringSet("rd_whitelist", whitelistSet);
+                            lstviewWhiteList.setAdapter(null);
+                            lstviewWhiteList.setAdapter(new WhiteListAdapter(getApplicationContext(), whiteList, WhiteListActivity.this));
+                            editor.putStringSet("rd_whitelist", whiteListSet);
                             editor.apply();
 
 
@@ -176,30 +179,37 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
     }
 
     private void buildArrayList() {
-        if (whitelist == null)
-            whitelist = new ArrayList<>();
+        if (whiteList == null)
+            whiteList = new ArrayList<>();
         else
-            whitelist.clear();
+            whiteList.clear();
 
-        if (numberToNameHashmap == null) {
-            Log.e("com.suraj.waext", "may be su failed");
+        if (numberToNameHashMap == null) {
+            Log.e("com.suraj.waext", "numbers null may be su failed");
             WhiteListActivity.this.finish();
             return;
         }
 
-        for (String number : whitelistSet) {
-            if (numberToNameHashmap.get(number) != null)
-                whitelist.add(numberToNameHashmap.get(number).toString());
-            else if(numberToNameHashmap.size()==0){
-                Toast.makeText(getApplicationContext(),getString(R.string.sqliteMissing),Toast.LENGTH_SHORT).show();
+        if (groupInfoHashMaps == null) {
+            Log.e("com.suraj.waext", "groups null may be su failed");
+            WhiteListActivity.this.finish();
+            return;
+        }
+
+        for (String number : whiteListSet) {
+            if (numberToNameHashMap.get(number) != null) {
+                whiteList.add(numberToNameHashMap.get(number).toString());
+            } else if (groupInfoHashMaps.get(0).get(number) != null) {
+                whiteList.add(groupInfoHashMaps.get(0).get(number));
+            } else if (numberToNameHashMap.size() == 0 || groupInfoHashMaps.get(0).size() == 0) {
+                Toast.makeText(getApplicationContext(), getString(R.string.sqliteMissing), Toast.LENGTH_SHORT).show();
             }
 
         }
-        Collections.sort(whitelist);
+        Collections.sort(whiteList);
 
-        deleteCheckBoxes = new CheckBox[whitelist.size()];
+        deleteCheckBoxes = new CheckBox[whiteList.size()];
         deleteItemsSet = new HashSet<>();
-
     }
 
     @Override
@@ -209,14 +219,14 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         if (data != null) {
             String number = data.getExtras().get("contact").toString().split("@")[0];
 
-            whitelistSet.add(number);
+            whiteListSet.add(number);
 
             buildArrayList();
 
-            lstviewwhitelist.setAdapter(null);
-            lstviewwhitelist.setAdapter(new WhiteListAdapter(getApplicationContext(), whitelist, WhiteListActivity.this));
+            lstviewWhiteList.setAdapter(null);
+            lstviewWhiteList.setAdapter(new WhiteListAdapter(getApplicationContext(), whiteList, WhiteListActivity.this));
 
-            editor.putStringSet("rd_whitelist", whitelistSet);
+            editor.putStringSet("rd_whitelist", whiteListSet);
 
             editor.apply();
 
@@ -225,7 +235,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
     @Override
     public void onInflateContactRow(View view, final List<String> whitelist, final int position) {
-        if (nameToNumberHashmap == null || numberToNameHashmap == null) {
+        if (nameToNumberHashMap == null || numberToNameHashMap == null) {
             Toast.makeText(getApplicationContext(), "Failed to get contact info. Make sure you have root", Toast.LENGTH_SHORT).show();
             return;
         }

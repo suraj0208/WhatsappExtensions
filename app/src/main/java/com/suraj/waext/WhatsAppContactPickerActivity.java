@@ -30,20 +30,23 @@ public class WhatsAppContactPickerActivity extends AppCompatActivity implements 
 
             @Override
             protected ArrayList<String> doInBackground(Void... params) {
+                List<HashMap<String, String>> groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMap();
 
-                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(WhatsAppDatabaseHelper.getGroupInfoHashMap().entrySet());
+                if (groupInfoHashMaps == null)
+                    return null;
+
+                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(groupInfoHashMaps.get(0).entrySet());
 
                 Collections.sort(groupEntryList, new Comparator<HashMap.Entry<String, String>>() {
                     @Override
                     public int compare(HashMap.Entry<String, String> lhs, HashMap.Entry<String, String> rhs) {
-                        return lhs.getKey().compareTo(rhs.getKey());
+                        return lhs.getValue().compareTo(rhs.getValue());
                     }
                 });
 
                 jids = new ArrayList<>();
 
                 nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-                HashMap<String, String> groupInfoHashMap = WhatsAppDatabaseHelper.getGroupInfoHashMap();
 
                 ArrayList<HashMap.Entry<String, Object>> contactEntryList = new ArrayList<>(nameToNumberHashMap.entrySet());
 
@@ -58,15 +61,13 @@ public class WhatsAppContactPickerActivity extends AppCompatActivity implements 
                 ArrayList<String> displayList = new ArrayList<>();
 
                 for (int i = 0; i < groupEntryList.size(); i++) {
-                    String name = groupEntryList.get(i).getKey().trim();
+                    String name = groupEntryList.get(i).getValue().trim();
 
                     if (name.length() == 0)
                         continue;
 
-                    String val = groupInfoHashMap.get(name);
-
                     displayList.add(name);
-                    jids.add(val);
+                    jids.add(groupEntryList.get(i).getKey());
                 }
 
                 displayList.add("");
