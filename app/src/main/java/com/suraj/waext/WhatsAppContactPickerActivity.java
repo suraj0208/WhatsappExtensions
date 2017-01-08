@@ -1,7 +1,6 @@
 package com.suraj.waext;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,15 +8,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 public class WhatsAppContactPickerActivity extends AppCompatActivity implements WhiteListContactRowManager {
     HashMap<String, Object> nameToNumberHashMap;
+    ArrayList<String> jids;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,51 +26,77 @@ public class WhatsAppContactPickerActivity extends AppCompatActivity implements 
 
         final ListView lstviewPicker = (ListView) findViewById(R.id.lstviewPicker);
 
-
         (new AsyncTask<Void, Void, ArrayList<String>>() {
 
             @Override
             protected ArrayList<String> doInBackground(Void... params) {
-                ArrayList<String> groups = new ArrayList<>(WhatsAppDatabaseHelper.getGroupInfoHashMap().keySet());
 
-                ArrayList<String> contacts = new ArrayList<>();
+                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(WhatsAppDatabaseHelper.getGroupInfoHashMap().entrySet());
+
+                Collections.sort(groupEntryList, new Comparator<HashMap.Entry<String, String>>() {
+                    @Override
+                    public int compare(HashMap.Entry<String, String> lhs, HashMap.Entry<String, String> rhs) {
+                        return lhs.getKey().compareTo(rhs.getKey());
+                    }
+                });
+
+                jids = new ArrayList<>();
 
                 nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
+                HashMap<String, String> groupInfoHashMap = WhatsAppDatabaseHelper.getGroupInfoHashMap();
+
+                ArrayList<HashMap.Entry<String, Object>> contactEntryList = new ArrayList<>(nameToNumberHashMap.entrySet());
+
+                Collections.sort(contactEntryList, new Comparator<HashMap.Entry<String, Object>>() {
+                    @Override
+                    public int compare(HashMap.Entry<String, Object> lhs, HashMap.Entry<String, Object> rhs) {
+                        return lhs.getKey().compareTo(rhs.getKey());
+                    }
+                });
 
 
-                for (String name : nameToNumberHashMap.keySet()) {
-                    name = name.trim();
+                ArrayList<String> displayList = new ArrayList<>();
+
+                for (int i = 0; i < groupEntryList.size(); i++) {
+                    String name = groupEntryList.get(i).getKey().trim();
+
+                    if (name.length() == 0)
+                        continue;
+
+                    String val = groupInfoHashMap.get(name);
+
+                    displayList.add(name);
+                    jids.add(val);
+                }
+
+                displayList.add("");
+                jids.add("");
+
+                for (int i = 0; i < contactEntryList.size(); i++) {
+                    String name = contactEntryList.get(i).getKey().trim();
 
                     if (name.length() == 0)
                         continue;
 
                     Object val = nameToNumberHashMap.get(name);
                     if (val instanceof List) {
-                        for (Object s : (List) val)
-                            contacts.add(name + " ( " + s.toString().split("-")[0] + " )");
-                    } else
-                        contacts.add(name);
-
+                        for (Object s : (List) val) {
+                            displayList.add(name + " ( " + s.toString().split("-")[0] + " )");
+                            jids.add(s.toString());
+                        }
+                    } else {
+                        displayList.add(name);
+                        jids.add(val.toString());
+                    }
                 }
 
-                Collections.sort(groups);
-                Collections.sort(contacts);
 
-                groups.add("");
-                groups.addAll(contacts);
-
-                return groups;
+                return displayList;
             }
 
             @Override
             protected void onPostExecute(final ArrayList<String> strings) {
                 lstviewPicker.setAdapter(new WhiteListAdapter(WhatsAppContactPickerActivity.this, strings, WhatsAppContactPickerActivity.this));
-
-                if (nameToNumberHashMap == null) {
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.sqliteMissing), Toast.LENGTH_SHORT).show();
-                    finish();
-                    return;
-                }
 
                 lstviewPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -79,22 +105,18 @@ public class WhatsAppContactPickerActivity extends AppCompatActivity implements 
                             Intent intent = new Intent();
 
                             Bundle bundle = new Bundle();
-                            bundle.putString("contact", nameToNumberHashMap.get(strings.get(position)).toString());
+                            bundle.putString("contact", jids.get(position));
                             intent.putExtras(bundle);
 
                             intent.putExtras(bundle);
                             setResult(RESULT_OK, intent);
                             finish();
                         }
-
-
                     }
                 });
 
             }
         }).execute();
-
-
     }
 
     @Override
