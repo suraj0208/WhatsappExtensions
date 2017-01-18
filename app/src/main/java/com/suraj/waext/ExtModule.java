@@ -97,6 +97,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean hideNotifs = false;
     private static boolean lockWAWeb = false;
     private static boolean blackOrWhite = true;
+    private static boolean lockArchived = false;
 
 
     private static int highlightColor = Color.GRAY;
@@ -586,19 +587,21 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
-                if (param.thisObject.getClass().getName().equals("com.whatsapp.qrcode.QrCodeActivity")) {
-                    if (!lockWAWeb)
-                        return;
+                String className = param.thisObject.getClass().getName();
 
-                    if (lockedContacts.size() > 0 && firstTime && showLockScreen) {
-                        Intent intent = new Intent();
-                        intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        AndroidAppHelper.currentApplication().startActivity(intent);
-                        firstTime = false;
-                    } else if (!firstTime && showLockScreen) {
-                        ((Activity) param.thisObject).finish();
-                    }
+                switch (className) {
+                    case "com.whatsapp.qrcode.QrCodeActivity":
+                        if (!lockWAWeb)
+                            return;
+
+                        startLockActivity(param.thisObject);
+                        break;
+                    case "com.whatsapp.ArchivedConversationsActivity":
+                        if (!lockArchived)
+                            return;
+
+                        startLockActivity(param.thisObject);
+                        break;
                 }
 
                 if (thread != null && thread.isAlive()) {
@@ -621,6 +624,17 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
+        XposedHelpers.findAndHookMethod("com.whatsapp.ArchivedConversationsActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                if (!lockArchived)
+                    return;
+
+                firstTime = true;
+                showLockScreen = true;
+            }
+        });
+
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onDestroy", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -634,6 +648,18 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
+    }
+
+    private void startLockActivity(Object thisObject) {
+        if (firstTime && showLockScreen) {
+            Intent intent = new Intent();
+            intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            AndroidAppHelper.currentApplication().startActivity(intent);
+            firstTime = false;
+        } else if (!firstTime && showLockScreen) {
+            ((Activity) thisObject).finish();
+        }
     }
 
 
@@ -1121,6 +1147,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hideNotifs = sharedPreferences.getBoolean("hideNotifs", false);
         lockWAWeb = sharedPreferences.getBoolean("lockWAWeb", false);
         blackOrWhite = sharedPreferences.getBoolean("blackOrWhite", true);
+        lockArchived = sharedPreferences.getBoolean("lockArchived", false);
+
     }
 
     private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1280,5 +1308,7 @@ custom read receipts    -- done
 hide locked contact notifications   -- done
 
 hide online status      -- not done
+
+lock archived chats
 
  */
