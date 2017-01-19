@@ -1,6 +1,9 @@
 package com.suraj.waext;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -16,8 +19,12 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String PACKAGE_NAME = "com.suraj.waext";
+
+    private static boolean isWaitingForLock = false;
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private UnlockReceiver unlockReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("myprefs", 1);
         editor = sharedPreferences.edit();
+
+        unlockReceiver = new UnlockReceiver();
 
         setupLockUI();
         setupReminderUI();
@@ -67,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
 
 
@@ -79,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         setUpCheckBox(checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
         setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "", false, "");
         setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
-        setUpCheckBox((CheckBox)findViewById(R.id.chkboxalwaysonline),"alwaysOnline",true,getApplicationContext().getString(R.string.last_seen_hidden),false,"");
+        setUpCheckBox((CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
 
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
@@ -121,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
 
         );
 
-        setUpCheckBox((CheckBox)findViewById(R.id.chkboxHideNotifs),"hideNotifs",false,"",false,"");
-        setUpCheckBox((CheckBox)findViewById(R.id.chkboxLockWAWeb),"lockWAWeb",false,"",false,"");
-
+        setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxHideNotifs), "hideNotifs", false, "", false, "");
+        setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxLockWAWeb), "lockWAWeb", false, "", false, "");
+        setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxLockArchived), "lockArchived", false, "", false, "");
     }
 
 
@@ -229,4 +237,68 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setUpProtectedCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
+        if (sharedPreferences.getBoolean(prefname, false))
+            checkBox.setChecked(true);
+        else
+            checkBox.setChecked(false);
+
+        checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent lockIntent = new Intent(MainActivity.this, LockActivity.class);
+
+                lockIntent.putExtra("hasPref", true);
+                Bundle extras = new Bundle();
+                extras.putBoolean(prefname, checkBox.isChecked());
+                lockIntent.putExtras(extras);
+
+                MainActivity.isWaitingForLock = true;
+
+                checkBox.setChecked(!checkBox.isChecked());
+                unlockReceiver.setCheckBox(v);
+                startActivity(lockIntent);
+
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.isWaitingForLock = false;
+        this.registerReceiver(unlockReceiver, new IntentFilter(ExtModule.UNLOCK_INTENT));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (!MainActivity.isWaitingForLock) {
+            this.unregisterReceiver(unlockReceiver);
+        }
+    }
+
+    class UnlockReceiver extends BroadcastReceiver {
+        private CheckBox checkBox;
+
+        public void setCheckBox(View view) {
+            if (view instanceof CheckBox)
+                this.checkBox = (CheckBox) view;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getBundleExtra("prefs");
+            if (bundle != null) {
+                for (String k : bundle.keySet()) {
+                    if (bundle.get(k) instanceof Boolean) {
+                        editor.putBoolean(k, bundle.getBoolean(k));
+                        checkBox.setChecked(bundle.getBoolean(k));
+                    }
+                }
+                editor.apply();
+            }
+        }
+    }
 }
