@@ -98,6 +98,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean lockWAWeb = false;
     private static boolean blackOrWhite = true;
     private static boolean lockArchived = false;
+    private static boolean sessionExpired = true;
 
 
     private static int highlightColor = Color.GRAY;
@@ -596,11 +597,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         startLockActivity(param.thisObject);
                         break;
+
                     case "com.whatsapp.ArchivedConversationsActivity":
                         if (!lockArchived)
                             return;
 
-                        startLockActivity(param.thisObject);
+                        if(sessionExpired)
+                            startLockActivity(param.thisObject);
                         break;
                 }
 
@@ -678,6 +681,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                     Thread.sleep(lockAfter * 1000 * 60);
                     ExtModule.templockedContacts.addAll(lockedContacts);
+                    sessionExpired=true;
                 } catch (InterruptedException e) {
                     //XposedBridge.log("Thread Inturrupted");
                     //e.printStackTrace();
@@ -1207,6 +1211,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
             //if contact is not to be locked immediately remove it temporarily from lockedcontacts.
             templockedContacts.remove(contactNumber);
+
+            sessionExpired=false;
 
             //XposedBridge.log("Broadcast Received " + showLockScreen + " " + firstTime);
         }
