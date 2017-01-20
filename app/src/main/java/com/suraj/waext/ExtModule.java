@@ -813,23 +813,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private void hookMethodsForHideGroup(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
-
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                if (param.args[0] == null) {
-                    return;
-                }
-
-
-//                if(param.args[0].toString().split("@")[0].equals("919405427709-1478266433")) {
-//                    XposedBridge.log("setting the result as null");
-//                    param.args[0]=null;
-//                    param.setResult(null);
-//                }
-            }
-
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -862,7 +845,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (!(archiveClass != null && archiveClass.isInstance(param.getResult()))) {
                     return;
                 }
-
 
                 if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
                     return;
