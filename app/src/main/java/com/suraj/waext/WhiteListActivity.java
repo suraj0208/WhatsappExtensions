@@ -31,7 +31,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
     private Set<Integer> deleteItemsSet;
     private HashMap<String, Object> numberToNameHashMap;
     private HashMap<String, Object> nameToNumberHashMap;
-    private List<HashMap<String, String>> groupInfoHashMaps;
+    private HashMap<String, String> groupNumberToNameHashMap;
+    private HashMap<String, String> groupNameToNumberHashMap;
 
     private ListView lstviewWhiteList;
     private CheckBox[] deleteCheckBoxes;
@@ -77,7 +78,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             protected Void doInBackground(Void... params) {
                 numberToNameHashMap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
                 nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-                groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMaps();
+                groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
+                groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
                 return null;
             }
 
@@ -133,7 +135,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                                     Object value = nameToNumberHashMap.get(name);
 
                                     if (value == null)// value is null -- it may be a group
-                                        value = groupInfoHashMaps.get(1).get(name);
+                                        value = groupNameToNumberHashMap.get(name);
 
                                     if (value instanceof String)
                                         whiteListSet.remove(value.toString());
@@ -190,7 +192,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             return;
         }
 
-        if (groupInfoHashMaps == null) {
+        if (groupNameToNumberHashMap == null || groupNumberToNameHashMap==null) {
             Log.e("com.suraj.waext", "groups null may be su failed");
             WhiteListActivity.this.finish();
             return;
@@ -199,9 +201,9 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         for (String number : whiteListSet) {
             if (numberToNameHashMap.get(number) != null) {
                 whiteList.add(numberToNameHashMap.get(number).toString());
-            } else if (groupInfoHashMaps.get(0).get(number) != null) {
-                whiteList.add(groupInfoHashMaps.get(0).get(number));
-            } else if (numberToNameHashMap.size() == 0 || groupInfoHashMaps.get(0).size() == 0) {
+            } else if (groupNumberToNameHashMap.get(number) != null) {
+                whiteList.add(groupNumberToNameHashMap.get(number));
+            } else if (numberToNameHashMap.size() == 0 || groupNumberToNameHashMap.size() == 0) {
                 Toast.makeText(getApplicationContext(), getString(R.string.sqliteMissing), Toast.LENGTH_SHORT).show();
             }
 

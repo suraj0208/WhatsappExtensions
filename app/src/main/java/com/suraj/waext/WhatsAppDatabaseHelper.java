@@ -9,21 +9,48 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by suraj on 2/12/16.
  */
 public class WhatsAppDatabaseHelper {
+    private static List<HashMap<String,Object>> contactHashMaps;
+    private static List<HashMap<String,String>> groupHashMaps;
 
     public static HashMap<String, Object> getNumberToNameHashMap() {
-        return getContactsHashMap(true);
+        if(contactHashMaps==null)
+            contactHashMaps = getContactsHashMaps();
+
+        //0 - number to name
+        return getContactsHashMaps().get(0);
     }
 
     public static HashMap<String, Object> getNameToNumberHashMap() {
-        return getContactsHashMap(false);
+        if(contactHashMaps==null)
+            contactHashMaps = getContactsHashMaps();
+
+        //1 - number to name
+        return getContactsHashMaps().get(1);
     }
 
-    public static List<HashMap<String,String>> getGroupInfoHashMaps(){
+    public static HashMap<String, String> getGroupNumberToNameHashMap() {
+        if(groupHashMaps==null)
+            groupHashMaps = getGroupInfoHashMaps();
+
+        //0 - number to name
+        return groupHashMaps.get(0);
+    }
+
+    public static HashMap<String, String> getGroupNameToNumberHashMap() {
+        if(groupHashMaps==null)
+            groupHashMaps = getGroupInfoHashMaps();
+
+        //1 - number to name
+        return groupHashMaps.get(1);
+    }
+
+    private static List<HashMap<String,String>> getGroupInfoHashMaps(){
         String arr[] = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db","select jid,display_name from wa_contacts where jid like "+ '"' + "%@g.us" + '"');
 
         List<HashMap<String,String>> hashMaps = new ArrayList<>(2);
@@ -103,10 +130,14 @@ public class WhatsAppDatabaseHelper {
 
     }
 
-    private static HashMap<String, Object> getContactsHashMap(boolean swap) {
-        HashMap<String, Object> hashMap = new HashMap<>();
+    private static List<HashMap<String, Object>> getContactsHashMaps() {
 
         String[] arr = execSQL("/data/data/com.whatsapp/databases/wa.db", "Select display_name, jid FROM wa_contacts WHERE is_whatsapp_user=1 and jid like " + '"' + "%@s.whatsapp.net" + '"');
+
+        List<HashMap<String,Object>> hashMaps = new ArrayList<>(2);
+
+        hashMaps.add(new HashMap<String, Object>());
+        hashMaps.add(new HashMap<String, Object>());
 
         if (arr == null)
             return null;
@@ -117,10 +148,11 @@ public class WhatsAppDatabaseHelper {
             if (potential.length < 2)
                 continue;
 
-            if (swap)        // swap = true -> number to name hashmap
-                hashMap.put(potential[1].split("@")[0], potential[0]);
-            else {            // swap = false -> name to number hashmap
-                Object value = hashMap.get(potential[0]);
+                  // swap = true -> number to name hashmap
+                hashMaps.get(0).put(potential[1].split("@")[0], potential[0]);
+
+                        // swap = false -> name to number hashmap
+                Object value = hashMaps.get(1).get(potential[0]);
 
                 if (value != null) {
                     List<String> numbers = new ArrayList<>();
@@ -132,13 +164,17 @@ public class WhatsAppDatabaseHelper {
                         numbers = (List<String>) value;
                         numbers.add(potential[1].split("@")[0]);
                     }
-                    hashMap.put(potential[0], numbers);
+                    hashMaps.get(1).put(potential[0], numbers);
                 } else {
-                    hashMap.put(potential[0], potential[1].split("@")[0]);
+                    hashMaps.get(1).put(potential[0], potential[1].split("@")[0]);
                 }
-            }
+
         }
-        return hashMap;
+        return hashMaps;
     }
 
+    public static void clearHashMaps(){
+        groupHashMaps=null;
+        contactHashMaps=null;
+    }
 }

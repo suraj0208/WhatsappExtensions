@@ -97,12 +97,11 @@ public class WhatsAppContactPickerActivity extends Activity implements WhiteList
         (new AsyncTask<Void, Void, ArrayList<String>>() {
             @Override
             protected ArrayList<String> doInBackground(Void... params) {
-                List<HashMap<String, String>> groupInfoHashMaps = WhatsAppDatabaseHelper.getGroupInfoHashMaps();
+                HashMap<String,String> groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
+                HashMap<String,String> groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
 
-                if (groupInfoHashMaps == null)
-                    return null;
 
-                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(groupInfoHashMaps.get(0).entrySet());
+                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(groupNumberToNameHashMap.entrySet());
 
                 Collections.sort(groupEntryList, new Comparator<HashMap.Entry<String, String>>() {
                     @Override
@@ -186,6 +185,7 @@ public class WhatsAppContactPickerActivity extends Activity implements WhiteList
 
             }
         }).execute();
+
     }
 
     @Override
