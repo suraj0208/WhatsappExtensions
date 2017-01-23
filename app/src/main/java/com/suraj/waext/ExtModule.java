@@ -99,6 +99,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean blackOrWhite = true;
     private static boolean lockArchived = false;
     private static boolean sessionExpired = true;
+    private static boolean chatSessionOngoing = false;
+    private static boolean enableRRDuringSession = false;
+
 
 
     private static int highlightColor = Color.GRAY;
@@ -288,6 +291,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
+
+                chatSessionOngoing=false;
 
                 if (enableHideSeen)
                     setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
@@ -866,6 +871,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
+
+                if(chatSessionOngoing && enableRRDuringSession)
+                    return;
+
                 boolean shouldSend = false;
 
                 Field jidField = readReceiptsJobClass.getDeclaredField("jid");
@@ -894,6 +903,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
             }
         });
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendE2EMessageJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                chatSessionOngoing=true;
+
+            }
+        });
+
     }
 
     public void hookMethodsForHideDeliveryReports(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1152,6 +1171,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         lockWAWeb = sharedPreferences.getBoolean("lockWAWeb", false);
         blackOrWhite = sharedPreferences.getBoolean("blackOrWhite", true);
         lockArchived = sharedPreferences.getBoolean("lockArchived", false);
+        enableRRDuringSession = sharedPreferences.getBoolean("enableRRDuringSession",false);
 
     }
 
