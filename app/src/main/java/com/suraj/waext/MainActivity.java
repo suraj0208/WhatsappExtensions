@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        sharedPreferences = getSharedPreferences("myprefs", 1);
-        editor = sharedPreferences.edit();
+        sharedPreferences = Utils.getSharedPreferences(this);
+        editor = Utils.getEditor(this);
 
         unlockReceiver = new UnlockReceiver();
 
@@ -54,10 +52,10 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
         CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
 
-        setUpCheckBox(checkBoxHideCamera, "hideCamera", false, "", false, "");
-        setUpCheckBox(checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
-        setUpCheckBox(checkBoxReplaceCallButton, "replaceCallButton", false, "", false, "");
-        setUpCheckBox(checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this,checkBoxHideCamera, "hideCamera", false, "", false, "");
+        Utils.setUpCheckBox(this,checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this,checkBoxReplaceCallButton, "replaceCallButton", false, "", false, "");
+        Utils.setUpCheckBox(this,checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
 
         Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
@@ -84,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
         final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
-        setUpCheckBox(checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
-        setUpCheckBox(checkBoxReadReports, "hideReadReceipts", false, "", false, "");
-        setUpCheckBox(checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
-        setUpCheckBox((CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
+        Utils.setUpCheckBox(this,checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
+        Utils.setUpCheckBox(this,checkBoxReadReports, "hideReadReceipts", false, "", false, "");
+        Utils.setUpCheckBox(this,checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
+        Utils.setUpCheckBox(this,(CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
 
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
@@ -192,50 +190,11 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        setUpCheckBox(checkBox, "enableHighlight", false, "", false, "");
+        Utils.setUpCheckBox(this,checkBox, "enableHighlight", false, "", false, "");
 
     }
 
-    private void setUpCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
 
-
-        if (sharedPreferences.getBoolean(prefname, false))
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
-
-        checkBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                long t = SystemClock.elapsedRealtime();
-
-                /*if (t < 2 * 60 * 1000) {
-                    checkBox.setChecked(!checkBox.isChecked());
-                    Toast.makeText(getApplicationContext(), R.string.wait_message, Toast.LENGTH_SHORT).show();
-                    return;
-                }*/
-
-                if (checkBox.isChecked()) {
-                    editor.putBoolean(prefname, true);
-
-                    if (onToast) {
-                        Toast.makeText(MainActivity.this, onMessage, Toast.LENGTH_SHORT).show();
-                    }
-
-                } else {
-                    editor.putBoolean(prefname, false);
-
-                    if (offToast) {
-                        Toast.makeText(MainActivity.this, offMessage, Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                editor.apply();
-
-            }
-        });
-    }
 
     private void setUpProtectedCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
         if (sharedPreferences.getBoolean(prefname, false))

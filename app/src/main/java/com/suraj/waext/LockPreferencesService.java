@@ -22,8 +22,7 @@ public class LockPreferencesService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        SharedPreferences.Editor editor = Utils.getEditor(this);
 
         int action = intent.getIntExtra("action",0);
 

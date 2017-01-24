@@ -34,7 +34,7 @@ public class LockActivity extends AppCompatActivity {
 
         setButtonListeners();
 
-        SharedPreferences sharedPreferences = getSharedPreferences("myprefs", 1);
+        SharedPreferences sharedPreferences = Utils.getSharedPreferences(this);
 
         byte[] defaultEncoded = Base64.encode("1234".getBytes(), 0);
 

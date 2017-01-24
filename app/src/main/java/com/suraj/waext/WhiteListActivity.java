@@ -41,8 +41,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_white_list);
 
-        sharedPreferences = getSharedPreferences("myprefs", 1);
-        editor = sharedPreferences.edit();
+        sharedPreferences = Utils.getSharedPreferences(this);
+        editor = Utils.getEditor(this);
 
         //tricky -- create new hashset -> getstringset returns a reference
         whiteListSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
