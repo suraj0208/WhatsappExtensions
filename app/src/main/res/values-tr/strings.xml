@@ -138,6 +138,7 @@
     <string name="picker_activity_text">Pick a Contact</string>
     <string name="search_hint">Search for Contact</string>
     <string name="lock_archived">Lock Archived chats</string>
+    <string name="enable_rr_during_chat">Send Read Receipts while chatting</string>
     <!-- end -->
 
 </resources>

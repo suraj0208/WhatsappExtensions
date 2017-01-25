@@ -174,10 +174,10 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                     v.setBackground(getDrawable(R.mipmap.ic_delete_black_24dp));
 
                 }
-
-
             }
         });
+
+        Utils.setUpCheckBox(this,(CheckBox)findViewById(R.id.chkboxEnableRRChatSession),"enableRRDuringSession",false,"",false,"");
     }
 
     private void buildArrayList() {

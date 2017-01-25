@@ -6,15 +6,24 @@
     android:paddingTop="10dp"
     tools:context="com.suraj.waext.WhiteListActivity">
 
+    <CheckBox
+        android:id="@+id/chkboxEnableRRChatSession"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:text="@string/enable_rr_during_chat" />
+
     <TextView
         android:id="@+id/tvinforwhitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/chkboxEnableRRChatSession"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
-        android:text="Use this as a " />
+        android:text="@string/whitelistinfo" />
 
 
     <ImageButton
