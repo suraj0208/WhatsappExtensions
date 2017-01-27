@@ -1047,6 +1047,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
+                //for opening chat when unlocking from notification
+                AndroidAppHelper.currentApplication().getApplicationContext().registerReceiver(unlockReceiver,new IntentFilter(ExtModule.UNLOCK_INTENT));
+
                 if (!hideNotifs)
                     return;
 
