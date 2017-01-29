@@ -29,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -216,13 +215,22 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         }
 
                         View zerothChild = zerothChildrenHashMap.get(parent);
-
                         View firstChild = firstChildrenHashMap.get(parent);
 
+
                         //hide previews for locked contacts
-                        if(lockedContacts.contains(contact)){
-                            View v = ((ViewGroup)((ViewGroup) (((ViewGroup) firstChild).getChildAt(1))).getChildAt(1)).getChildAt(2);
-                            v.setVisibility(View.GONE);
+                        try {
+                            if (lockedContacts.contains(contact)) {
+                                View v = getPreviewView(firstChild);
+                                if(v!=null)
+                                    v.setVisibility(View.GONE);
+                            } else {
+                                View v = getPreviewView(firstChild);
+                                if(v!=null)
+                                    v.setVisibility(View.VISIBLE);
+                            }
+                        } catch (Exception ex) {
+                            XposedBridge.log("Exception caught");
                         }
 
                         if (!enableHighlight && highlightedChats.size() == 0)
@@ -252,6 +260,20 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     }
                 }
         );
+    }
+
+    private View getPreviewView(View firstChild) {
+        if (firstChild instanceof ViewGroup) {
+            View firstChildOfFirstChild /*f1*/ = ((ViewGroup) firstChild).getChildAt(1);
+            if (firstChildOfFirstChild != null && firstChildOfFirstChild instanceof ViewGroup) {
+                View firstChildOfF1 /*f2*/ = ((ViewGroup) firstChildOfFirstChild).getChildAt(1);
+                if (firstChildOfF1 != null && firstChildOfF1 instanceof ViewGroup) {
+                    View v = ((ViewGroup) firstChildOfF1).getChildAt(2);
+                    return v;
+                }
+            }
+        }
+        return null;
     }
 
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
