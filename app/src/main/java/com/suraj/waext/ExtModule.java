@@ -163,6 +163,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
 
+                        if(!(param.args[0] instanceof String))
+                            return;
+
                         String tag = param.args[0].toString();
 
                         boolean localIsGroup = tag.contains("@g.us");
@@ -181,7 +184,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                     contact = contact.replace("+", "");
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
-                                    //XposedBridge.log("ArrayIndexOutofBound");
                                     ex.printStackTrace();
                                 }
                             } else
