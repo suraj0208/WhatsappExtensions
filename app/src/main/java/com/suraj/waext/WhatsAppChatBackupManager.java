@@ -100,7 +100,7 @@ public class WhatsAppChatBackupManager {
             for (int i = 0; i < fields.length; i++) {
                 if (fields[i].length() == 0) {
                     values.append("NULL");
-                } else if (fields[i].matches("[A-Za-z0-9@\\.]+")) {
+                } else if (fields[i].matches("[A-Za-z0-9@\\.\\-]+")) {
                     values.append('"').append(fields[i]).append('"');
                 } else {
                     values.append(fields[i]);
