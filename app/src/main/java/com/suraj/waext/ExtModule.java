@@ -422,10 +422,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 if (highlightedChats.contains(contactNumber)) {
                     menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_unhighlight));
-
                 } else {
                     menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_highlight));
                 }
+
+                menu.getItem(menu.size()-1).getSubMenu().add(modRes.getString(R.string.backup) + "/" +modRes.getString(R.string.restore));
 
             }
         });
@@ -600,6 +601,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
                     param.setResult(false);
 
+                } else  if (title.equals((modRes.getString(R.string.backup) + "/" +modRes.getString(R.string.restore)))){
+                    intent = new Intent();
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME,"com.suraj.waext.BackupManagerActivity"));
+                    intent.putExtra("jid",contactNumber + (isGroup? "@g.us" : "@s.whatsapp.net"));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    AndroidAppHelper.currentApplication().startActivity(intent);
+                    param.setResult(false);
                 }
             }
 

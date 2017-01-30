@@ -14,7 +14,12 @@ public class BackupManagerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_backup_manager);
 
-        //TODO: //set proper jid
+        jid = getIntent().getStringExtra("jid");
+
+        if(jid==null){
+            Toast.makeText(this,"Error",Toast.LENGTH_SHORT).show();
+            finish();
+        }
         setContactNameFromNumberAsync(jid);
 
         (findViewById(R.id.btnBackupChat)).setOnClickListener(new View.OnClickListener() {
