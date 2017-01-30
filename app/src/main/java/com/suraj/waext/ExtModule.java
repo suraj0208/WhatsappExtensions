@@ -822,13 +822,23 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     }
 
                     if (param.thisObject instanceof ImageView) {
-                        //new PhotoViewAttacher((ImageView) param.thisObject);
+                        new PhotoViewAttacher((ImageView)param.thisObject);
                     }
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
 
+            }
+        });
+    }
+
+    private void hookMethodsForPhotoViewAttacher(XC_LoadPackage.LoadPackageParam loadPackageParam) {
+        XposedHelpers.findAndHookMethod(PhotoViewAttacher.class, "checkImageViewScaleType", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                param.setResult(null);
             }
         });
     }
@@ -1333,6 +1343,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForClickToReply(loadPackageParam);
         hookMethodsForHideDeliveryReports(loadPackageParam);
         hookMethodsForHidingNotifications(loadPackageParam);
+        //prevent IllegalStateException while closing profile photo
+        hookMethodsForPhotoViewAttacher(loadPackageParam);
         //hookMethodsForUpdatePrefs(loadPackageParam);
 
         unlockReceiver = new UnlockReceiver();
@@ -1345,6 +1357,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
 
     }
+
+
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);
