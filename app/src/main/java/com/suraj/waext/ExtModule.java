@@ -179,12 +179,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         if (!localIsGroup) {
                             if (tagToContactHashMap.get(tag) == null) {
                                 try {
+                                    if(!tag.contains(":"))
+                                        return;
+
                                     contact = tag.split(":")[1];
                                     contact = contact.split("_")[0];
                                     contact = contact.replace("+", "");
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
-                                    ex.printStackTrace();
+                                    return;
                                 }
                             } else
                                 contact = tagToContactHashMap.get(tag);
@@ -232,7 +235,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                     v.setVisibility(View.VISIBLE);
                             }
                         } catch (Exception ex) {
-                            XposedBridge.log("Exception caught");
+                            //who cares
                         }
 
                         if (!enableHighlight && highlightedChats.size() == 0)
@@ -819,7 +822,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     }
 
                     if (param.thisObject instanceof ImageView) {
-                        new PhotoViewAttacher((ImageView) param.thisObject);
+                        //new PhotoViewAttacher((ImageView) param.thisObject);
                     }
 
                 } catch (Exception ex) {
