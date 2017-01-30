@@ -23,10 +23,11 @@ public class WhatsAppChatBackupManager {
         backupDatabaseHelper.execSQL("CREATE TABLE IF NOT EXISTS messages (_id INTEGER PRIMARY KEY AUTOINCREMENT, key_remote_jid TEXT NOT NULL, key_from_me INTEGER, key_id TEXT NOT NULL, status INTEGER, needs_push INTEGER, data TEXT, timestamp INTEGER, media_url TEXT, media_mime_type TEXT, media_wa_type TEXT, media_size INTEGER, media_name TEXT, media_caption TEXT, media_hash TEXT, media_duration INTEGER, origin INTEGER, latitude REAL, longitude REAL, thumb_image TEXT, remote_resource TEXT, received_timestamp INTEGER, send_timestamp INTEGER, receipt_server_timestamp INTEGER, receipt_device_timestamp INTEGER, read_device_timestamp INTEGER, played_device_timestamp INTEGER, raw_data BLOB, recipient_count INTEGER, participant_hash TEXT, starred INTEGER, quoted_row_id INTEGER, mentioned_jids TEXT, multicast_id TEXT);;");
 
         String[] values = prepareValues(WhatsAppChatBackupManager.WHATSAPP_MESSAGEDB_PATH,jid,false);
+        backupDatabaseHelper.execSQL("delete from messages where key_remote_jid like "+'"'+jid+'"'+';');
 
         for(String value:values) {
             String query = "INSERT OR IGNORE INTO messages VALUES (" + value + ");";
-            //backupDatabaseHelper.execSQL(query);
+            backupDatabaseHelper.execSQL(query);
         }
 
     }
@@ -45,7 +46,7 @@ public class WhatsAppChatBackupManager {
 
             query.append("INSERT OR IGNORE INTO messages VALUES (").append(value).append(");");
         }
-
+        WhatsAppDatabaseHelper.execSQL(WhatsAppChatBackupManager.WHATSAPP_MESSAGEDB_PATH,"delete from messages where key_remote_jid like "+'"'+jid+'"'+';');
         WhatsAppDatabaseHelper.execSQL(WhatsAppChatBackupManager.WHATSAPP_MESSAGEDB_PATH,query.toString());
 
 
