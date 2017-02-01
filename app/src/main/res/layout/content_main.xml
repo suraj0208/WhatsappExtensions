@@ -34,35 +34,50 @@
             android:text="@string/lock_text"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/tvlockafter"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/lllockafter"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlockdesc"
-            android:layout_marginLeft="7dp"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/lock_after" />
+            android:orientation="horizontal"
+            android:weightSum="3">
 
-        <Spinner
-            android:id="@+id/spinminutes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/tvlockafter"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="5dp"
-            android:entries="@array/minutelist" />
+            <TextView
+                android:id="@+id/tvlockafter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="7dp"
+                android:layout_marginStart="7dp"
+                android:layout_weight="1"
+                android:text="@string/lock_after" />
+            
+            <Spinner
+                android:id="@+id/spinminutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:dropDownWidth="wrap_content"
+                android:entries="@array/minutelist" />
 
-        <Button
-            android:id="@+id/btnchangepass"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_alignBaseline="@id/spinminutes"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:background="@mipmap/ic_settings_black_24dp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/btnchangepass"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@mipmap/ic_settings_black_24dp" />
+
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
 
         <CheckBox
             android:id="@+id/chkboxHideNotifs"
@@ -70,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
-            android:layout_below="@id/btnchangepass"
+            android:layout_below="@id/lllockafter"
             android:layout_marginTop="8dp"
             android:text="@string/hide_notifs" />
 
