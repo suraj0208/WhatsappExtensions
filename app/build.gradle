@@ -8,8 +8,8 @@ android {
         applicationId "com.suraj.waext"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 17
-        versionName "4.6"
+        versionCode 18
+        versionName "5.0"
     }
     buildTypes {
         release {

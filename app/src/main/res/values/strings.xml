@@ -121,14 +121,12 @@
     <string name="restore_prefs">Restore your privacy preferences in WhatsApp.</string>
     <string name="always_online">Always show me online</string>
 
-    <!-- Translate these for 4.6 -->
     <string name="listtype_black">BlackList</string>
     <string name="listtype_white">WhiteList</string>
     <string name="whitelistinfo">Use this as %1$s</string>
     <string name="hide_notifs">Hide notifications for locked contacts</string>
     <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
     <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
-    <!-- Translate end for v4.6 -->
 
     <!-- not translated for > 4.6 -->
     <string name="replace_ticks">Show black ticks instead of blue</string>
