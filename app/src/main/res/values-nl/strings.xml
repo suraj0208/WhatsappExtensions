@@ -125,13 +125,13 @@
     <string name="sqliteMissing">Sqlite3 ontbreekt. Kijk bij de FAQ op XDA</string>
 
     <!-- not translated for > 4.6 -->
-    <string name="replace_ticks">Show black ticks instead of blue</string>
-    <string name="picker_activity_text">Pick a Contact</string>
-    <string name="search_hint">Search for Contact</string>
-    <string name="lock_archived">Lock Archived chats</string>
-    <string name="enable_rr_during_chat">Send Read Receipts while chatting</string>
+    <string name="replace_ticks">Gebruik zwarte vinkjes in plaats van blauwe</string>
+    <string name="picker_activity_text">Kies een Contact</string>
+    <string name="search_hint">Zoek een Contact</string>
+    <string name="lock_archived">Vergrendel gearchiveerde chats</string>
+    <string name="enable_rr_during_chat">Stuur leesbevestigingen tijdens het chatten</string>
     <string name="backup">Backup</string>
-    <string name="restore">Restore</string>
+    <string name="restore">Herstel</string>
     <!-- end -->
 
 </resources>
