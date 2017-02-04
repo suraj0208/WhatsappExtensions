@@ -163,7 +163,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         super.afterHookedMethod(param);
 
-                        if(!(param.args[0] instanceof String))
+                        if (!(param.args[0] instanceof String))
                             return;
 
                         String tag = param.args[0].toString();
@@ -179,7 +179,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         if (!localIsGroup) {
                             if (tagToContactHashMap.get(tag) == null) {
                                 try {
-                                    if(!tag.contains(":"))
+                                    if (!tag.contains(":"))
                                         return;
 
                                     contact = tag.split(":")[1];
@@ -227,11 +227,11 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         try {
                             if (lockedContacts.contains(contact)) {
                                 View v = getPreviewView(firstChild);
-                                if(v!=null)
+                                if (v != null)
                                     v.setVisibility(View.GONE);
                             } else {
                                 View v = getPreviewView(firstChild);
-                                if(v!=null)
+                                if (v != null)
                                     v.setVisibility(View.VISIBLE);
                             }
                         } catch (Exception ex) {
@@ -284,34 +284,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public void hookInitialStage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod(Intent.class, "getStringExtra", String.class, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(final MethodHookParam param) throws Throwable {
-                ExtModule.showLockScreen = false;
-                ExtModule.firstTime = true;
+            protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
+                String result = (String) param.getResult();
 
-                (new Handler(Looper.getMainLooper())).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        String result = (String) param.getResult();
-
-                        if (result != null) {
-
-                            isGroup = result.contains("@g.us");
-
-                            if (result.contains("@")) {
-                                contactNumber = result.split("@")[0];
-                                if (templockedContacts.contains(contactNumber)) {
-                                    ExtModule.showLockScreen = true;
-                                    ExtModule.firstTime = false;
-
-                                    Intent intent = new Intent();
-                                    intent.setComponent(new ComponentName("com.suraj.waext", "com.suraj.waext.LockActivity"));
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    AndroidAppHelper.currentApplication().startActivity(intent);
-                                }
-                            }
-                        }
+                if (result != null) {
+                    isGroup = result.contains("@g.us");
+                    if (result.contains("@")) {
+                        contactNumber = result.split("@")[0];
                     }
-                });
+                }
             }
         });
     }
@@ -332,21 +313,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
 
         XposedHelpers.findAndHookMethod(conversationClass, "onResume", new XC_MethodHook() {
-
-
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                //XposedBridge.log("onResume");
-
-                if (ExtModule.showLockScreen && !firstTime) {
-                    ((Activity) param.thisObject).finish();
-                } else
-                    firstTime = false;
 
                 if (!enableHideSeen)
                     return;
-
 
                 try {
                     Thread.sleep(200);
@@ -426,7 +398,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_highlight));
                 }
 
-                menu.getItem(menu.size()-1).getSubMenu().add(modRes.getString(R.string.backup) + "/" +modRes.getString(R.string.restore));
+                menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.backup) + "/" + modRes.getString(R.string.restore));
 
             }
         });
@@ -601,10 +573,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
                     param.setResult(false);
 
-                } else  if (title.equals((modRes.getString(R.string.backup) + "/" +modRes.getString(R.string.restore)))){
+                } else if (title.equals((modRes.getString(R.string.backup) + "/" + modRes.getString(R.string.restore)))) {
                     intent = new Intent();
-                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME,"com.suraj.waext.BackupManagerActivity"));
-                    intent.putExtra("jid",contactNumber + (isGroup? "@g.us" : "@s.whatsapp.net"));
+                    intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.BackupManagerActivity"));
+                    intent.putExtra("jid", contactNumber + (isGroup ? "@g.us" : "@s.whatsapp.net"));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     AndroidAppHelper.currentApplication().startActivity(intent);
                     param.setResult(false);
@@ -634,8 +606,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.afterHookedMethod(param);
 
                 String className = param.thisObject.getClass().getName();
-
                 switch (className) {
+                    case "com.whatsapp.Conversation":
+
+                        if (templockedContacts.contains(contactNumber)) {
+                            startLockActivity(param.thisObject);
+                        }
+                        break;
+
                     case "com.whatsapp.qrcode.QrCodeActivity":
                         if (!lockWAWeb)
                             return;
@@ -678,6 +656,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (!lockArchived)
                     return;
 
+                firstTime = true;
+                showLockScreen = true;
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("com.whatsapp.Conversation", loadPackageParam.classLoader, "onCreate", Bundle.class,new  XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
                 firstTime = true;
                 showLockScreen = true;
             }
@@ -830,7 +817,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     }
 
                     if (param.thisObject instanceof ImageView) {
-                        new PhotoViewAttacher((ImageView)param.thisObject);
+                        new PhotoViewAttacher((ImageView) param.thisObject);
                     }
 
                 } catch (Exception ex) {
@@ -1365,7 +1352,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
 
     }
-
 
 
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
