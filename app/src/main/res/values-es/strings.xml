@@ -39,7 +39,7 @@
     <string name="menuitem_wallpaper_set">Fondo Personalizado</string>
     <string name="menuitem_wallpaper_remove">Eliminar Fondo</string>
     <string name="menuitem_reminder">Añadir Recordatorio</string>
-    <string name="menuitem_lock">Bloquear</string>
+    <string name="menuitem_lock">Proteger</string> <!-- Maybe this will solve what i've said in the PM (Changed Bloquear to Proteger) -->
     <string name="menuitem_unlock">Desbloquear</string>
     <string name="menuitem_highlight">Marcar</string>
     <string name="menuitem_unhighlight">Desmarcar</string>
@@ -120,22 +120,22 @@
     <string name="always_online">Siempre muéstreme en línea</string>
 
     <!-- Translate these for 4.6 -->
-    <string name="listtype_black">BlackList</string>
-    <string name="listtype_white">WhiteList</string>
-    <string name="whitelistinfo">Use this as %1$s</string>
-    <string name="hide_notifs">Hide notifications for locked contacts</string>
-    <string name="lock_whatsapp_web">Lock WhatsApp Web</string>
-    <string name="sqliteMissing">Sqlite3 may be missing. Please refer FAQ on XDA</string>
+    <string name="listtype_black">Lista Negra</string>
+    <string name="listtype_white">Lista Blanca</string>
+    <string name="whitelistinfo">Usar esto como %1$s</string>
+    <string name="hide_notifs">Ocultar notificaciones de contactos protegidos.</string>
+    <string name="lock_whatsapp_web">Proteger WhatsApp Web</string>
+    <string name="sqliteMissing">Sqlite3 puede no estar instalado. Lea el FAQ en XDA</string>
     <!-- Translate end for v4.6 -->
 
     <!-- not translated for > 4.6 -->
-    <string name="replace_ticks">Show black ticks instead of blue</string>
-    <string name="picker_activity_text">Pick a Contact</string>
-    <string name="search_hint">Search for Contact</string>
-    <string name="lock_archived">Lock Archived chats</string>
-    <string name="enable_rr_during_chat">Send Read Receipts while chatting</string>
+    <string name="replace_ticks">Mostrar ticks negros en vez de azules</string>
+    <string name="picker_activity_text">Elegir un Contacto</string>
+    <string name="search_hint">Buscar un Contacto</string>
+    <string name="lock_archived">Proteger Chats Archivados</string>
+    <string name="enable_rr_during_chat">Enviar Recibos de Lectura al chatear</string>
     <string name="backup">Backup</string>
-    <string name="restore">Restore</string>
+    <string name="restore">Restaurar</string>
     <!-- end -->
 
 </resources>
