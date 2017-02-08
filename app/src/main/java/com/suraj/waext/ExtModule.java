@@ -398,7 +398,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.menuitem_highlight));
                 }
 
-                menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.backup) + "/" + modRes.getString(R.string.restore));
+                //menu.getItem(menu.size() - 1).getSubMenu().add(modRes.getString(R.string.backup) + "/" + modRes.getString(R.string.restore));
 
             }
         });
