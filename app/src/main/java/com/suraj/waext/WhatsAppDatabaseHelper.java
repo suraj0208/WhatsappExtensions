@@ -61,7 +61,11 @@ public class WhatsAppDatabaseHelper {
         for(String row:arr){
             String splts[] = row.split("\\|",-1);
 
-            if(splts.length > 0) {
+            Log.i("com.suraj.waext", "0: " + splts[0].replaceAll("[0-9]","x"));
+
+            if(splts.length > 1) {
+                Log.i("com.suraj.waext", "1: " + splts[1].replaceAll("[0-9]","x"));
+
                 hashMaps.get(0).put(splts[0].split("@")[0], splts[1]);
                 hashMaps.get(1).put(splts[1],splts[0].split("@")[0]);
             }
