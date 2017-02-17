@@ -215,8 +215,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                 //XposedBridge.log("ClassCastException in hookMethodsForHighLight");
                             }
 
-                            zerothChildrenHashMap.put(parent, rl.getChildAt(0));
-                            firstChildrenHashMap.put(parent, rl.getChildAt(1));
+                            if(rl!=null){
+                                zerothChildrenHashMap.put(parent, rl.getChildAt(0));
+                                firstChildrenHashMap.put(parent, rl.getChildAt(1));
+                            }
                         }
 
                         View zerothChild = zerothChildrenHashMap.get(parent);
