@@ -3,11 +3,13 @@ package com.suraj.waext;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -71,5 +73,29 @@ public class Utils {
                 editor.apply();
             }
         });
+    }
+
+    public static void setContactNameFromDataase(final TextView textView, final String jid){
+        (new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
+
+                if (arr != null) {
+                    return arr[0];
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                if (s == null)
+                    textView.setText("Cant retrieve contact name");
+                else
+                    textView.setText(s);
+
+            }
+        }).execute();
     }
 }

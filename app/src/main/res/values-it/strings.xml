@@ -137,4 +137,7 @@
     <string name="restore">Ripristino</string>
     <!-- end -->
 
+    <string name="stats">Stats</string>
+
+
 </resources>

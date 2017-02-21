@@ -76,10 +76,13 @@
         <activity android:name=".WhiteListActivity" />
         <activity
             android:name=".WhatsAppContactPickerActivity"
-            android:label="@string/picker_activity_text"></activity>
+            android:label="@string/picker_activity_text" />
         <activity
             android:name=".BackupManagerActivity"
-            android:exported="true"></activity>
+            android:exported="true" />
+        <activity android:name=".StatsActivity"
+            android:label="@string/title_activity_stats"
+            android:exported="true"/>
     </application>
 
 </manifest>

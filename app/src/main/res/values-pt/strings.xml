@@ -134,4 +134,7 @@
     <string name="backup">Backup</string>
     <string name="restore">Restore</string>
     <!-- end -->
+
+    <string name="stats">Stats</string>
+
 </resources>
