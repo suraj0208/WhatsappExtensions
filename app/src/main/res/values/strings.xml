@@ -139,17 +139,13 @@
     <!-- end -->
 
     <string name="stats">Stats</string>
-
-    <string-array name="messagesTypeArray">
-        <item name="messagesFrom">Messages Received : </item>
-        <item name="messagesTo">Messages Sent : </item>
-    </string-array>
+    <string name="messagesReceived">Messages Received</string>
+    <string name="messagesSent">Messages Sent</string>
+    <string name="messageTotal">Total</string>
 
     <!-- this is date. for example from 8/12/2016 to 17/01/2017 -->
-
-    <string name="messagesTimespan">From %1$s to %1$s</string>
+    <string name="messagesTimespan">From %1$s to %2$s</string>
     <string name="title_activity_stats">Stats</string>
-
 
 
 </resources>

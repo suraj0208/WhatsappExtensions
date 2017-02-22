@@ -27,15 +27,53 @@
         android:layout_marginTop="5dp" />
 
     <TextView
+        android:id="@+id/tvMessagesSentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvMessagesTimeSpan"
+        android:text="@string/messagesSent" />
+
+    <TextView
+        android:id="@+id/tvMessagesReceivedTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/tvMessagesSentTitle"
+        android:text="@string/messagesReceived" />
+
+    <TextView
         android:id="@+id/tvMessagesSent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvMessagesTimeSpan" />
+        android:layout_alignBaseline="@id/tvMessagesSentTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true" />
 
     <TextView
         android:id="@+id/tvMessagesReceived"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvMessagesReceivedTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true" />
+
+
+    <TextView
+        android:id="@+id/tvMessageTotalTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvMessagesSent" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/tvMessagesReceivedTitle"
+        android:text="@string/messageTotal" />
+
+    <TextView
+        android:id="@+id/tvMessageTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/tvMessageTotalTitle"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

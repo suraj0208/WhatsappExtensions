@@ -25,8 +25,9 @@ public class StatsActivity extends AppCompatActivity {
             finish();
         }
 
+
         Utils.setContactNameFromDataase((TextView) findViewById(R.id.tvStatsContactName), jid);
-        getMessagesCount((TextView) findViewById(R.id.tvMessagesSent), (TextView) findViewById(R.id.tvMessagesReceived), jid);
+        getMessagesCount((TextView) findViewById(R.id.tvMessagesReceived),(TextView) findViewById(R.id.tvMessagesSent),(TextView) findViewById(R.id.tvMessageTotal), jid);
         getMessagesTimeSpan((TextView)findViewById(R.id.tvMessagesTimeSpan),jid);
 
     }
@@ -73,7 +74,7 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
-    public void getMessagesCount(final TextView tvTo, TextView tvFrom, final String jid) {
+    public void getMessagesCount(final TextView tvTo, TextView tvFrom, final TextView tvTotal, final String jid) {
         final TextView[] textViews = {tvTo, tvFrom};
 
         (new AsyncTask<Void, Void, String[]>() {
@@ -93,20 +94,22 @@ public class StatsActivity extends AppCompatActivity {
                 if (s == null) {
                     return;
                 }
+
+                long total =0;
+
                 for (String data : s) {
                     String rowData[] = data.split("\\|");
 
                     try {
                         int num = Integer.parseInt(rowData[1]);
-
-                        textViews[num].setText(getResources().getStringArray(R.array.messagesTypeArray)[num] + rowData[0]);
-
-
+                        textViews[num].setText(""+rowData[0]);
+                        total += Long.parseLong(rowData[0]);
                     } catch (NumberFormatException | ArrayIndexOutOfBoundsException ne) {
                         ne.printStackTrace();
                     }
 
                 }
+                tvTotal.setText(""+total);
 
             }
         }).execute();

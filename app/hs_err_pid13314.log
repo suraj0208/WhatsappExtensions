@@ -1,0 +1,103 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 32505856 bytes for committing reserved memory.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_linux.cpp:2627), pid=13314, tid=0x00007f3893cfc700
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_121-b13) (build 1.8.0_121-b13)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.121-b13 mixed mode linux-amd64 compressed oops)
+# Failed to write core dump. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007f38b4078000):  VMThread [stack: 0x00007f3893bfc000,0x00007f3893cfd000] [id=13325]
+
+Stack: [0x00007f3893bfc000,0x00007f3893cfd000],  sp=0x00007f3893cfafe0,  free space=1019k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xac703a]  VMError::report_and_die()+0x2ba
+V  [libjvm.so+0x4fc7eb]  report_vm_out_of_memory(char const*, int, unsigned long, VMErrorType, char const*)+0x8b
+V  [libjvm.so+0x923c43]  os::Linux::commit_memory_impl(char*, unsigned long, bool)+0x103
+V  [libjvm.so+0x924199]  os::pd_commit_memory(char*, unsigned long, unsigned long, bool)+0x29
+V  [libjvm.so+0x91e4aa]  os::commit_memory(char*, unsigned long, unsigned long, bool)+0x2a
+V  [libjvm.so+0x992f03]  PSVirtualSpace::expand_by(unsigned long)+0x53
+V  [libjvm.so+0x994308]  PSYoungGen::resize_generation(unsigned long, unsigned long)+0xf8
+V  [libjvm.so+0x993462]  PSYoungGen::resize(unsigned long, unsigned long)+0x22
+V  [libjvm.so+0x99073b]  PSScavenge::invoke_no_policy()+0xf3b
+V  [libjvm.so+0x990ec1]  PSScavenge::invoke()+0x41
+V  [libjvm.so+0x947c10]  ParallelScavengeHeap::failed_mem_allocate(unsigned long)+0x70
+V  [libjvm.so+0xac8a57]  VM_ParallelGCFailedAllocation::doit()+0x97
+V  [libjvm.so+0xad0535]  VM_Operation::evaluate()+0x55
+V  [libjvm.so+0xace90a]  VMThread::evaluate_operation(VM_Operation*)+0xba
+V  [libjvm.so+0xacec8e]  VMThread::loop()+0x1ce
+V  [libjvm.so+0xacf100]  VMThread::run()+0x70
+V  [libjvm.so+0x926268]  java_start(Thread*)+0x108
+
+VM_Operation (0x00007f389290bae0): ParallelGCFailedAllocation, mode: safepoint, requested by thread 0x00007f38b414b000
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00007f38b414b000 JavaThread "pool-1-thread-4" [_thread_blocked, id=13338, stack(0x00007f389280d000,0x00007f389290e000)]
+  0x00007f38b4149000 JavaThread "pool-1-thread-3" [_thread_blocked, id=13337, stack(0x00007f389290e000,0x00007f3892a0f000)]
+  0x00007f38b4147800 JavaThread "pool-1-thread-2" [_thread_blocked, id=13336, stack(0x00007f3892a0f000,0x00007f3892b10000)]
+  0x00007f38b4145800 JavaThread "pool-2-thread-1" [_thread_blocked, id=13335, stack(0x00007f3892b10000,0x00007f3892c11000)]
+  0x00007f38b4144000 JavaThread "pool-1-thread-1" [_thread_blocked, id=13334, stack(0x00007f3892c11000,0x00007f3892d12000)]
+  0x00007f38b40c0800 JavaThread "Service Thread" daemon [_thread_blocked, id=13332, stack(0x00007f3892e13000,0x00007f3892f14000)]
+  0x00007f38b40bd000 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=13331, stack(0x00007f3892f14000,0x00007f3893015000)]
+  0x00007f38b40bb800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=13330, stack(0x00007f3893015000,0x00007f3893116000)]
+  0x00007f38b40b8800 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=13329, stack(0x00007f3893116000,0x00007f3893217000)]
+  0x00007f38b40b7000 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=13328, stack(0x00007f3893217000,0x00007f3893318000)]
+  0x00007f38b4084000 JavaThread "Finalizer" daemon [_thread_blocked, id=13327, stack(0x00007f38939fa000,0x00007f3893afb000)]
+  0x00007f38b407f800 JavaThread "Reference Handler" daemon [_thread_blocked, id=13326, stack(0x00007f3893afb000,0x00007f3893bfc000)]
+  0x00007f38b400a000 JavaThread "main" [_thread_blocked, id=13320, stack(0x00007f38ba2c4000,0x00007f38ba3c5000)]
+
+Other Threads:
+=>0x00007f38b4078000 VMThread [stack: 0x00007f3893bfc000,0x00007f3893cfd000] [id=13325]
+  0x00007f38b40c3000 WatcherThread [stack: 0x00007f3892d12000,0x00007f3892e13000] [id=13333]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007f38b40064d0] Threads_lock - owner thread: 0x00007f38b4078000
+[0x00007f38b40069d0] Heap_lock - owner thread: 0x00007f38b414b000
+
+Heap:
+ PSYoungGen      total 34304K, used 2529K [0x00000000eab00000, 0x00000000ecf00000, 0x0000000100000000)
+  eden space 31744K, 0% used [0x00000000eab00000,0x00000000eab00000,0x00000000eca00000)
+  from space 2560K, 98% used [0x00000000eca00000,0x00000000ecc78490,0x00000000ecc80000)
+  to   space 2560K, 0% used [0x00000000ecc80000,0x00000000ecc80000,0x00000000ecf00000)
+ ParOldGen       total 42496K, used 9733K [0x00000000c0000000, 0x00000000c2980000, 0x00000000eab00000)
+  object space 42496K, 22% used [0x00000000c0000000,0x00000000c0981798,0x00000000c2980000)
+ Metaspace       used 5782K, capacity 6832K, committed 7040K, reserved 1056768K
+  class space    used 588K, capacity 616K, committed 640K, reserved 1048576K
+
+Card table byte_map: [0x00007f38a3dbd000,0x00007f38a3fbe000] byte_map_base: 0x00007f38a37bd000
+
+Marking Bits: (ParMarkBitMap*) 0x00007f38b97a0c80
+ Begin Bits: [0x00007f38a1863000, 0x00007f38a2863000)
+ End Bits:   [0x00007f38a2863000, 0x00007f38a3863000)
+
+Polling page: 0x00007f38ba3ea000
+
+CodeCache: size=245760Kb used=3647Kb max_used=3647Kb free=242112Kb
+ bounds [0x00007f38a437e000, 0x00007f38a471e000, 0x00007f38b337e000]
+ total_blobs=1267 nmethods=1006 adapters=175
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 1.672 
