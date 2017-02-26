@@ -37,7 +37,7 @@ public class StatsActivity extends AppCompatActivity {
     private int messagesHighestCount = 0;
 
     private String jid;
-    private String[] messageTimestamps;
+    private Long[] messageTimestamps;
 
     private TreeMap<ContributionCalendarDate, Integer> dateCountTreeMap;
     private HashMap<String, MonthYearPair> availableMonths;
@@ -91,19 +91,28 @@ public class StatsActivity extends AppCompatActivity {
     }
 
     private void getMessagesTimeSpan(final TextView textview, final String jid) {
-        (new AsyncTask<Void, Void, String[]>() {
+        (new AsyncTask<Void, Void, Long[]>() {
             @Override
-            protected String[] doInBackground(Void... voids) {
+            protected Long[] doInBackground(Void... voids) {
                 String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select timestamp from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 order by timestamp;");
 
+                Calendar c = Calendar.getInstance(Locale.getDefault());
+
                 if (arr != null) {
-                    return arr;
+                    Long[] timestampsFromDatabase = new Long[arr.length];
+                    for (int i=0;i<arr.length ; i++) {
+                        timestampsFromDatabase[i] = Long.parseLong(arr[i]);
+                        c.setTime(new Date(timestampsFromDatabase[i]));
+                        availableMonths.put(new SimpleDateFormat("MMM yyyy").format(c.getTime()), new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
+
+                    }
+                    return timestampsFromDatabase;
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(String[] s) {
+            protected void onPostExecute(Long[] s) {
                 super.onPostExecute(s);
                 if (s == null) {
                     return;
@@ -116,8 +125,8 @@ public class StatsActivity extends AppCompatActivity {
                 String second;
 
                 try {
-                    first = getDateFromTimeStamp(Long.parseLong(s[0]));
-                    second = getDateFromTimeStamp(Long.parseLong(s[s.length - 1]));
+                    first = getDateFromTimeStamp(s[0]);
+                    second = getDateFromTimeStamp(s[s.length - 1]);
 
                     textview.setText(getResources().getString(R.string.messagesTimespan, first, second));
 
@@ -134,7 +143,7 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
-    private void displayContributionCalendar(final String[] timestamps, final int month, final int year) {
+    private void displayContributionCalendar(final Long[] timestamps, final int month, final int year) {
         if (timestamps == null || timestamps.length == 0) {
             Log.i("com.suraj.waext", "timestamps array null");
             return;
@@ -144,18 +153,24 @@ public class StatsActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    for (final String data : timestamps) {
-                        long timestamp = Long.parseLong(data);
+                    int pos = binarySearch(timestamps, month, year);
+                    System.out.println("found at postions " + pos);
+                    if (pos == -1) {
 
-                        ContributionCalendarDate date = new ContributionCalendarDate(timestamp);
+                        return null;
+                    }
 
-                        Calendar c = Calendar.getInstance(Locale.getDefault());
+                    Calendar c = Calendar.getInstance(Locale.getDefault());
+
+                    for (int i = pos; i < timestamps.length; i++) {
+
+                        ContributionCalendarDate date = new ContributionCalendarDate(timestamps[i]);
+
                         c.setTime(date);
 
-                        availableMonths.put(new SimpleDateFormat("MMM yyyy").format(date), new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
 
                         if (c.get(Calendar.MONTH) != month - 1 || c.get(Calendar.YEAR) != year)
-                            continue;
+                            break;
 
                         Integer currentCount = dateCountTreeMap.get(date);
 
@@ -164,6 +179,7 @@ public class StatsActivity extends AppCompatActivity {
                         else
                             dateCountTreeMap.put(date, currentCount + 1);
                     }
+
                 } catch (NumberFormatException ex) {
                     ex.printStackTrace();
                 }
@@ -171,7 +187,7 @@ public class StatsActivity extends AppCompatActivity {
                 ArrayList<Integer> counts = new ArrayList<>();
                 ArrayList<Integer> diffs = new ArrayList<>();
 
-                for (Date date : dateCountTreeMap.keySet()) {
+                for (ContributionCalendarDate date : dateCountTreeMap.keySet()) {
                     counts.add(dateCountTreeMap.get(date));
                 }
 
@@ -315,6 +331,55 @@ public class StatsActivity extends AppCompatActivity {
     public String getDateFromTimeStamp(long timestamp) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }
+
+    public int binarySearch(Long[] timestamps, int month, int year) {
+        int start = 0;
+        int end = timestamps.length -1;
+
+        int mid;
+        int pos = -1;
+
+        Calendar c = Calendar.getInstance(Locale.getDefault());
+
+        while (start <= end) {
+            mid = (start + end) / 2;
+            System.out.println("in binary search");
+
+            ContributionCalendarDate date = new ContributionCalendarDate(timestamps[mid]);
+            c.setTime(date);
+
+            if (c.get(Calendar.MONTH) == month - 1 && c.get(Calendar.YEAR) == year) {
+                pos = mid;
+                end = mid - 1;
+                continue;
+            }
+
+            if (c.get(Calendar.YEAR) > year) {
+                end = mid - 1;
+                continue;
+            }
+
+            if (c.get(Calendar.YEAR) < year) {
+                start = mid + 1;
+                continue;
+            }
+
+            if (c.get(Calendar.MONTH) > ( month -1 )) {
+                end = mid - 1;
+                continue;
+            }
+
+            if (c.get(Calendar.MONTH) < (month - 1)) {
+                start = mid + 1;
+            }
+
+        }
+
+        return pos;
+
+    }
+
+    ;
 
     class MonthYearPair {
         int month;
