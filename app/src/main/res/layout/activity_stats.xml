@@ -84,8 +84,92 @@
         android:layout_below="@id/tvMessageTotal"
         android:layout_centerHorizontal="true"
         android:layout_margin="10dp"
-        android:visibility="invisible"
-        android:paddingLeft="20dp" />
+        android:paddingLeft="20dp"
+        android:paddingStart="20dp"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/llLegend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgViewLowActivity"
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:layout_marginTop="3sp"
+                android:background="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvLowActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/imgViewLowActivity"
+                android:layout_toRightOf="@id/imgViewLowActivity"
+                android:text="0-10" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgViewMediumActivity"
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+
+                android:layout_marginTop="3sp"
+                android:background="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvMediumActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/imgViewMediumActivity"
+                android:layout_toRightOf="@id/imgViewMediumActivity"
+                android:text="10-20" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imgViewHighActivity"
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:layout_marginTop="3sp"
+                android:background="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvHighActivity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_toEndOf="@id/imgViewHighActivity"
+                android:layout_toRightOf="@id/imgViewHighActivity"
+                android:text="20-30" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

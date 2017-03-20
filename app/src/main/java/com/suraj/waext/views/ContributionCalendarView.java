@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import com.suraj.waext.data.ContributionCalendarDate;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 /**
@@ -28,6 +28,22 @@ public class ContributionCalendarView extends View {
     private String mediumColor;
     private String highColor;
     private String emptyColor;
+
+    public String getLowColor() {
+        return lowColor;
+    }
+
+    public String getMediumColor() {
+        return mediumColor;
+    }
+
+    public String getHighColor() {
+        return highColor;
+    }
+
+    public String getEmptyColor() {
+        return emptyColor;
+    }
 
     private TreeMap<ContributionCalendarDate, Integer> dateCountTreeMap;
 
@@ -66,14 +82,14 @@ public class ContributionCalendarView extends View {
         this.spacing = spacing;
     }
 
-    public ContributionCalendarView(Context context, int side, int spacing, int median, int diff, TreeMap<ContributionCalendarDate, Integer> dateCountTreeMap) {
+    public ContributionCalendarView(Context context, int side, int spacing, int intervalStart, int intervalEnd, TreeMap<ContributionCalendarDate, Integer> dateCountTreeMap) {
         super(context);
         this.squareSide = side;
         this.spacing = spacing;
-        this.dateCountTreeMap = dateCountTreeMap;
+        this.dateCountTreeMap = new TreeMap<>(dateCountTreeMap);
 
-        lowerLimit = median - diff;
-        upperLimit = median + diff;
+        lowerLimit = intervalStart;
+        upperLimit = intervalEnd;
 
         setLowColor("#D6E685");
         setMediumColor("#8CC665");
@@ -109,62 +125,67 @@ public class ContributionCalendarView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Calendar c = Calendar.getInstance(Locale.getDefault());
-        c.setTime(dateCountTreeMap.firstKey());
-        c.set(Calendar.DAY_OF_MONTH, 1);
+        try {
+            Calendar c = Calendar.getInstance(Locale.getDefault());
+            c.setTime(dateCountTreeMap.firstKey());
+            c.set(Calendar.DAY_OF_MONTH, 1);
 
-        int firstDay = c.get(Calendar.DAY_OF_WEEK);
+            int firstDay = c.get(Calendar.DAY_OF_WEEK);
 
-        int j;
-        int k = squareSide / 2;
+            int j;
+            int k = squareSide / 2;
 
-        int day = 1;
+            int day = 1;
 
-        int col = 0;
+            int col = 0;
 
-        for (col = 0; col < 6; col++) {
-            j = squareSide / 2;
-            for (int row = 0; row < 7; row++) {
+            for (col = 0; col < 6; col++) {
+                j = squareSide / 2;
+                for (int row = 0; row < 7; row++) {
 
-                if (firstDay > 1) {
-                    canvas.drawPoint(k, j, emptyPaint);
-                    firstDay--;
-                    j += squareSide + spacing;
-                    continue;
-                }
-
-                if (dateCountTreeMap.size() > 0 && day == dateCountTreeMap.firstKey().getDate()) {
-
-                    int count = dateCountTreeMap.remove(dateCountTreeMap.firstKey());
-
-                    if (count >= lowerLimit && count <= upperLimit) {
-                        canvas.drawPoint(k, j, avgPaint);
-                        textPaint.setColor(aboveAvgPaint.getColor());
-                    } else if (count < lowerLimit) {
-                        canvas.drawPoint(k, j, belowAvgPaint);
-                        textPaint.setColor(aboveAvgPaint.getColor());
-                    } else {
-                        canvas.drawPoint(k, j, aboveAvgPaint);
-                        textPaint.setColor(belowAvgPaint.getColor());
+                    if (firstDay > 1) {
+                        canvas.drawPoint(k, j, emptyPaint);
+                        firstDay--;
+                        j += squareSide + spacing;
+                        continue;
                     }
 
-                    canvas.drawText("" + day, k - 10, j + 10, textPaint);
+                    if (dateCountTreeMap.size() > 0 && day == dateCountTreeMap.firstKey().getDate()) {
 
-                } else {
-                    canvas.drawPoint(k, j, emptyPaint);
+                        int count = dateCountTreeMap.remove(dateCountTreeMap.firstKey());
+
+                        if (count >= lowerLimit && count <= upperLimit) {
+                            canvas.drawPoint(k, j, avgPaint);
+                            textPaint.setColor(aboveAvgPaint.getColor());
+                        } else if (count < lowerLimit) {
+                            canvas.drawPoint(k, j, belowAvgPaint);
+                            textPaint.setColor(aboveAvgPaint.getColor());
+                        } else {
+                            canvas.drawPoint(k, j, aboveAvgPaint);
+                            textPaint.setColor(belowAvgPaint.getColor());
+                        }
+
+                        canvas.drawText("" + day, k - 10, j + 10, textPaint);
+
+                    } else {
+                        canvas.drawPoint(k, j, emptyPaint);
+                    }
+
+                    j += squareSide + spacing;
+                    day++;
+
+                    if (day > 31)
+                        break;
+
                 }
-
-                j += squareSide + spacing;
-                day++;
+                k += squareSide + spacing;
 
                 if (day > 31)
                     break;
-
             }
-            k += squareSide + spacing;
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
 
-            if (day > 31)
-                break;
         }
     }
 

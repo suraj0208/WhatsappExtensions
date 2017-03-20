@@ -1,13 +1,15 @@
 package com.suraj.waext;
 
+import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,30 +24,32 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class StatsActivity extends AppCompatActivity {
-    private int median;
-    private int diffMedian;
     private int contributionCalendarViewSquareSize;
     private int contributionCalendarViewSpacing;
     private int contributionCalendarViewWidth;
     private int contributionCalendarViewHeight;
-    private int messagesHighestCount = 0;
 
     private String jid;
-    private Long[] messageTimestamps;
 
-    private TreeMap<ContributionCalendarDate, Integer> dateCountTreeMap;
+    ArrayList<String> spinnerData;
+
+
     private HashMap<String, MonthYearPair> availableMonths;
+    private HashMap<String, TreeMap<ContributionCalendarDate, Integer>> dateStringTreeMapHashMap;
+    private HashMap<String, DistributionPair> dateStringMedianPairHashMap;
 
     private Spinner spinMonths;
     private TextView tvDay;
-    RelativeLayout relativeLayoutMain;
+    private RelativeLayout relativeLayoutMain;
+    private LinearLayout linearLayoutLegend;
 
+    private ImageView imgViewActivities[];
+    private TextView tvActivities[];
 
     private ContributionCalendarView contributionCalendarView;
 
@@ -56,13 +60,24 @@ public class StatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_stats);
 
         jid = getIntent().getStringExtra("jid");
-        dateCountTreeMap = new TreeMap<>();
+
         availableMonths = new HashMap<>();
+
+        dateStringTreeMapHashMap = new HashMap<>();
+        dateStringMedianPairHashMap = new HashMap<>();
+
         spinMonths = (Spinner) findViewById(R.id.spinMonths);
+        spinnerData = new ArrayList<>();
+
         relativeLayoutMain = (RelativeLayout) findViewById(R.id.rlStatsMain);
+        linearLayoutLegend = (LinearLayout) findViewById(R.id.llLegend);
+
+        imgViewActivities = new ImageView[]{(ImageView) findViewById(R.id.imgViewLowActivity), (ImageView) findViewById(R.id.imgViewMediumActivity), (ImageView) findViewById(R.id.imgViewHighActivity)};
+        tvActivities = new TextView[]{(TextView) findViewById(R.id.tvLowActivity), (TextView) findViewById(R.id.tvMediumActivity), (TextView) findViewById(R.id.tvHighActivity)};
 
         contributionCalendarViewSquareSize = 50;
         contributionCalendarViewSpacing = 10;
+
         contributionCalendarViewWidth = contributionCalendarViewSquareSize * 6 + contributionCalendarViewSpacing * 5;
         contributionCalendarViewHeight = contributionCalendarViewSquareSize * 7 + contributionCalendarViewSpacing * 6;
 
@@ -75,18 +90,6 @@ public class StatsActivity extends AppCompatActivity {
         getMessagesCount((TextView) findViewById(R.id.tvMessagesReceived), (TextView) findViewById(R.id.tvMessagesSent), (TextView) findViewById(R.id.tvMessageTotal), jid);
         getMessagesTimeSpan((TextView) findViewById(R.id.tvMessagesTimeSpan), jid);
 
-        spinMonths.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                MonthYearPair monthYearPair = availableMonths.get(spinMonths.getItemAtPosition(i).toString());
-                displayContributionCalendar(messageTimestamps, monthYearPair.month, monthYearPair.year);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
     }
 
@@ -98,14 +101,84 @@ public class StatsActivity extends AppCompatActivity {
 
                 Calendar c = Calendar.getInstance(Locale.getDefault());
 
+                ArrayList<Integer> medianList = new ArrayList<>();
+
+                TreeMap<ContributionCalendarDate, Integer> currentTreeMap = null;
+
+                String prevMonthYearName = null;
+                ContributionCalendarDate prevDate = null;
+
                 if (arr != null) {
                     Long[] timestampsFromDatabase = new Long[arr.length];
-                    for (int i=0;i<arr.length ; i++) {
-                        timestampsFromDatabase[i] = Long.parseLong(arr[i]);
-                        c.setTime(new Date(timestampsFromDatabase[i]));
-                        availableMonths.put(new SimpleDateFormat("MMM yyyy").format(c.getTime()), new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
 
+                    for (int i = 0; i < arr.length; i++) {
+                        timestampsFromDatabase[i] = Long.parseLong(arr[i]);
+
+                        c.setTime(new Date(timestampsFromDatabase[i]));
+
+                        String monthYearName = new SimpleDateFormat("MMM yyyy").format(c.getTime());
+
+                        ContributionCalendarDate currentDate = new ContributionCalendarDate(timestampsFromDatabase[i]);
+                        availableMonths.put(monthYearName, new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
+
+                        currentTreeMap = dateStringTreeMapHashMap.get(monthYearName);
+
+                        if (currentTreeMap == null) {
+                            if (i != 0) {
+                                Collections.sort(medianList);
+                                int intervalStart = medianList.size() / 3;
+                                int intervalEnd = intervalStart + intervalStart;
+
+                                if (medianList.size()> 0 && intervalEnd >= medianList.size() - 1) {
+                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
+                                } else if(medianList.size()> 0)
+                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
+
+                                medianList.clear();
+                            }
+
+                            currentTreeMap = new TreeMap<>();
+                            currentTreeMap.put(currentDate, 1);
+                            dateStringTreeMapHashMap.put(monthYearName, currentTreeMap);
+                        } else {
+                            Integer current = currentTreeMap.get(currentDate);
+
+                            if (current == null) {
+                                currentTreeMap.put(currentDate, 1);
+                                medianList.add(currentTreeMap.get(prevDate));
+                            } else
+                                currentTreeMap.put(currentDate, current + 1);
+
+                        }
+                        prevMonthYearName = monthYearName;
+                        prevDate = currentDate;
                     }
+
+                    medianList.add(currentTreeMap.get(prevDate));
+                    Collections.sort(medianList);
+                    int intervalStart = medianList.size() / 3;
+                    int intervalEnd = intervalStart + intervalStart;
+
+                    if (intervalEnd >= medianList.size() - 1) {
+                        dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
+                    } else
+                        dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
+
+                    ArrayList<HashMap.Entry<String, MonthYearPair>> entries = new ArrayList<>(availableMonths.entrySet());
+
+                    Collections.sort(entries, new Comparator<HashMap.Entry<String, MonthYearPair>>() {
+                        @Override
+                        public int compare(HashMap.Entry<String, MonthYearPair> left, HashMap.Entry<String, MonthYearPair> right) {
+                            String thisDate = left.getValue().year + "/" + (Integer.toString(left.getValue().month).length() < 2 ? "0" + left.getValue().month : left.getValue().month);
+                            String otherDate = right.getValue().year + "/" + (Integer.toString(right.getValue().month).length() < 2 ? "0" + right.getValue().month : right.getValue().month);
+
+                            return thisDate.compareTo(otherDate);
+                        }
+                    });
+
+                    for (Map.Entry<String, MonthYearPair> entry : entries)
+                        spinnerData.add(entry.getKey());
+
                     return timestampsFromDatabase;
                 }
                 return null;
@@ -130,8 +203,29 @@ public class StatsActivity extends AppCompatActivity {
 
                     textview.setText(getResources().getString(R.string.messagesTimespan, first, second));
 
-                    String firstDate[] = first.split("/");
-                    displayContributionCalendar(s, Integer.parseInt(firstDate[1]), Integer.parseInt(firstDate[2]));
+                    String monthYearName = new SimpleDateFormat("MMM yyyy").format(s[0]);
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(StatsActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerData);
+                    spinMonths.setAdapter(adapter);
+                    spinMonths.setVisibility(View.VISIBLE);
+
+                    displayContributionCalendar(monthYearName);
+
+                    spinMonths.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            displayContributionCalendar(spinMonths.getItemAtPosition(i).toString());
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
+
+                    imgViewActivities[0].setBackgroundColor(Color.parseColor(contributionCalendarView.getLowColor()));
+                    imgViewActivities[1].setBackgroundColor(Color.parseColor(contributionCalendarView.getMediumColor()));
+                    imgViewActivities[2].setBackgroundColor(Color.parseColor(contributionCalendarView.getHighColor()));
 
                 } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
                     ex.printStackTrace();
@@ -143,145 +237,51 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
-    private void displayContributionCalendar(final Long[] timestamps, final int month, final int year) {
-        if (timestamps == null || timestamps.length == 0) {
-            Log.i("com.suraj.waext", "timestamps array null");
-            return;
-        }
+    private void displayContributionCalendar(String dateString) {
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(contributionCalendarViewWidth, contributionCalendarViewHeight);
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        layoutParams.addRule(RelativeLayout.BELOW, R.id.spinMonths);
 
-        (new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    int pos = binarySearch(timestamps, month, year);
-                    System.out.println("found at postions " + pos);
-                    if (pos == -1) {
+        relativeLayoutMain.removeView(contributionCalendarView);
 
-                        return null;
-                    }
+        DistributionPair distributionPair = dateStringMedianPairHashMap.get(dateString);
 
-                    Calendar c = Calendar.getInstance(Locale.getDefault());
+        contributionCalendarView = new ContributionCalendarView(StatsActivity.this, contributionCalendarViewSquareSize, contributionCalendarViewSpacing, distributionPair.middleStart, distributionPair.middleEnd, dateStringTreeMapHashMap.get(dateString));
+        contributionCalendarView.setId(View.generateViewId());
+        relativeLayoutMain.addView(contributionCalendarView, layoutParams);
 
-                    for (int i = pos; i < timestamps.length; i++) {
+        RelativeLayout.LayoutParams layoutParamsDay = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsDay.addRule(RelativeLayout.ALIGN_TOP, contributionCalendarView.getId());
+        layoutParamsDay.addRule(RelativeLayout.LEFT_OF, contributionCalendarView.getId());
+        layoutParamsDay.setMargins(0, 0, 5, 0);
+        relativeLayoutMain.removeView(tvDay);
 
-                        ContributionCalendarDate date = new ContributionCalendarDate(timestamps[i]);
+        tvDay = new TextView(StatsActivity.this);
+        tvDay.setText("Sun");
+        tvDay.setTextSize(10);
+        tvDay.setLayoutParams(layoutParamsDay);
+        relativeLayoutMain.addView(tvDay);
 
-                        c.setTime(date);
+        RelativeLayout.LayoutParams layoutParamsLegend = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        layoutParamsLegend.addRule(RelativeLayout.BELOW, contributionCalendarView.getId());
+        layoutParamsLegend.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        layoutParamsLegend.setMargins(0, 20, 0, 0);
+        setLegend(dateString);
+        linearLayoutLegend.setVisibility(View.VISIBLE);
+        linearLayoutLegend.setLayoutParams(layoutParamsLegend);
 
-
-                        if (c.get(Calendar.MONTH) != month - 1 || c.get(Calendar.YEAR) != year)
-                            break;
-
-                        Integer currentCount = dateCountTreeMap.get(date);
-
-                        if (currentCount == null)
-                            dateCountTreeMap.put(date, 1);
-                        else
-                            dateCountTreeMap.put(date, currentCount + 1);
-                    }
-
-                } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                }
-
-                ArrayList<Integer> counts = new ArrayList<>();
-                ArrayList<Integer> diffs = new ArrayList<>();
-
-                for (ContributionCalendarDate date : dateCountTreeMap.keySet()) {
-                    counts.add(dateCountTreeMap.get(date));
-                }
-
-                Collections.sort(counts);
-
-                if (counts.size() == 1)
-                    diffs.add(counts.get(0));
-
-                for (int i = 1; i < counts.size(); i++)
-                    diffs.add(counts.get(i) - counts.get(i - 1));
-
-                median = calculateMedian(counts);
-
-                Collections.sort(diffs);
-
-                diffMedian = calculateMedian(diffs);
-
-                if (counts.size() > 0)
-                    messagesHighestCount = counts.get(counts.size() - 1);
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-
-                RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(contributionCalendarViewWidth, contributionCalendarViewHeight);
-                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-                layoutParams.addRule(RelativeLayout.BELOW, R.id.spinMonths);
-
-                relativeLayoutMain.removeView(contributionCalendarView);
-
-                contributionCalendarView = new ContributionCalendarView(StatsActivity.this, contributionCalendarViewSquareSize, contributionCalendarViewSpacing, median, diffMedian, dateCountTreeMap);
-                contributionCalendarView.setId(View.generateViewId());
-                relativeLayoutMain.addView(contributionCalendarView, layoutParams);
-
-                RelativeLayout.LayoutParams layoutParamsDay = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-                layoutParamsDay.addRule(RelativeLayout.ALIGN_TOP, contributionCalendarView.getId());
-                layoutParamsDay.addRule(RelativeLayout.LEFT_OF, contributionCalendarView.getId());
-                layoutParamsDay.setMargins(0, 0, 5, 0);
-                relativeLayoutMain.removeView(tvDay);
-
-                tvDay = new TextView(StatsActivity.this);
-                tvDay.setText("Sun");
-                tvDay.setTextSize(10);
-                tvDay.setLayoutParams(layoutParamsDay);
-                relativeLayoutMain.addView(tvDay);
-
-                if (messageTimestamps == null) {
-                    ArrayList<HashMap.Entry<String, MonthYearPair>> entries = new ArrayList<>(availableMonths.entrySet());
-
-                    Collections.sort(entries, new Comparator<HashMap.Entry<String, MonthYearPair>>() {
-                        @Override
-                        public int compare(HashMap.Entry<String, MonthYearPair> left, HashMap.Entry<String, MonthYearPair> right) {
-                            String thisDate = left.getValue().year + "/" + (Integer.toString(left.getValue().month).length() < 2 ? "0" + left.getValue().month : left.getValue().month);
-                            String otherDate = right.getValue().year + "/" + (Integer.toString(right.getValue().month).length() < 2 ? "0" + right.getValue().month : right.getValue().month);
-
-                            return thisDate.compareTo(otherDate);
-                        }
-                    });
-
-                    ArrayList<String> spinnerData = new ArrayList<>();
-
-                    for (Map.Entry<String, MonthYearPair> entry : entries)
-                        spinnerData.add(entry.getKey());
-
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(StatsActivity.this, android.R.layout.simple_spinner_dropdown_item, spinnerData);
-                    spinMonths.setAdapter(adapter);
-                    messageTimestamps = timestamps;
-                    spinMonths.setVisibility(View.VISIBLE);
-                }
-
-                System.out.println(median + " " + diffMedian);
-                System.out.println(1 + " to " + (median - diffMedian <= 0 ? median : median - diffMedian));
-                System.out.println(median - diffMedian <= 0 ? median : ((median - diffMedian) + " to " + (median + diffMedian)));
-                System.out.println(median + diffMedian < messagesHighestCount ? ((median + diffMedian) + " to " + messagesHighestCount) : median + " to " + messagesHighestCount);
-
-            }
-        }).execute();
     }
 
-    private int calculateMedian(List<Integer> counts) {
-        int median;
+    private void setLegend(String dateString) {
+        DistributionPair distributionPair = dateStringMedianPairHashMap.get(dateString);
+        int median = distributionPair.middleStart;
+        int diffMedian = distributionPair.middleEnd;
+        int highLimit = distributionPair.highest;
 
-        if (counts.size() == 0)
-            return 0;
+        tvActivities[0].setText(1 + "-" + median);
+        tvActivities[1].setText("" + (median + 1) + "-" + diffMedian);
+        tvActivities[2].setText(diffMedian + 1 + " - " + highLimit);
 
-        if (counts.size() % 2 == 0)
-            median = (counts.get((counts.size() / 2) - 1) + counts.get(counts.size() / 2)) / 2;
-        else
-            median = (counts.get(counts.size() / 2));
-
-        return median;
     }
 
     public void getMessagesCount(final TextView tvTo, TextView tvFrom, final TextView tvTotal, final String jid) {
@@ -325,61 +325,11 @@ public class StatsActivity extends AppCompatActivity {
             }
         }).execute();
 
-
     }
 
     public String getDateFromTimeStamp(long timestamp) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }
-
-    public int binarySearch(Long[] timestamps, int month, int year) {
-        int start = 0;
-        int end = timestamps.length -1;
-
-        int mid;
-        int pos = -1;
-
-        Calendar c = Calendar.getInstance(Locale.getDefault());
-
-        while (start <= end) {
-            mid = (start + end) / 2;
-            System.out.println("in binary search");
-
-            ContributionCalendarDate date = new ContributionCalendarDate(timestamps[mid]);
-            c.setTime(date);
-
-            if (c.get(Calendar.MONTH) == month - 1 && c.get(Calendar.YEAR) == year) {
-                pos = mid;
-                end = mid - 1;
-                continue;
-            }
-
-            if (c.get(Calendar.YEAR) > year) {
-                end = mid - 1;
-                continue;
-            }
-
-            if (c.get(Calendar.YEAR) < year) {
-                start = mid + 1;
-                continue;
-            }
-
-            if (c.get(Calendar.MONTH) > ( month -1 )) {
-                end = mid - 1;
-                continue;
-            }
-
-            if (c.get(Calendar.MONTH) < (month - 1)) {
-                start = mid + 1;
-            }
-
-        }
-
-        return pos;
-
-    }
-
-    ;
 
     class MonthYearPair {
         int month;
@@ -388,6 +338,18 @@ public class StatsActivity extends AppCompatActivity {
         public MonthYearPair(int month, int year) {
             this.month = month;
             this.year = year;
+        }
+    }
+
+    class DistributionPair {
+        int middleStart;
+        int middleEnd;
+        int highest;
+
+        public DistributionPair(int middleStart, int middleEnd, int highest) {
+            this.middleStart = middleStart;
+            this.middleEnd = middleEnd;
+            this.highest = highest;
         }
     }
 
