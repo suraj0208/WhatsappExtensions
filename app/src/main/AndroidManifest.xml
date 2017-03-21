@@ -80,9 +80,11 @@
         <activity
             android:name=".BackupManagerActivity"
             android:exported="true" />
-        <activity android:name=".StatsActivity"
-            android:label="@string/title_activity_stats"
-            android:exported="true"/>
+        <activity
+            android:name=".StatsActivity"
+            android:exported="true"
+            android:label="@string/title_activity_stats" />
+        <activity android:name=".BlockedContactsActivity"></activity>
     </application>
 
 </manifest>

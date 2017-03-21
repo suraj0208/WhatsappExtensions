@@ -15,7 +15,7 @@
         android:text="@string/enable_rr_during_chat" />
 
     <TextView
-        android:id="@+id/tvinforwhitelist"
+        android:id="@+id/tvInforWhitelist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/chkboxEnableRRChatSession"
@@ -27,10 +27,10 @@
 
 
     <ImageButton
-        android:id="@+id/imgbtnremovecontact"
+        android:id="@+id/imgbtnRemoveReceiptsContact"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_alignBottom="@id/tvinforwhitelist"
+        android:layout_alignBottom="@id/tvInforWhitelist"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginEnd="10dp"
@@ -41,21 +41,21 @@
         android:id="@+id/switchBlackWhite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/tvinforwhitelist"
+        android:layout_alignBaseline="@id/tvInforWhitelist"
         android:layout_marginEnd="5dp"
         android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@id/imgbtnremovecontact"
-        android:layout_toStartOf="@id/imgbtnremovecontact" />
+        android:layout_toLeftOf="@id/imgbtnRemoveReceiptsContact"
+        android:layout_toStartOf="@id/imgbtnRemoveReceiptsContact" />
 
     <ListView
-        android:id="@+id/lstviewwhitelistcontacts"
+        android:id="@+id/lstviewWhiteListContacts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/switchBlackWhite"
         android:layout_marginTop="10dp" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fbaddtowhitelist"
+        android:id="@+id/fbAddToWhiteList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

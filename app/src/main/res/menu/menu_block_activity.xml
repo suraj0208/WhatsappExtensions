@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.suraj.waext.MainActivity">
+    <item
+        android:id="@+id/action_remove"
+        android:orderInCategory="100"
+        android:icon="@mipmap/ic_delete_white_24dp"
+        android:title="@string/action_settings"
+        app:showAsAction="always" />
+</menu>

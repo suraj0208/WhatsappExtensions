@@ -251,15 +251,35 @@
             android:layout_alignLeft="@id/tvhighlight"
             android:layout_alignStart="@id/tvhighlight"
             android:layout_below="@id/chkboxdeliveryreports"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
             android:text="@string/always_online" />
+
+        <CheckBox
+            android:id="@+id/chkboxBlockContacts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxalwaysonline"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp"
+            android:text="@string/block_contacts" />
+
+        <ImageButton
+            android:id="@+id/imgbtnblocksetting"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignBottom="@id/chkboxBlockContacts"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:background="@mipmap/ic_settings_black_24dp" />
 
         <TextView
             android:id="@+id/tvlayoutprefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chkboxalwaysonline"
+            android:layout_below="@id/chkboxBlockContacts"
             android:layout_margin="10dp"
             android:text="@string/layout_prefs"
             android:textSize="22sp" />

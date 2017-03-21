@@ -88,12 +88,20 @@ public class MainActivity extends AppCompatActivity {
         Utils.setUpCheckBox(this,checkBoxReadReports, "hideReadReceipts", false, "", false, "");
         Utils.setUpCheckBox(this,checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
         Utils.setUpCheckBox(this,(CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
+        Utils.setUpCheckBox(this,(CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false,"", false, "");
 
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, WhiteListActivity.class));
+            }
+        });
+
+        findViewById(R.id.imgbtnblocksetting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, BlockedContactsActivity.class));
             }
         });
 

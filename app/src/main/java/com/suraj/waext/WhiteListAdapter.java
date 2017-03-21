@@ -41,9 +41,7 @@ public class WhiteListAdapter extends ArrayAdapter<String> {
 
         View rowView = inflater.inflate(R.layout.contact_row, parent, false);
         this.whiteListContactRowManager.onInflateContactRow(rowView,whitelist,position);
-
         return rowView;
-
     }
 }
 

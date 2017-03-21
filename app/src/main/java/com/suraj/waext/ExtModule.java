@@ -19,7 +19,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -30,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -69,7 +67,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public static final String UNLOCK_INTENT = ExtModule.PACKAGE_NAME + ".UNLOCK_INTENT";
     public static final String WALLPAPER_DIR = "/WhatsApp/Media/WallPaper/";
     public static final String UPDATE_INTENT = ".UPDATE_INTENT";
-    public static final String WHITELIST_PREFS_STRING = "rd_whitelist";
+    public static final String WHITE_LIST_PREFS_STRING = "rd_whitelist";
+    public static final String BLOCKED_CONTACTS_PREFS_STRING = "blockedContactList";
+
 
     public static String MODULE_PATH;
 
@@ -78,6 +78,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static HashSet<String> hiddenGroups;
     private static HashSet<String> highlightedChats;
     private static HashSet<String> whitelistSet;
+    private static HashSet<String> blockContactsSet;
 
     private static HashMap<View, View> processedViewsHashMap;
     private static HashMap<View, View> zerothChildrenHashMap;
@@ -104,6 +105,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean chatSessionOngoing = false;
     private static boolean enableRRDuringSession = false;
     private static boolean isViewProfilePhotoActivityOpen = false;
+    private static boolean blockContacts = false;
 
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
@@ -181,7 +183,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         //XposedBridge.log("number: " + tag.replaceAll("[0-9]+","x"));
 
                         if (!localIsGroup) {
-                            XposedBridge.log("not a group");
+                            //XposedBridge.log("not a group");
                             if (tagToContactHashMap.get(tag) == null) {
                                 try {
                                     if (!tag.contains(":"))
@@ -895,6 +897,17 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private void hookMethodsForHideGroup(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
             @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+
+                String number = param.args[0].toString().split("@")[0];
+
+                if(blockContacts && blockContactsSet.contains(number))
+                    param.setResult(null);
+
+            }
+
+            @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
 
@@ -927,7 +940,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     return;
                 }
 
-                if (!hiddenGroups.contains(param.args[0].toString().split("@")[0]))
+                String number = param.args[0].toString().split("@")[0];
+
+                if (!hiddenGroups.contains(number))
                     return;
 
                 Field f = param.getResult().getClass().getDeclaredField(archiveBooleanFieldName);
@@ -1133,7 +1148,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 String currentContact = notification.extras.get(Notification.EXTRA_TITLE).toString();
 
-                if (nameToNumberHashMap == null){
+                if (nameToNumberHashMap == null) {
                     nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
                 }
 
@@ -1203,7 +1218,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 
     private void hookMethodsForHideStatusTab(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        try{
+        try {
             XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "c", int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -1249,9 +1264,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
             });
 
-        }catch (NoSuchMethodError error){
+        } catch (NoSuchMethodError error) {
             error.printStackTrace();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -1289,7 +1304,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         lockedContacts = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.LOCKED_CONTACTS_PREF_STRING, new HashSet<String>());
         highlightedChats = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, new HashSet<String>());
         hiddenGroups = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.HIDDEN_GROUPS_PREF_STRING, new HashSet<String>());
-        whitelistSet = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.WHITELIST_PREFS_STRING, new HashSet<String>());
+        whitelistSet = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.WHITE_LIST_PREFS_STRING, new HashSet<String>());
+        blockContactsSet = (HashSet<String>) sharedPreferences.getStringSet(ExtModule.BLOCKED_CONTACTS_PREFS_STRING, new HashSet<String>());
 
         highlightColor = sharedPreferences.getInt("highlightColor", Color.GRAY);
         individualHighlightColor = sharedPreferences.getInt("individualHighlightColor", Color.GRAY);
@@ -1307,6 +1323,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         blackOrWhite = sharedPreferences.getBoolean("blackOrWhite", true);
         lockArchived = sharedPreferences.getBoolean("lockArchived", false);
         enableRRDuringSession = sharedPreferences.getBoolean("enableRRDuringSession", false);
+        blockContacts = sharedPreferences.getBoolean("blockContacts", false);
 
     }
 
@@ -1447,7 +1464,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         //call it here
         hookMethodsForAlwaysOnline(loadPackageParam);
 
-        if(sharedPreferences.getBoolean("hideStatusTab",false))
+        if (sharedPreferences.getBoolean("hideStatusTab", false))
             hookMethodsForHideStatusTab(loadPackageParam);
 
     }

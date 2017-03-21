@@ -48,7 +48,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         whiteListSet = new HashSet<>(sharedPreferences.getStringSet("rd_whitelist", new HashSet<String>()));
 
         final Switch switchBlackWhite = (Switch) findViewById(R.id.switchBlackWhite);
-        final TextView tvwhitelistinfo = (TextView) findViewById(R.id.tvinforwhitelist);
+        final TextView tvwhitelistinfo = (TextView) findViewById(R.id.tvInforWhitelist);
 
         if (sharedPreferences.getBoolean("blackOrWhite", true)) {
             switchBlackWhite.setChecked(true);
@@ -91,7 +91,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
                 whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whiteList, WhiteListActivity.this);
 
-                lstviewWhiteList = (ListView) findViewById(R.id.lstviewwhitelistcontacts);
+                lstviewWhiteList = (ListView) findViewById(R.id.lstviewWhiteListContacts);
 
                 lstviewWhiteList.setAdapter(whiteListAdapter);
 
@@ -99,7 +99,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
         }).execute();
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fbaddtowhitelist);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fbAddToWhiteList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +107,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             }
         });
 
-        (findViewById(R.id.imgbtnremovecontact)).setOnClickListener(new View.OnClickListener() {
+        (findViewById(R.id.imgbtnRemoveReceiptsContact)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (whiteList.size() == 0) {
