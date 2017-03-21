@@ -51,11 +51,13 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxHideTabs = (CheckBox) findViewById(R.id.chkboxhidetabs);
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
         CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
+        CheckBox checkBoxHideStatusTab = (CheckBox) findViewById(R.id.chkboxHideStatusTab);
 
         Utils.setUpCheckBox(this,checkBoxHideCamera, "hideCamera", false, "", false, "");
         Utils.setUpCheckBox(this,checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
         Utils.setUpCheckBox(this,checkBoxReplaceCallButton, "replaceCallButton", false, "", false, "");
         Utils.setUpCheckBox(this,checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this,checkBoxHideStatusTab, "hideStatusTab", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
 
         Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));

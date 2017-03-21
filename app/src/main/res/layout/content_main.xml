@@ -265,24 +265,37 @@
             android:textSize="22sp" />
 
         <CheckBox
-            android:id="@+id/chkboxhidecamera"
+            android:id="@+id/chkboxhidetabs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/tvlayoutprefs"
             android:layout_marginTop="5dp"
-            android:text="@string/hide_camera_btn" />
+            android:text="@string/hide_tabs_btn" />
 
         <CheckBox
-            android:id="@+id/chkboxhidetabs"
+            android:id="@+id/chkboxHideStatusTab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
-            android:layout_below="@id/chkboxhidecamera"
+            android:layout_below="@id/chkboxhidetabs"
             android:layout_marginTop="5dp"
-            android:text="@string/hide_tabs_btn" />
+            android:text="@string/hide_status_tab" />
+
+
+        <CheckBox
+            android:id="@+id/chkboxhidecamera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxHideStatusTab"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_camera_btn" />
+
+
 
 
         <CheckBox
@@ -291,7 +304,7 @@
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
-            android:layout_below="@id/chkboxhidetabs"
+            android:layout_below="@id/chkboxhidecamera"
             android:layout_marginTop="5dp"
             android:text="@string/replace_call_btn" />
 
@@ -304,6 +317,7 @@
             android:layout_below="@id/chkboxreplacecallbtn"
             android:layout_marginTop="5dp"
             android:text="@string/replace_ticks" />
+
 
         <TextView
             android:id="@+id/tvsingleclickaction"

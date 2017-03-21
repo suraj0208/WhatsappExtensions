@@ -105,7 +105,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean enableRRDuringSession = false;
     private static boolean isViewProfilePhotoActivityOpen = false;
 
-
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
     private static int oneClickAction = 3;
@@ -144,7 +143,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-
                 (new Thread() {
                     @Override
                     public void run() {
@@ -180,7 +178,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                         String contact = null;
 
+                        //XposedBridge.log("number: " + tag.replaceAll("[0-9]+","x"));
+
                         if (!localIsGroup) {
+                            XposedBridge.log("not a group");
                             if (tagToContactHashMap.get(tag) == null) {
                                 try {
                                     if (!tag.contains(":"))
@@ -199,6 +200,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         } else {
                             contact = tag.split("@")[0];
                         }
+                        //XposedBridge.log("contact: " + contact.replaceAll("[0-9]+","x"));
 
                         if (parent == null) {
                             View contactPictureViewBackground = (View) ((View) param.thisObject).getParent();
@@ -254,6 +256,14 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             ((RelativeLayout.LayoutParams) firstChild.getLayoutParams()).height = -1;
 
                         } else {
+                            /*if(contact !=null){
+                                for(String con : highlightedChats){
+                                    if(con.contains(contact) || contact.contains(con)){
+                                        XposedBridge.log("matched contact: " + con.replaceAll("[0-9]+","x"));
+                                    }
+                                }
+                            }*/
+
                             if (contact != null && highlightedChats.contains(contact)) {
                                 firstChild.setBackgroundColor(individualHighlightColor);
                                 zerothChild.setBackgroundColor(individualHighlightColor);
@@ -1437,7 +1447,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         //call it here
         hookMethodsForAlwaysOnline(loadPackageParam);
 
-        hookMethodsForHideStatusTab(loadPackageParam);
+        if(sharedPreferences.getBoolean("hideStatusTab",false))
+            hookMethodsForHideStatusTab(loadPackageParam);
 
     }
 
