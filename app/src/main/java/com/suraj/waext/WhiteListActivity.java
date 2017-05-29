@@ -37,6 +37,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
     private ListView lstviewWhiteList;
     private CheckBox[] deleteCheckBoxes;
 
+    private FloatingActionButton fab;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_white_list);
@@ -99,7 +101,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
         }).execute();
 
-        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fbAddToWhiteList);
+        fab = (FloatingActionButton) findViewById(R.id.fbAddToWhiteList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -118,7 +120,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
                 if (fab.getVisibility() == View.VISIBLE) {
                     for (CheckBox checkBox : deleteCheckBoxes)
-                        checkBox.setVisibility(View.VISIBLE);
+                        if (checkBox != null)
+                            checkBox.setVisibility(View.VISIBLE);
 
                     fab.setVisibility(View.INVISIBLE);
                     v.setBackground(getDrawable(R.mipmap.ic_done_black_24dp));
@@ -168,7 +171,8 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
                     }).execute();
 
                     for (CheckBox checkBox : deleteCheckBoxes)
-                        checkBox.setVisibility(View.INVISIBLE);
+                        if (checkBox != null)
+                            checkBox.setVisibility(View.INVISIBLE);
 
                     fab.setVisibility(View.VISIBLE);
                     v.setBackground(getDrawable(R.mipmap.ic_delete_black_24dp));
@@ -177,7 +181,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             }
         });
 
-        Utils.setUpCheckBox(this,(CheckBox)findViewById(R.id.chkboxEnableRRChatSession),"enableRRDuringSession",false,"",false,"");
+        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxEnableRRChatSession), "enableRRDuringSession", false, "", false, "");
     }
 
     private void buildArrayList() {
@@ -192,7 +196,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             return;
         }
 
-        if (groupNameToNumberHashMap == null || groupNumberToNameHashMap==null) {
+        if (groupNameToNumberHashMap == null || groupNumberToNameHashMap == null) {
             Log.e("com.suraj.waext", "groups null may be su failed");
             WhiteListActivity.this.finish();
             return;
@@ -248,6 +252,9 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         final CheckBox deleteCheckBox = (CheckBox) view.findViewById(R.id.chkboxdeletewhitelistcontact);
 
         deleteCheckBoxes[position] = deleteCheckBox;
+
+        if (fab.getVisibility() != View.VISIBLE)
+            deleteCheckBoxes[position].setVisibility(View.VISIBLE);
 
         deleteCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override

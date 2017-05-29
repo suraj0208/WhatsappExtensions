@@ -52,12 +52,14 @@ public class MainActivity extends AppCompatActivity {
         CheckBox checkBoxReplaceCallButton = (CheckBox) findViewById(R.id.chkboxreplacecallbtn);
         CheckBox checkBoxBlackTicks = (CheckBox) findViewById(R.id.chkboxblackticks);
         CheckBox checkBoxHideStatusTab = (CheckBox) findViewById(R.id.chkboxHideStatusTab);
+        CheckBox checkBoxHideToast = (CheckBox) findViewById(R.id.chkboxHideToast);
 
-        Utils.setUpCheckBox(this,checkBoxHideCamera, "hideCamera", false, "", false, "");
-        Utils.setUpCheckBox(this,checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
-        Utils.setUpCheckBox(this,checkBoxReplaceCallButton, "replaceCallButton", false, "", false, "");
-        Utils.setUpCheckBox(this,checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
-        Utils.setUpCheckBox(this,checkBoxHideStatusTab, "hideStatusTab", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this, checkBoxHideCamera, "hideCamera", false, "", false, "");
+        Utils.setUpCheckBox(this, checkBoxHideTabs, "hideTabs", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this, checkBoxReplaceCallButton, "replaceCallButton", false, "", false, "");
+        Utils.setUpCheckBox(this, checkBoxBlackTicks, "showBlackTicks", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this, checkBoxHideStatusTab, "hideStatusTab", true, getApplicationContext().getString(R.string.req_restart), true, getApplicationContext().getString(R.string.req_restart));
+        Utils.setUpCheckBox(this, checkBoxHideToast, "hideToast", false, "", false, "");
 
         Spinner spinSingleClickActions = (Spinner) findViewById(R.id.spinsingleclickactions);
         spinSingleClickActions.setSelection(sharedPreferences.getInt("oneClickAction", 3));
@@ -84,11 +86,11 @@ public class MainActivity extends AppCompatActivity {
         final CheckBox checkBoxReadReports = (CheckBox) findViewById(R.id.chkboxreadreceipts);
         final CheckBox checkBoxDeliveryReports = (CheckBox) findViewById(R.id.chkboxdeliveryreports);
 
-        Utils.setUpCheckBox(this,checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
-        Utils.setUpCheckBox(this,checkBoxReadReports, "hideReadReceipts", false, "", false, "");
-        Utils.setUpCheckBox(this,checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
-        Utils.setUpCheckBox(this,(CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
-        Utils.setUpCheckBox(this,(CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false,"", false, "");
+        Utils.setUpCheckBox(this, checkBoxSeen, "hideSeen", false, "", true, getApplicationContext().getString(R.string.restore_prefs));
+        Utils.setUpCheckBox(this, checkBoxReadReports, "hideReadReceipts", false, "", false, "");
+        Utils.setUpCheckBox(this, checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
+        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
+        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false, "", false, "");
 
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
@@ -200,11 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
         final CheckBox checkBox = (CheckBox) (findViewById(R.id.chkboxhighlight));
 
-        Utils.setUpCheckBox(this,checkBox, "enableHighlight", false, "", false, "");
+        Utils.setUpCheckBox(this, checkBox, "enableHighlight", false, "", false, "");
 
     }
-
-
 
     private void setUpProtectedCheckBox(final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
         if (sharedPreferences.getBoolean(prefname, false))

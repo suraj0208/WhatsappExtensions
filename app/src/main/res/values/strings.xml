@@ -33,7 +33,9 @@
     <string name="select_picture">Select Picture</string>
 
     <!-- do not translate this string. see faq section on XDA thread -->
-    <string name="menuitem_call">call</string>
+    <string name="menuitem_call">Call</string>
+    <string name="voice_call_string">Voice call</string>
+
 
 
     <string name="menuitem_hide">Hide</string>
@@ -65,7 +67,7 @@
     <string name="req_restart">Requires Restart</string>
 
     <string name="layout_prefs">Layout Preferences</string>
-    <string name="hide_camera_btn">Hide Camera Button</string>
+    <string name="hide_camera_btn">Hide camera button</string>
     <string name="hide_tabs_btn">Hide tabs</string>
     <string name="replace_call_btn">Replace call button</string>
 
@@ -146,8 +148,9 @@
     <!-- this is date. for example from 8/12/2016 to 17/01/2017 -->
     <string name="messagesTimespan">From %1$s to %2$s</string>
     <string name="title_activity_stats">Stats</string>
-    <string name="hide_status_tab">Hide Status tab</string>
-    <string name="block_contacts">Block Contacts</string>
+    <string name="hide_status_tab">Hide status tab</string>
+    <string name="block_contacts">Permanently hide messages</string>
 
+    <string name="hide_toast_message">Hide toasts</string>
 
 </resources>

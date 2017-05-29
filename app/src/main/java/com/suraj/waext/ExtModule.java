@@ -1,5 +1,6 @@
 package com.suraj.waext;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AndroidAppHelper;
 import android.app.Notification;
@@ -12,6 +13,7 @@ import android.content.res.XModuleResources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -106,6 +108,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private static boolean enableRRDuringSession = false;
     private static boolean isViewProfilePhotoActivityOpen = false;
     private static boolean blockContacts = false;
+    private static boolean hideToast = false;
 
     private static int highlightColor = Color.GRAY;
     private static int individualHighlightColor = Color.GRAY;
@@ -465,13 +468,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     param.setResult(false);
                 }
 
-                String callTitle = modRes.getString(R.string.menuitem_call);
-                String capCallTitle = title.substring(0, 1).toUpperCase() + callTitle.substring(1);
-
-
-                if (replaceCallButton && title.equals(capCallTitle)) {
-                    title = callTitle;
-                }
 
                 if (title.equals(modRes.getString(R.string.menuitem_lock))) {
                     lockedContacts.add(contactNumber);
@@ -503,7 +499,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     menuItem.setVisible(false);
                     param.setResult(false);
 
-                } else if (title.equals(modRes.getString(R.string.menuitem_call))) {
+                } else if (title.equals(modRes.getString(R.string.menuitem_call)) || (title.equals(modRes.getString(R.string.voice_call_string)) && replaceCallButton)) {
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -833,6 +829,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
 
         XposedHelpers.findAndHookMethod("android.view.View", loadPackageParam.classLoader, "setVisibility", int.class, new de.robv.android.xposed.XC_MethodHook() {
+            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -850,8 +847,10 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             if (parent instanceof LinearLayout) {
                                 StackTraceElement[] stackTraceElements = new Exception().getStackTrace();
 
-                                if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate"))
+                                if (stackTraceElements[4].getMethodName().equals("afterTextChanged") || stackTraceElements[5].getMethodName().equals("onCreate")) {
                                     view.setVisibility(View.GONE);
+                                    //((View) view.getParent()).setBackgroundColor(Color.BLACK);
+                                }
                             }
                         }
                         return;
@@ -1134,6 +1133,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     public void hookMethodsForHidingNotifications(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod("android.app.Notification.Builder", loadPackageParam.classLoader, "build", new XC_MethodHook() {
+            @TargetApi(Build.VERSION_CODES.KITKAT)
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -1324,6 +1324,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         lockArchived = sharedPreferences.getBoolean("lockArchived", false);
         enableRRDuringSession = sharedPreferences.getBoolean("enableRRDuringSession", false);
         blockContacts = sharedPreferences.getBoolean("blockContacts", false);
+        hideToast = sharedPreferences.getBoolean("hideToast", false);
 
     }
 
@@ -1452,6 +1453,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         hookMethodsForClickToReply(loadPackageParam);
         hookMethodsForHideDeliveryReports(loadPackageParam);
         hookMethodsForHidingNotifications(loadPackageParam);
+        hookMethodsForToastWorkAround(loadPackageParam);
         //prevent IllegalStateException while closing profile photo
         hookMethodsForPhotoViewAttacher(loadPackageParam);
         //hookMethodsForUpdatePrefs(loadPackageParam);
@@ -1466,9 +1468,20 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         if (sharedPreferences.getBoolean("hideStatusTab", false))
             hookMethodsForHideStatusTab(loadPackageParam);
-
     }
 
+    private void hookMethodsForToastWorkAround(XC_LoadPackage.LoadPackageParam loadPackageParam){
+        XposedHelpers.findAndHookMethod(Toast.class, "show", new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                if(hideToast){
+                    param.setResult(null);
+                }
+            }
+        });
+
+    }
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);
         Method[] methods = cls.getDeclaredMethods();

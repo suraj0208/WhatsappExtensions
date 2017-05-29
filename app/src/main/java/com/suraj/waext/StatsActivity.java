@@ -1,8 +1,10 @@
 package com.suraj.waext;
 
+import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -95,6 +97,7 @@ public class StatsActivity extends AppCompatActivity {
 
     private void getMessagesTimeSpan(final TextView textview, final String jid) {
         (new AsyncTask<Void, Void, Long[]>() {
+            @TargetApi(Build.VERSION_CODES.N)
             @Override
             protected Long[] doInBackground(Void... voids) {
                 String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select timestamp from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 order by timestamp;");
@@ -184,6 +187,7 @@ public class StatsActivity extends AppCompatActivity {
                 return null;
             }
 
+            @TargetApi(Build.VERSION_CODES.N)
             @Override
             protected void onPostExecute(Long[] s) {
                 super.onPostExecute(s);
@@ -237,6 +241,7 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     private void displayContributionCalendar(String dateString) {
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(contributionCalendarViewWidth, contributionCalendarViewHeight);
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
@@ -327,6 +332,7 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     public String getDateFromTimeStamp(long timestamp) {
         return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date(timestamp));
     }

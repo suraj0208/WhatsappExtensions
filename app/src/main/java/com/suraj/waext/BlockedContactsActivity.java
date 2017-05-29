@@ -161,6 +161,9 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
 
         deleteCheckBoxes[position] = (CheckBox) view.findViewById(R.id.chkboxdeletewhitelistcontact);
 
+        if(fab.getVisibility()!=View.VISIBLE)
+            deleteCheckBoxes[position].setVisibility(View.VISIBLE);
+
         deleteCheckBoxes[position].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,8 +198,10 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
             if (fab.getVisibility() == View.VISIBLE) {
                 fab.setVisibility(View.INVISIBLE);
 
-                for (CheckBox checkBox : deleteCheckBoxes)
-                    checkBox.setVisibility(View.VISIBLE);
+                for (CheckBox checkBox : deleteCheckBoxes) {
+                    if(checkBox!=null)
+                        checkBox.setVisibility(View.VISIBLE);
+                }
 
                 item.setIcon(getDrawable(R.mipmap.ic_done_white_24dp));
 
@@ -246,7 +251,8 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
                 }).execute();
 
                 for (CheckBox checkBox : deleteCheckBoxes)
-                    checkBox.setVisibility(View.INVISIBLE);
+                    if(checkBox!=null)
+                        checkBox.setVisibility(View.INVISIBLE);
 
                 fab.setVisibility(View.VISIBLE);
                 item.setIcon(getDrawable(R.mipmap.ic_delete_white_24dp));

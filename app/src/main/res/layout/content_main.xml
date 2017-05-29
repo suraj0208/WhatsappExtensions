@@ -295,12 +295,22 @@
             android:text="@string/hide_tabs_btn" />
 
         <CheckBox
-            android:id="@+id/chkboxHideStatusTab"
+            android:id="@+id/chkboxHideToast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@id/tvlockprefs"
             android:layout_alignStart="@id/tvlockprefs"
             android:layout_below="@id/chkboxhidetabs"
+            android:layout_marginTop="5dp"
+            android:text="@string/hide_toast_message" />
+
+        <CheckBox
+            android:id="@+id/chkboxHideStatusTab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvlockprefs"
+            android:layout_alignStart="@id/tvlockprefs"
+            android:layout_below="@id/chkboxHideToast"
             android:layout_marginTop="5dp"
             android:text="@string/hide_status_tab" />
 
