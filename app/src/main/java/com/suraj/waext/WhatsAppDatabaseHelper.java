@@ -184,7 +184,7 @@ public class WhatsAppDatabaseHelper {
         contactHashMaps = null;
     }
 
-    public static void clearNullItemsFromMessages(String contact){
-        WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "delete from messages where key_remote_jid = '" + contact + "' and data is null;");
+    public static void clearNullItemsFromMessages(String contact) {
+        WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "delete from messages where key_remote_jid = " + '"' + contact + '"' + " and data is null;");
     }
 }

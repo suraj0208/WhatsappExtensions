@@ -161,7 +161,7 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
 
         deleteCheckBoxes[position] = (CheckBox) view.findViewById(R.id.chkboxdeletewhitelistcontact);
 
-        if(fab.getVisibility()!=View.VISIBLE)
+        if (fab.getVisibility() != View.VISIBLE)
             deleteCheckBoxes[position].setVisibility(View.VISIBLE);
 
         deleteCheckBoxes[position].setOnClickListener(new View.OnClickListener() {
@@ -199,7 +199,7 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
                 fab.setVisibility(View.INVISIBLE);
 
                 for (CheckBox checkBox : deleteCheckBoxes) {
-                    if(checkBox!=null)
+                    if (checkBox != null)
                         checkBox.setVisibility(View.VISIBLE);
                 }
 
@@ -218,16 +218,20 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
 
                                 Object value = nameToNumberHashMap.get(name);
 
-                                if (value == null)// value is null -- it may be a group
-                                    value = groupNameToNumberHashMap.get(name);
+                                boolean localIsGroup = false;
 
+                                if (value == null) {// value is null -- it may be a group
+                                    value = groupNameToNumberHashMap.get(name);
+                                    localIsGroup = true;
+                                }
                                 if (value instanceof String) {
                                     blockedContactsSet.remove(value.toString());
-                                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value.toString());
-                                }else if (value instanceof List) {
+                                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(localIsGroup ? value.toString() + "@g.us" : value + "@s.whatsapp.net");
+                                } else if (value instanceof List) {
                                     for (Object number : (List) value) {
                                         blockedContactsSet.remove(number.toString());
-                                        WhatsAppDatabaseHelper.clearNullItemsFromMessages(number.toString());
+                                        WhatsAppDatabaseHelper.clearNullItemsFromMessages(localIsGroup ? number.toString() + "@g.us" : number + "@s.whatsapp.net");
+
                                     }
                                 }
 
@@ -255,7 +259,7 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
                 }).execute();
 
                 for (CheckBox checkBox : deleteCheckBoxes)
-                    if(checkBox!=null)
+                    if (checkBox != null)
                         checkBox.setVisibility(View.INVISIBLE);
 
                 fab.setVisibility(View.VISIBLE);
