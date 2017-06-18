@@ -221,12 +221,16 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
                                 if (value == null)// value is null -- it may be a group
                                     value = groupNameToNumberHashMap.get(name);
 
-                                if (value instanceof String)
+                                if (value instanceof String) {
                                     blockedContactsSet.remove(value.toString());
-                                else if (value instanceof List) {
-                                    for (Object number : (List) value)
+                                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value.toString());
+                                }else if (value instanceof List) {
+                                    for (Object number : (List) value) {
                                         blockedContactsSet.remove(number.toString());
+                                        WhatsAppDatabaseHelper.clearNullItemsFromMessages(number.toString());
+                                    }
                                 }
+
                                 iterator.remove();
                             }
 
