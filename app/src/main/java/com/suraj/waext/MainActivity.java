@@ -118,12 +118,16 @@ public class MainActivity extends AppCompatActivity {
                 editor.putBoolean("blockContacts", checkBoxBlockedContacts.isChecked());
                 editor.apply();
 
-                HashSet<String> blockedContactsSet = new HashSet<>(sharedPreferences.getStringSet("blockedContactList", new HashSet<String>()));
-
-                for(String value:blockedContactsSet) {
-                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@g.us");
-                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@s.whatsapp.net");
-                }
+                final HashSet<String> blockedContactsSet = new HashSet<>(sharedPreferences.getStringSet("blockedContactList", new HashSet<String>()));
+                (new Thread() {
+                    @Override
+                    public void run() {
+                        for (String value : blockedContactsSet) {
+                            WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@g.us");
+                            WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@s.whatsapp.net");
+                        }
+                    }
+                }).start();
             }
         });
 
