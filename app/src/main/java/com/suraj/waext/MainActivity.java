@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import java.util.HashSet;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String PACKAGE_NAME = "com.suraj.waext";
@@ -90,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         Utils.setUpCheckBox(this, checkBoxReadReports, "hideReadReceipts", false, "", false, "");
         Utils.setUpCheckBox(this, checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
         Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
-        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false, "", false, "");
+        //Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false, "", false, "");
 
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
@@ -106,6 +108,25 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, BlockedContactsActivity.class));
             }
         });
+
+        final CheckBox checkBoxBlockedContacts = (CheckBox) findViewById(R.id.chkboxBlockContacts);
+        checkBoxBlockedContacts.setChecked(sharedPreferences.getBoolean("blockContacts", false));
+
+        checkBoxBlockedContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editor.putBoolean("blockContacts", checkBoxBlockedContacts.isChecked());
+                editor.apply();
+
+                HashSet<String> blockedContactsSet = new HashSet<>(sharedPreferences.getStringSet("blockedContactList", new HashSet<String>()));
+
+                for(String value:blockedContactsSet) {
+                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@g.us");
+                    WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@s.whatsapp.net");
+                }
+            }
+        });
+
 
     }
 

@@ -1,12 +1,9 @@
 package com.suraj.waext;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -19,10 +16,10 @@ public class Utils {
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
 
-    private static void initPreferences(Context context){
-        if(sharedPreferences==null){
-            sharedPreferences=context.getSharedPreferences("myprefs", 1);
-            editor=sharedPreferences.edit();
+    private static void initPreferences(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences("myprefs", 1);
+            editor = sharedPreferences.edit();
         }
     }
 
@@ -36,13 +33,10 @@ public class Utils {
         return editor;
     }
 
-    public static void setUpCheckBox(final Context context,final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
+    public static void setUpCheckBox(final Context context, final CheckBox checkBox, final String prefname, final boolean onToast, final String onMessage, final boolean offToast, final String offMessage) {
         initPreferences(context);
 
-        if (sharedPreferences.getBoolean(prefname, false))
-            checkBox.setChecked(true);
-        else
-            checkBox.setChecked(false);
+        checkBox.setChecked(sharedPreferences.getBoolean(prefname, false));
 
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,26 +50,20 @@ public class Utils {
                     return;
                 }*/
 
-                if (checkBox.isChecked()) {
-                    editor.putBoolean(prefname, true);
+                editor.putBoolean(prefname, checkBox.isChecked());
 
-                    if (onToast) {
-                        Toast.makeText(context, onMessage, Toast.LENGTH_SHORT).show();
-                    }
+                if (checkBox.isChecked() && onToast) {
+                    Toast.makeText(context, onMessage, Toast.LENGTH_SHORT).show();
 
-                } else {
-                    editor.putBoolean(prefname, false);
-
-                    if (offToast) {
-                        Toast.makeText(context, offMessage, Toast.LENGTH_SHORT).show();
-                    }
+                } else if (!checkBox.isChecked() && !offToast) {
+                    Toast.makeText(context, offMessage, Toast.LENGTH_SHORT).show();
                 }
                 editor.apply();
             }
         });
     }
 
-    public static void setContactNameFromDataase(final TextView textView, final String jid){
+    public static void setContactNameFromDataase(final TextView textView, final String jid) {
         (new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
