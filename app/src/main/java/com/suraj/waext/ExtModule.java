@@ -957,7 +957,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public void hookMethodsForHideReadReceipts(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         final Class readReceiptsJobClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader);
 
-        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "c", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -1219,7 +1219,17 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private void hookMethodsForHideStatusTab(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         try {
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "c", int.class, new XC_MethodHook() {
+            /*XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "c", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((int) param.args[0] == 2)
+                        param.setResult(3);
+                }
+            });
+*/
+            //correct
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "j", int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
@@ -1228,16 +1238,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
             });
 
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "i", int.class, new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    if ((int) param.args[0] == 2)
-                        param.setResult(3);
-                }
-            });
-
-
+            //correct
             XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "a", int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
@@ -1256,7 +1257,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
             });
 
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "b", new XC_MethodHook() {
+            printMethodOfClass("com.whatsapp.HomeActivity$b",loadPackageParam);
+            //correct
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "c", new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
