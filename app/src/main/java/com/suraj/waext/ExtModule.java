@@ -1259,7 +1259,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
             printMethodOfClass("com.whatsapp.HomeActivity$b",loadPackageParam);
             //correct
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "c", new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "b", new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
