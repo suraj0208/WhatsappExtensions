@@ -18,7 +18,7 @@ public class Utils {
 
     private static void initPreferences(Context context) {
         if (sharedPreferences == null) {
-            sharedPreferences = context.getSharedPreferences("myprefs", 1);
+            sharedPreferences = context.getSharedPreferences("myprefs", Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
         }
     }
