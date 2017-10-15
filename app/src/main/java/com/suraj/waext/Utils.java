@@ -13,12 +13,13 @@ import android.widget.Toast;
  * Created by suraj on 24/1/17.
  */
 public class Utils {
+    public static final String MYPREFS = "myprefs";
     private static SharedPreferences sharedPreferences;
     private static SharedPreferences.Editor editor;
 
     private static void initPreferences(Context context) {
         if (sharedPreferences == null) {
-            sharedPreferences = context.getSharedPreferences("myprefs", Context.MODE_PRIVATE);
+            sharedPreferences = context.getSharedPreferences(MYPREFS, Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
         }
     }

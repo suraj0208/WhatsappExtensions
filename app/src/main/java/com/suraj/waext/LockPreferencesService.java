@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import java.io.File;
 import java.util.Set;
 
 
@@ -24,21 +25,21 @@ public class LockPreferencesService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences.Editor editor = Utils.getEditor(this);
 
-        int action = intent.getIntExtra("action",0);
+        int action = intent.getIntExtra("action", 0);
 
 
-        switch (action){
+        switch (action) {
             case 0:
                 editor.putStringSet("lockedContacts", (Set) intent.getSerializableExtra("lockedContacts"));
                 break;
             case 1:
-                editor.putStringSet("hiddenGroups",(Set) intent.getSerializableExtra("hiddenGroups"));
+                editor.putStringSet("hiddenGroups", (Set) intent.getSerializableExtra("hiddenGroups"));
                 break;
             case 2:
-                editor.putBoolean("showGroups",intent.getBooleanExtra("showGroups",true));
+                editor.putBoolean("showGroups", intent.getBooleanExtra("showGroups", true));
                 break;
             case 3:
-                editor.putStringSet("highlightedChats",(Set) intent.getSerializableExtra("highlightedChats"));
+                editor.putStringSet("highlightedChats", (Set) intent.getSerializableExtra("highlightedChats"));
                 break;
 
         }
@@ -46,6 +47,11 @@ public class LockPreferencesService extends IntentService {
         //XposedBridge.log("saved preferences");
         editor.apply();
 
-
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
+        }
     }
+
 }

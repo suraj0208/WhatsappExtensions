@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
+import java.io.File;
+
 public class ColorChooserActivity extends AppCompatActivity {
 
     @Override
@@ -59,6 +61,16 @@ public class ColorChooserActivity extends AppCompatActivity {
 
         editor.putInt(which, color);
         editor.commit();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS  + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
+        }
     }
 
 }

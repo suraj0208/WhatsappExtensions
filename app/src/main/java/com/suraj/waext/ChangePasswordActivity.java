@@ -12,6 +12,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class ChangePasswordActivity extends AppCompatActivity {
 
     private int count = 0;
@@ -137,6 +139,16 @@ public class ChangePasswordActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
+        }
     }
 
 }

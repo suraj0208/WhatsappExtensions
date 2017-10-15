@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.File;
+
 public class LockActivity extends AppCompatActivity {
     public static final String PACKAGE_NAME = "com.suraj.waext";
     private EditText etpassword;
@@ -144,5 +146,10 @@ public class LockActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
+        }
     }
 }

@@ -14,6 +14,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -266,4 +267,15 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
+        }
+    }
+
 }

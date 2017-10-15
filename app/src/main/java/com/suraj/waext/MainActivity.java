@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import java.io.File;
 import java.util.HashSet;
 
 
@@ -270,6 +271,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (!MainActivity.isWaitingForLock) {
             this.unregisterReceiver(unlockReceiver);
+        }
+
+        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
+        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        if (prefsFile.exists()) {
+            prefsFile.setReadable(true, false);
         }
     }
 
