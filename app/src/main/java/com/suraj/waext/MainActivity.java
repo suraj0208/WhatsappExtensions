@@ -269,15 +269,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
+        makeread();
+        
         if (!MainActivity.isWaitingForLock) {
             this.unregisterReceiver(unlockReceiver);
         }
+    }
+    
+    public void makeread(){
+    
+        String datadir = this.getApplicationInfo().dataDir;
+        
+        // marshmallow+
+            File p = new File(datadir + "/shared_prefs/" + Utils.MYPREFS + ".xml");
+            if (p.exists()) {
+                p.setReadable(true, false);
+            }
 
-        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
-        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
-        if (prefsFile.exists()) {
-            prefsFile.setReadable(true, false);
-        }
+        // nougat+ extra fix
+            p = new File(datadir);
+            if (p.exists() && p.isDirectory()) {
+                p.setReadable(true, false);
+                p.setExecutable(true, false);
+            }
+        
     }
 
     class UnlockReceiver extends BroadcastReceiver {
