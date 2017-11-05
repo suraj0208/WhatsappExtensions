@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 /**
  * Created by suraj on 24/1/17.
  */
@@ -86,5 +88,21 @@ public class Utils {
 
             }
         }).execute();
+    }
+
+    public static void setPreferencesRW(Context context) {
+        File prefsDir = new File(context.getApplicationInfo().dataDir, "shared_prefs");
+        final File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+        prefsFile.setReadable(true, false);
+        prefsFile.setWritable(true, false);
+        try {
+            (new Thread() {
+                String cmd[] = {"su", "-c",
+                        "chmod 666 " + prefsFile};
+                Process p = Runtime.getRuntime().exec(cmd);
+            }).start();
+        } catch (Exception e) {
+
+        }
     }
 }

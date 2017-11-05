@@ -148,12 +148,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        initPrefs();
-                    }
-                }).start();
+                initPrefs();
 
                 TypedValue a = new TypedValue();
 
@@ -1328,7 +1323,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         enableRRDuringSession = sharedPreferences.getBoolean("enableRRDuringSession", false);
         blockContacts = sharedPreferences.getBoolean("blockContacts", false);
         hideToast = sharedPreferences.getBoolean("hideToast", false);
-
     }
 
     private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {

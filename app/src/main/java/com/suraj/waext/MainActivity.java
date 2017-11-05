@@ -273,11 +273,8 @@ public class MainActivity extends AppCompatActivity {
             this.unregisterReceiver(unlockReceiver);
         }
 
-        File prefsDir = new File(this.getApplicationInfo().dataDir, "shared_prefs");
-        File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
-        if (prefsFile.exists()) {
-            prefsFile.setReadable(true, false);
-        }
+        Utils.setPreferencesRW(this);
+
     }
 
     class UnlockReceiver extends BroadcastReceiver {
