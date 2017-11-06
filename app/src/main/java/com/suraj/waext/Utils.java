@@ -9,6 +9,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+
 /**
  * Created by suraj on 24/1/17.
  */
@@ -86,5 +88,45 @@ public class Utils {
 
             }
         }).execute();
+    }
+
+    public static void setPreferencesRW(Context context) {
+        String datadir = context.getApplicationInfo().dataDir;
+        System.out.println(datadir);
+
+        // marshmallow+
+        File p = new File(datadir + "/shared_prefs/" + Utils.MYPREFS + ".xml");
+        if (p.exists()) {
+            p.setReadable(true, false);
+        }
+
+        // nougat+ extra fix
+        p = new File(datadir);
+        if (p.exists() && p.isDirectory()) {
+            p.setReadable(true, false);
+            p.setExecutable(true, false);
+        }
+        /*final File prefsDir = new File(context.getApplicationInfo().dataDir, "shared_prefs");
+
+        final File prefsFile = new File(prefsDir, Utils.MYPREFS + ".xml");
+
+        final File dataDir = new File(context.getApplicationInfo().dataDir);
+
+        try {
+            (new Thread() {
+                String cmd1[] = {"su", "-c",
+                        "chmod 777 /data/data/com.suraj.waext" };
+
+                Process p1  = Runtime.getRuntime().exec(cmd1);
+
+                String cmd[] = {"su", "-c",
+                        "chmod -R 777 /data/data/com.suraj.waext"};
+                Process p = Runtime.getRuntime().exec(cmd);
+
+            }).start();
+        } catch (Exception e) {
+
+        }*/
+
     }
 }

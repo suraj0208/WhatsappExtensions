@@ -136,6 +136,9 @@ public class StatsActivity extends AppCompatActivity {
                                     dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
                                 } else if(medianList.size()> 0)
                                     dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
+                                else{
+                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(1,1,1));
+                                }
 
                                 medianList.clear();
                             }
