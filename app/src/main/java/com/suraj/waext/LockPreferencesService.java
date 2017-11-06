@@ -24,9 +24,7 @@ public class LockPreferencesService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         SharedPreferences.Editor editor = Utils.getEditor(this);
-
         int action = intent.getIntExtra("action", 0);
-
 
         switch (action) {
             case 0:
@@ -43,11 +41,22 @@ public class LockPreferencesService extends IntentService {
                 break;
 
         }
-
-        //XposedBridge.log("saved preferences");
         editor.apply();
 
-        Utils.setPreferencesRW(this);
-    }
+        try {
+            (new Thread() {
+                String cmd1[] = {"su", "-c",
+                        "chmod 777 /data/data/com.suraj.waext" };
 
+                Process p1  = Runtime.getRuntime().exec(cmd1);
+
+                String cmd[] = {"su", "-c",
+                        "chmod 664 /data/data/com.suraj.waext/shared_prefs/myprefs.xml"};
+                Process p = Runtime.getRuntime().exec(cmd);
+
+            }).start();
+        } catch (Exception e) {
+
+        }
+    }
 }
