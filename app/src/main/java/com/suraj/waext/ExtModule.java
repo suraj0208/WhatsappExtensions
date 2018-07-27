@@ -633,13 +633,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         }
                         break;
 
-                    case "com.whatsapp.qrcode.QrCodeActivity":
-                        if (!lockWAWeb)
-                            return;
-
-                        startLockActivity(param.thisObject);
-                        break;
-
                     case "com.whatsapp.ArchivedConversationsActivity":
                         if (!lockArchived)
                             return;
@@ -653,19 +646,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     thread.interrupt();
                 }
 
-            }
-        });
-
-        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.QrCodeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
-            @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                super.beforeHookedMethod(param);
-
-                if (!lockWAWeb)
-                    return;
-
-                firstTime = true;
-                showLockScreen = true;
             }
         });
 
