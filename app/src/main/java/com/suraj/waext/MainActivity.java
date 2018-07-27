@@ -166,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         );
 
         setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxHideNotifs), "hideNotifs", false, "", false, "");
-        setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxLockWAWeb), "lockWAWeb", false, "", false, "");
         setUpProtectedCheckBox((CheckBox) findViewById(R.id.chkboxLockArchived), "lockArchived", false, "", false, "");
     }
 
