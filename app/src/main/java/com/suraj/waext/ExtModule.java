@@ -879,12 +879,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-/*
+
                 String number = param.args[0].toString().split("@")[0];
 
                 if(blockContacts && blockContactsSet.contains(number))
                     param.setResult(null);
-*/
+
             }
 
             @Override
