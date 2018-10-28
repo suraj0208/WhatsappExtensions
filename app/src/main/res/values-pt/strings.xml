@@ -128,26 +128,26 @@
     <string name="sqliteMissing">Sqlite3 pode está faltando. Por favor, consulte FAQ na XDA</string>
 
     <!-- not translated for > 4.6 -->
-    <string name="replace_ticks">Show black ticks instead of blue</string>
-    <string name="picker_activity_text">Pick a Contact</string>
-    <string name="search_hint">Search for Contact</string>
-    <string name="lock_archived">Lock Archived chats</string>
-    <string name="enable_rr_during_chat">Send Read Receipts while chatting</string>
+    <string name="replace_ticks">Mostrar tiques pretos em vez de azul</string>
+    <string name="picker_activity_text">Escolha um contato</string>
+    <string name="search_hint">Pesquisar contato</string>
+    <string name="lock_archived">Bloquear conversas arquivadas</string>
+    <string name="enable_rr_during_chat">Enviar recibos de leitura enquanto conversa</string>
     <string name="backup">Backup</string>
-    <string name="restore">Restore</string>
+    <string name="restore">Restaurar</string>
     <!-- end -->
 
-    <string name="stats">Stats</string>
-    <string name="messagesReceived">Messages Received</string>
-    <string name="messagesSent">Messages Sent</string>
+    <string name="stats">Estatísticas</string>
+    <string name="messagesReceived">Mensagens Recebidas</string>
+    <string name="messagesSent">Mensagens Enviadas</string>
     <string name="messageTotal">Total</string>
 
     <!-- this is date. for example from 8/12/2016 to 17/01/2017 -->
-    <string name="messagesTimespan">From %1$s to %2$s</string>
-    <string name="title_activity_stats">Stats</string>
-    <string name="hide_status_tab">Hide status tab</string>
+    <string name="messagesTimespan">de %1$s para %2$s</string>
+    <string name="title_activity_stats">Estatísticas</string>
+    <string name="hide_status_tab">Ocultar guia de status</string>
 
-    <string name="block_contacts">Permanently hide messages</string>
+    <string name="block_contacts">Ocultar permanentemente as mensagens</string>
 
-    <string name="hide_toast_message">Hide toasts</string>
+    <string name="hide_toast_message">Esconder notificações rápidas</string>
 </resources>

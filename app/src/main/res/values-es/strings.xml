@@ -33,7 +33,7 @@
 
     <!-- do not translate this string. see faq section on XDA thread -->
     <string name="menuitem_call">llamar</string>
-    <string name="voice_call_string">Voice call</string>
+    <string name="voice_call_string">Llamada de voz</string>
 
 
     <string name="menuitem_hide">Ocultar</string>
@@ -140,17 +140,17 @@
     <string name="restore">Restaurar</string>
     <!-- end -->
 
-    <string name="stats">Stats</string>
-    <string name="messagesReceived">Messages Received</string>
-    <string name="messagesSent">Messages Sent</string>
+    <string name="stats">Estadísticas</string>
+    <string name="messagesReceived">Mens. Recibidos</string>
+    <string name="messagesSent">Mens. Enviados</string>
     <string name="messageTotal">Total</string>
 
     <!-- this is date. for example from 8/12/2016 to 17/01/2017 -->
-    <string name="messagesTimespan">From %1$s to %2$s</string>
-    <string name="title_activity_stats">Stats</string>
-    <string name="hide_status_tab">Hide status tab</string>
-    <string name="block_contacts">Permanently hide messages</string>
+    <string name="messagesTimespan">Desde %1$s hasta %2$s</string>
+    <string name="title_activity_stats">Estadísticas</string>
+    <string name="hide_status_tab">Ocultar Barra de Estado</string>
+    <string name="block_contacts">Ocultar mensajes permanentemente</string>
 
-    <string name="hide_toast_message">Hide toasts</string>
+    <string name="hide_toast_message">Ocultar notif. emergentes</string>
 
 </resources>

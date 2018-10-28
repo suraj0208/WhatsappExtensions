@@ -1,5 +1,6 @@
 package com.suraj.waext;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -270,4 +272,11 @@ public class BlockedContactsActivity extends AppCompatActivity implements WhiteL
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Utils.setPreferencesRW(this);
+    }
+
 }

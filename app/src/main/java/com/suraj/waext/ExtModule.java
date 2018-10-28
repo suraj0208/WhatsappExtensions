@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.XModuleResources;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -37,9 +38,12 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -148,12 +152,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                (new Thread() {
-                    @Override
-                    public void run() {
-                        initPrefs();
-                    }
-                }).start();
+                initPrefs();
 
                 TypedValue a = new TypedValue();
 
@@ -894,22 +893,23 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     }
 
     private void hookMethodsForHideGroup(final XC_LoadPackage.LoadPackageParam loadPackageParam) {
+
+
         XposedHelpers.findAndHookMethod("java.util.concurrent.ConcurrentHashMap", loadPackageParam.classLoader, "get", Object.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-
+/*
                 String number = param.args[0].toString().split("@")[0];
 
                 if(blockContacts && blockContactsSet.contains(number))
                     param.setResult(null);
-
+*/
             }
 
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
-
                 if (param.args[0] == null) {
                     return;
                 }
@@ -919,20 +919,22 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
 
                 if (exceptionThrown) {
-                    if (param.args[0].toString().contains("@")) {
+                    Pattern pattern = Pattern.compile("[0-9]+[\\-]*[0-9]*");
+                    Matcher matcher = pattern.matcher(param.args[0].toString().split("@")[0]);
+
+                    if (matcher.matches()) {
                         archiveClass = param.getResult().getClass();
 
                         for (Field field : archiveClass.getDeclaredFields()) {
                             if (field.getType().getName().equals("boolean")) {
                                 archiveBooleanFieldName = field.getName();
-                                //XposedBridge.log("s name set");
                                 exceptionThrown = false;
+                                break;
                             }
                         }
                     } else {
                         return;
                     }
-
                 }
 
                 if (!(archiveClass != null && archiveClass.isInstance(param.getResult()))) {
@@ -949,7 +951,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 f.set(param.getResult(), true);
 
                 //XposedBridge.log(param.args[0] + " " + param.getResult().getClass().getName());
-
             }
         });
     }
@@ -1259,7 +1260,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
             printMethodOfClass("com.whatsapp.HomeActivity$b",loadPackageParam);
             //correct
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "c", new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "b", new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
@@ -1328,7 +1329,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         enableRRDuringSession = sharedPreferences.getBoolean("enableRRDuringSession", false);
         blockContacts = sharedPreferences.getBoolean("blockContacts", false);
         hideToast = sharedPreferences.getBoolean("hideToast", false);
-
     }
 
     private void initVars(XC_LoadPackage.LoadPackageParam loadPackageParam) {

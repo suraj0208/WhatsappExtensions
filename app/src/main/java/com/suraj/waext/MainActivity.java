@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Spinner;
 
+import java.io.File;
 import java.util.HashSet;
 
 
@@ -271,6 +272,9 @@ public class MainActivity extends AppCompatActivity {
         if (!MainActivity.isWaitingForLock) {
             this.unregisterReceiver(unlockReceiver);
         }
+
+        Utils.setPreferencesRW(this);
+
     }
 
     class UnlockReceiver extends BroadcastReceiver {

@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.rarepebble.colorpicker.ColorPickerView;
 
+import java.io.File;
+
 public class ColorChooserActivity extends AppCompatActivity {
 
     @Override
@@ -59,6 +61,12 @@ public class ColorChooserActivity extends AppCompatActivity {
 
         editor.putInt(which, color);
         editor.commit();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Utils.setPreferencesRW(this);
     }
 
 }
