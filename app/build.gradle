@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "com.suraj.waext"
         minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 27
-        versionName "6.0"
+        targetSdkVersion 28
+        versionCode 28
+        versionName "6.2"
     }
     buildTypes {
         release {

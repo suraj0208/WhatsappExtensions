@@ -22,6 +22,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.support.annotation.RequiresApi;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -151,7 +152,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
         XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
-            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+            protected void beforeHookedMethod(MethodHookParam param) {
                 initPrefs();
 
                 TypedValue a = new TypedValue();
@@ -223,17 +224,18 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                 rl = (RelativeLayout) parent;
                             } catch (ClassCastException e) {
                                 //XposedBridge.log("ClassCastException in hookMethodsForHighLight");
+                            } catch (Exception e){
+                                //XposedBridge.log(e.getMessage());
                             }
 
                             if (rl != null) {
                                 zerothChildrenHashMap.put(parent, rl.getChildAt(0));
-                                firstChildrenHashMap.put(parent, rl.getChildAt(1));
+                                firstChildrenHashMap.put(parent, rl.getChildAt(2));
                             }
                         }
 
                         View zerothChild = zerothChildrenHashMap.get(parent);
                         View firstChild = firstChildrenHashMap.get(parent);
-
 
                         //hide previews for locked contacts
                         try {
@@ -633,7 +635,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         }
                         break;
 
-                    case "com.whatsapp.qrcode.QrCodeActivity":
+                    case "com.whatsapp.qrcode.WebQrScannerActivity":
                         if (!lockWAWeb)
                             return;
 
@@ -656,7 +658,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
-        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.QrCodeActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.whatsapp.qrcode.WebQrScannerActivity", loadPackageParam.classLoader, "onCreate", Bundle.class, new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -856,7 +858,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     }
 
                     if (param.thisObject instanceof ImageView && isViewProfilePhotoActivityOpen) {
-                        new PhotoViewAttacher((ImageView) param.thisObject);
+                        //new PhotoViewAttacher((ImageView) param.thisObject);
                     }
 
                 } catch (Exception ex) {
@@ -958,7 +960,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     public void hookMethodsForHideReadReceipts(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         final Class readReceiptsJobClass = XposedHelpers.findClass("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader);
 
-        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "c", new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("com.whatsapp.jobqueue.job.SendReadReceiptJob", loadPackageParam.classLoader, "b", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
@@ -1089,6 +1091,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 if (param.args[1] != null) {
                     try {
                         ((View) param.args[1]).setOnClickListener(new View.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.O)
                             @Override
                             public void onClick(View v) {
 
@@ -1099,9 +1102,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                                 v.performLongClick();
 
-                                if (oneClickActionButton != null)
+                                if (oneClickActionButton != null) {
                                     oneClickActionButton.performClick();
-                                else
+                                }else
                                     v.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
                             }
                         });
@@ -1113,8 +1116,8 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             }
         });
 
-
-        XposedHelpers.findAndHookMethod("android.support.v7.view.menu.ActionMenuItemView", loadPackageParam.classLoader, "setTitle", CharSequence.class, new XC_MethodHook() {
+        //"android.support.v7.view.menu.ActionMenuItemView"
+        XposedHelpers.findAndHookMethod(View.class,  "setTooltipText", CharSequence.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -1230,17 +1233,28 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             });
 */
             //correct
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity", loadPackageParam.classLoader, "j", int.class, new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$TabsPager", loadPackageParam.classLoader, "setCurrentItem", int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
                     if ((int) param.args[0] == 2)
-                        param.setResult(3);
+                        param.args[0] = 3;
+                        //param.setResult(3);
+                }
+            });
+
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "a", int.class, new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    super.beforeHookedMethod(param);
+                    if ((int) param.args[0] == 2)
+                        param.args[0] = 3;
+                    //param.setResult(3);
                 }
             });
 
             //correct
-            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "a", int.class, new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "b", int.class, new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                     super.beforeHookedMethod(param);
