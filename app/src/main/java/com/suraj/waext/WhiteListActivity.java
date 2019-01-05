@@ -1,5 +1,6 @@
 package com.suraj.waext;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,7 +15,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,6 +40,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
     private FloatingActionButton fab;
 
+    @SuppressLint("StaticFieldLeak")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_white_list);
@@ -76,25 +77,34 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
         });
 
 
-        (new AsyncTask<Void, Void, Void>() {
+        (new AsyncTask<Void, Void, Object>() {
             @Override
-            protected Void doInBackground(Void... params) {
-                numberToNameHashMap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
-                nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-                groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
-                groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
+            protected Object doInBackground(Void... params) {
+                try {
+                    numberToNameHashMap = WhatsAppDatabaseHelper.getNumberToNameHashMap();
+                    nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
+                    groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
+                    groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
+                } catch (WhatsAppDBException e) {
+                    return e;
+                }
+
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(Object object) {
+                super.onPostExecute(object);
+
+                if (Utils.toastAndExitIfWaDbException(object, WhiteListActivity.this)) {
+                    return;
+                }
 
                 buildArrayList();
 
                 whiteListAdapter = new WhiteListAdapter(getApplicationContext(), whiteList, WhiteListActivity.this);
 
-                lstviewWhiteList = (ListView) findViewById(R.id.lstviewWhiteListContacts);
+                lstviewWhiteList = findViewById(R.id.lstviewWhiteListContacts);
 
                 lstviewWhiteList.setAdapter(whiteListAdapter);
 
@@ -102,7 +112,7 @@ public class WhiteListActivity extends AppCompatActivity implements WhiteListCon
 
         }).execute();
 
-        fab = (FloatingActionButton) findViewById(R.id.fbAddToWhiteList);
+        fab = findViewById(R.id.fbAddToWhiteList);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

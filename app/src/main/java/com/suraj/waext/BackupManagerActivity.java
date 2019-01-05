@@ -1,6 +1,7 @@
 package com.suraj.waext;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,8 +26,9 @@ public class BackupManagerActivity extends AppCompatActivity {
             Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
             finish();
         }
-        setContactNameFromNumberAsync(jid);
+        //setContactNameFromNumberAsync(jid);
 
+        /*
         (findViewById(R.id.btnBackupChat)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -73,14 +75,20 @@ public class BackupManagerActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(BackupManagerActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     0);
-        }
+        }*/
     }
-
+/*
+    @SuppressLint("StaticFieldLeak")
     private void setContactNameFromNumberAsync(final String jid) {
         (new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
-                String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
+                String[] arr = new String[0];
+                try {
+                    arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
+                } catch (WhatsAppDBException e) {
+                    e.printStackTrace();
+                }
 
                 if (arr != null) {
                     return arr[0];
@@ -100,5 +108,5 @@ public class BackupManagerActivity extends AppCompatActivity {
 
             }
         }).execute();
-    }
+    }*/
 }

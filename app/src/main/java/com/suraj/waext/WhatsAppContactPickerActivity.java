@@ -1,5 +1,6 @@
 package com.suraj.waext;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -55,6 +56,7 @@ public class WhatsAppContactPickerActivity extends Activity implements WhiteList
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     private void findAndDisplayContacts(final CharSequence contactName) {
         if (contactsFinder != null && !contactsFinder.isCancelled())
             contactsFinder.cancel(true);
@@ -91,80 +93,90 @@ public class WhatsAppContactPickerActivity extends Activity implements WhiteList
         contactsFinder.execute();
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void displayAllContacts() {
-        lstviewPicker = (ListView) findViewById(R.id.lstviewPicker);
+        lstviewPicker = findViewById(R.id.lstviewPicker);
 
-        (new AsyncTask<Void, Void, ArrayList<String>>() {
+        (new AsyncTask<Void, Void, Object>() {
             @Override
-            protected ArrayList<String> doInBackground(Void... params) {
-                HashMap<String,String> groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
-                HashMap<String,String> groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
+            protected Object doInBackground(Void... params) {
+                HashMap<String, String> groupNumberToNameHashMap = null;
+                try {
+                    groupNumberToNameHashMap = WhatsAppDatabaseHelper.getGroupNumberToNameHashMap();
+                    HashMap<String, String> groupNameToNumberHashMap = WhatsAppDatabaseHelper.getGroupNameToNumberHashMap();
 
+                    ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(groupNumberToNameHashMap.entrySet());
 
-                ArrayList<HashMap.Entry<String, String>> groupEntryList = new ArrayList<>(groupNumberToNameHashMap.entrySet());
-
-                Collections.sort(groupEntryList, new Comparator<HashMap.Entry<String, String>>() {
-                    @Override
-                    public int compare(HashMap.Entry<String, String> lhs, HashMap.Entry<String, String> rhs) {
-                        return lhs.getValue().compareTo(rhs.getValue());
-                    }
-                });
-
-                allJids = new ArrayList<>();
-
-                nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
-
-                ArrayList<HashMap.Entry<String, Object>> contactEntryList = new ArrayList<>(nameToNumberHashMap.entrySet());
-
-                Collections.sort(contactEntryList, new Comparator<HashMap.Entry<String, Object>>() {
-                    @Override
-                    public int compare(HashMap.Entry<String, Object> lhs, HashMap.Entry<String, Object> rhs) {
-                        return lhs.getKey().compareTo(rhs.getKey());
-                    }
-                });
-
-                ArrayList<String> displayList = new ArrayList<>();
-
-                for (int i = 0; i < groupEntryList.size(); i++) {
-                    String name = groupEntryList.get(i).getValue().trim();
-
-                    if (name.length() == 0)
-                        continue;
-
-                    displayList.add(name);
-                    allJids.add(groupEntryList.get(i).getKey());
-                }
-
-                displayList.add("");
-                allJids.add("");
-
-                for (int i = 0; i < contactEntryList.size(); i++) {
-                    String name = contactEntryList.get(i).getKey().trim();
-
-                    if (name.length() == 0)
-                        continue;
-
-                    Object val = nameToNumberHashMap.get(name);
-                    if (val instanceof List) {
-                        for (Object s : (List) val) {
-                            displayList.add(name + " ( " + s.toString().split("-")[0] + " )");
-                            allJids.add(s.toString());
+                    Collections.sort(groupEntryList, new Comparator<HashMap.Entry<String, String>>() {
+                        @Override
+                        public int compare(HashMap.Entry<String, String> lhs, HashMap.Entry<String, String> rhs) {
+                            return lhs.getValue().compareTo(rhs.getValue());
                         }
-                    } else {
+                    });
+
+                    allJids = new ArrayList<>();
+
+                    nameToNumberHashMap = WhatsAppDatabaseHelper.getNameToNumberHashMap();
+
+                    ArrayList<HashMap.Entry<String, Object>> contactEntryList = new ArrayList<>(nameToNumberHashMap.entrySet());
+
+                    Collections.sort(contactEntryList, new Comparator<HashMap.Entry<String, Object>>() {
+                        @Override
+                        public int compare(HashMap.Entry<String, Object> lhs, HashMap.Entry<String, Object> rhs) {
+                            return lhs.getKey().compareTo(rhs.getKey());
+                        }
+                    });
+
+                    ArrayList<String> displayList = new ArrayList<>();
+
+                    for (int i = 0; i < groupEntryList.size(); i++) {
+                        String name = groupEntryList.get(i).getValue().trim();
+
+                        if (name.length() == 0)
+                            continue;
+
                         displayList.add(name);
-                        allJids.add(val.toString());
+                        allJids.add(groupEntryList.get(i).getKey());
                     }
+
+                    displayList.add("");
+                    allJids.add("");
+
+                    for (int i = 0; i < contactEntryList.size(); i++) {
+                        String name = contactEntryList.get(i).getKey().trim();
+
+                        if (name.length() == 0)
+                            continue;
+
+                        Object val = nameToNumberHashMap.get(name);
+                        if (val instanceof List) {
+                            for (Object s : (List) val) {
+                                displayList.add(name + " ( " + s.toString().split("-")[0] + " )");
+                                allJids.add(s.toString());
+                            }
+                        } else {
+                            displayList.add(name);
+                            allJids.add(val.toString());
+                        }
+                    }
+
+                    allContacts = new ArrayList<>(displayList);
+                    searchedContacts = new ArrayList<>(allContacts);
+                    searchedJids = new ArrayList<>(allJids);
+
+                    return displayList;
+                } catch (WhatsAppDBException e) {
+                    return e;
                 }
-
-                allContacts = new ArrayList<>(displayList);
-                searchedContacts = new ArrayList<>(allContacts);
-                searchedJids = new ArrayList<>(allJids);
-
-                return displayList;
             }
 
             @Override
-            protected void onPostExecute(final ArrayList<String> contacts) {
+            protected void onPostExecute(Object object) {
+                if (Utils.toastAndExitIfWaDbException(object, WhatsAppContactPickerActivity.this)) {
+                    return;
+                }
+
+                final ArrayList<String> contacts = (ArrayList<String>) object;
                 lstviewPicker.setAdapter(new WhiteListAdapter(WhatsAppContactPickerActivity.this, contacts, WhatsAppContactPickerActivity.this));
 
                 lstviewPicker.setOnItemClickListener(new AdapterView.OnItemClickListener() {

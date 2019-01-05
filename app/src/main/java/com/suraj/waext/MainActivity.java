@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        final CheckBox checkBoxBlockedContacts = (CheckBox) findViewById(R.id.chkboxBlockContacts);
+        final CheckBox checkBoxBlockedContacts = findViewById(R.id.chkboxBlockContacts);
         checkBoxBlockedContacts.setChecked(sharedPreferences.getBoolean("blockContacts", false));
 
         checkBoxBlockedContacts.setOnClickListener(new View.OnClickListener() {
@@ -124,8 +125,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         for (String value : blockedContactsSet) {
-                            WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@g.us");
-                            WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@s.whatsapp.net");
+                            try {
+                                WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@g.us");
+                                WhatsAppDatabaseHelper.clearNullItemsFromMessages(value + "@s.whatsapp.net");
+                            } catch (WhatsAppDBException e) {
+                                Log.e(ExtModule.PACKAGE_NAME, e.getMessage());
+                            }
                         }
                     }
                 }).start();

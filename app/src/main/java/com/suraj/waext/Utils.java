@@ -1,12 +1,11 @@
 package com.suraj.waext;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.view.View;
 import android.widget.CheckBox;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -66,28 +65,9 @@ public class Utils {
         });
     }
 
-    public static void setContactNameFromDataase(final TextView textView, final String jid) {
-        (new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... voids) {
-                String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
-
-                if (arr != null) {
-                    return arr[0];
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                super.onPostExecute(s);
-                if (s == null)
-                    textView.setText("Cant retrieve contact name");
-                else
-                    textView.setText(s);
-
-            }
-        }).execute();
+    public static String getContactNameFromDatabase(final String jid) throws WhatsAppDBException {
+        String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
+        return arr[0];
     }
 
     public static void setPreferencesRW(Context context) {
@@ -128,5 +108,14 @@ public class Utils {
 
         }*/
 
+    }
+
+    public static boolean toastAndExitIfWaDbException(Object object, Activity activity) {
+        if(object instanceof WhatsAppDBException) {
+            Toast.makeText(activity, ((WhatsAppDBException)object).getMessage(), Toast.LENGTH_SHORT).show();
+            activity.finish();
+            return true;
+        }
+        return false;
     }
 }

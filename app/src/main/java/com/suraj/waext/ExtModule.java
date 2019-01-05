@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.XModuleResources;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -39,7 +38,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -128,12 +126,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
     private Class<?> settingClass;
     private Class<?> preferenceClass;
     private Class<?> archiveClass;
-    private Class<?> fragmentStatePagerAdapterClass;
 
     private String contactNumber;
 
     //private Context context;
     private View oneClickActionButton;
+    private MenuItem oneClickActionMenuItem;
 
     private Thread thread;
 
@@ -142,6 +140,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
     private UnlockReceiver unlockReceiver;
     private XModuleResources modRes;
+    private Activity conversationActivity;
 
     public ExtModule() {
 
@@ -189,12 +188,15 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                             //XposedBridge.log("not a group");
                             if (tagToContactHashMap.get(tag) == null) {
                                 try {
-                                    if (!tag.contains(":"))
-                                        return;
-
-                                    contact = tag.split(":")[1];
-                                    contact = contact.split("_")[0];
-                                    contact = contact.replace("+", "");
+                                    if (!tag.contains(":")) {
+                                        contact = tag.split("_")[0];
+                                        contact = contact.split("@")[0];
+                                        contact = contact.replace("+", "");
+                                    } else {
+                                        contact = tag.split(":")[1];
+                                        contact = contact.split("_")[0];
+                                        contact = contact.replace("+", "");
+                                    }
                                     tagToContactHashMap.put(tag, contact);
                                 } catch (ArrayIndexOutOfBoundsException ex) {
                                     return;
@@ -224,7 +226,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                                 rl = (RelativeLayout) parent;
                             } catch (ClassCastException e) {
                                 //XposedBridge.log("ClassCastException in hookMethodsForHighLight");
-                            } catch (Exception e){
+                            } catch (Exception e) {
                                 //XposedBridge.log(e.getMessage());
                             }
 
@@ -241,8 +243,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                         try {
                             if (lockedContacts.contains(contact)) {
                                 View v = getPreviewView(firstChild);
-                                if (v != null)
+                                if (v != null) {
                                     v.setVisibility(View.GONE);
+                                }
                             } else {
                                 View v = getPreviewView(firstChild);
                                 if (v != null)
@@ -295,8 +298,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             if (firstChildOfFirstChild != null && firstChildOfFirstChild instanceof ViewGroup) {
                 View firstChildOfF1 /*f2*/ = ((ViewGroup) firstChildOfFirstChild).getChildAt(1);
                 if (firstChildOfF1 != null && firstChildOfF1 instanceof ViewGroup) {
-                    View v = ((ViewGroup) firstChildOfF1).getChildAt(2);
-                    return v;
+                    return firstChildOfF1;
+                    //f2.setBackgroundColor(Color.RED);
+                    //return ((ViewGroup) firstChildOfF1).getChildAt(2);
                 }
             }
         }
@@ -329,6 +333,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 chatSessionOngoing = false;
 
+                conversationActivity = (Activity) param.thisObject;
                 if (enableHideSeen)
                     setSeenOff("2", ((Activity) param.thisObject).getApplicationContext());
             }
@@ -359,7 +364,6 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 super.beforeHookedMethod(param);
 
                 //XposedBridge.log("onCreateOptionMenu");
-
 
                 //skip call button for group chats
                 if (!isGroup && !replaceCallButton) {
@@ -464,11 +468,9 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                 Intent intent;
 
-                if (title.equals("Info")) {
-                    Toast.makeText(AndroidAppHelper.currentApplication(), "info info info", Toast.LENGTH_SHORT);
-                    param.setResult(false);
-                }
-
+                //if (title.equals("Info")) {
+                //param.setResult(false);
+                //}
 
                 if (title.equals(modRes.getString(R.string.menuitem_lock))) {
                     lockedContacts.add(contactNumber);
@@ -478,12 +480,16 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra("action", 0);
                     intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
-                    AndroidAppHelper.currentApplication().startService(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
 
                     ExtModule.this.showToast(modRes.getString(R.string.lock_enable_message));
-
-                    ((Activity) param.thisObject).finish();
                     param.setResult(false);
+                    ((Activity) param.thisObject).finish();
 
                 } else if (title.equals(modRes.getString(R.string.menuitem_unlock))) {
                     lockedContacts.remove(contactNumber);
@@ -494,7 +500,12 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.putExtra("action", 0);
                     intent.putExtra(ExtModule.LOCKED_CONTACTS_PREF_STRING, lockedContacts);
 
-                    AndroidAppHelper.currentApplication().startService(intent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
+
                     ExtModule.this.showToast(modRes.getString(R.string.lock_disable_message));
 
                     menuItem.setVisible(false);
@@ -546,7 +557,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra("action", 1);
                     intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
-                    AndroidAppHelper.currentApplication().startService(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
+
                     menuItem.setTitle(modRes.getString(R.string.menuitem_unhide));
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
 
@@ -559,7 +576,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra("action", 1);
                     intent.putExtra(ExtModule.HIDDEN_GROUPS_PREF_STRING, hiddenGroups);
-                    AndroidAppHelper.currentApplication().startService(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
+
                     menuItem.setTitle(modRes.getString(R.string.menuitem_hide));
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message_long));
 
@@ -571,7 +594,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra("action", 3);
                     intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
-                    AndroidAppHelper.currentApplication().startService(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
+
                     menuItem.setTitle(modRes.getString(R.string.menuitem_unhighlight));
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
                     param.setResult(false);
@@ -582,7 +611,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     intent.setComponent(new ComponentName(ExtModule.PACKAGE_NAME, "com.suraj.waext.LockPreferencesService"));
                     intent.putExtra("action", 3);
                     intent.putExtra(ExtModule.HIGHLIGHTED_CHATS_PREF_STRING, highlightedChats);
-                    AndroidAppHelper.currentApplication().startService(intent);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        AndroidAppHelper.currentApplication().startForegroundService(intent);
+                    } else {
+                        AndroidAppHelper.currentApplication().startService(intent);
+                    }
+
                     menuItem.setTitle(modRes.getString(R.string.menuitem_highlight));
                     ExtModule.this.showToast(modRes.getString(R.string.whatsapp_restart_message));
                     param.setResult(false);
@@ -1102,10 +1137,13 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
                                 v.performLongClick();
 
-                                if (oneClickActionButton != null) {
+                                if (oneClickActionButton != null) {// && oneClickAction != 1) {
                                     oneClickActionButton.performClick();
-                                }else
+                                /*} else if (oneClickAction == 1) {
+                                    conversationActivity.onOptionsItemSelected(oneClickActionMenuItem);*/
+                                }else {
                                     v.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                                }
                             }
                         });
 
@@ -1117,7 +1155,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
         });
 
         //"android.support.v7.view.menu.ActionMenuItemView"
-        XposedHelpers.findAndHookMethod(View.class,  "setTooltipText", CharSequence.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(View.class, "setTooltipText", CharSequence.class, new XC_MethodHook() {
             @Override
             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                 super.afterHookedMethod(param);
@@ -1133,6 +1171,24 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
 
             }
         });
+
+        /*XposedHelpers.findAndHookMethod(ActionMenuItemView.class, "setTitle", int.class, new XC_MethodHook() {
+            @Override
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("int: " + ));
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.support.v7.view.menu.j", loadPackageParam.classLoader, "getTitle", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if(getOneClickActionString().equals(param.getResult())){
+                    XposedBridge.log("but: " + param.getResult());
+                    oneClickActionMenuItem = (MenuItem) param.thisObject;
+                }
+            }
+        });*/
+
     }
 
     public void hookMethodsForHidingNotifications(XC_LoadPackage.LoadPackageParam loadPackageParam) {
@@ -1239,7 +1295,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                     super.beforeHookedMethod(param);
                     if ((int) param.args[0] == 2)
                         param.args[0] = 3;
-                        //param.setResult(3);
+                    //param.setResult(3);
                 }
             });
 
@@ -1272,7 +1328,7 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
                 }
             });
 
-            printMethodOfClass("com.whatsapp.HomeActivity$b",loadPackageParam);
+            //printMethodOfClass("com.whatsapp.HomeActivity$b",loadPackageParam);
             //correct
             XposedHelpers.findAndHookMethod("com.whatsapp.HomeActivity$b", loadPackageParam.classLoader, "b", new XC_MethodHook() {
                 @Override
@@ -1487,18 +1543,19 @@ public class ExtModule implements IXposedHookLoadPackage, IXposedHookZygoteInit,
             hookMethodsForHideStatusTab(loadPackageParam);
     }
 
-    private void hookMethodsForToastWorkAround(XC_LoadPackage.LoadPackageParam loadPackageParam){
+    private void hookMethodsForToastWorkAround(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedHelpers.findAndHookMethod(Toast.class, "show", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                if(hideToast){
+                if (hideToast) {
                     param.setResult(null);
                 }
             }
         });
 
     }
+
     public void printMethodOfClass(String className, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         Class cls = XposedHelpers.findClass(className, loadPackageParam.classLoader);
         Method[] methods = cls.getDeclaredMethods();

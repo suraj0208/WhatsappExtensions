@@ -1,5 +1,6 @@
 package com.suraj.waext;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
@@ -88,19 +89,51 @@ public class StatsActivity extends AppCompatActivity {
             finish();
         }
 
-        Utils.setContactNameFromDataase((TextView) findViewById(R.id.tvStatsContactName), jid);
+        setContactNameFromDatabase(jid);
         getMessagesCount((TextView) findViewById(R.id.tvMessagesReceived), (TextView) findViewById(R.id.tvMessagesSent), (TextView) findViewById(R.id.tvMessageTotal), jid);
         getMessagesTimeSpan((TextView) findViewById(R.id.tvMessagesTimeSpan), jid);
 
 
     }
 
+    @SuppressLint("StaticFieldLeak")
+    public void setContactNameFromDatabase(final String jid) {
+        (new AsyncTask<Void, Void, Object>() {
+
+            @Override
+            protected Object doInBackground(Void... voids) {
+                try {
+                    return Utils.getContactNameFromDatabase(jid);
+                } catch (WhatsAppDBException e) {
+                    return e;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+
+                if (Utils.toastAndExitIfWaDbException(o, StatsActivity.this)) {
+                    return;
+                }
+
+                ((TextView) findViewById(R.id.tvStatsContactName)).setText(o.toString());
+            }
+        }).execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
     private void getMessagesTimeSpan(final TextView textview, final String jid) {
-        (new AsyncTask<Void, Void, Long[]>() {
+        (new AsyncTask<Void, Void, Object>() {
             @TargetApi(Build.VERSION_CODES.N)
             @Override
-            protected Long[] doInBackground(Void... voids) {
-                String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select timestamp from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 order by timestamp;");
+            protected Object doInBackground(Void... voids) {
+                String[] arr;
+                try {
+                    arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select timestamp from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 order by timestamp;");
+                } catch (WhatsAppDBException e) {
+                    return e;
+                }
 
                 Calendar c = Calendar.getInstance(Locale.getDefault());
 
@@ -111,89 +144,93 @@ public class StatsActivity extends AppCompatActivity {
                 String prevMonthYearName = null;
                 ContributionCalendarDate prevDate = null;
 
-                if (arr != null) {
-                    Long[] timestampsFromDatabase = new Long[arr.length];
+                Long[] timestampsFromDatabase = new Long[arr.length];
 
-                    for (int i = 0; i < arr.length; i++) {
-                        timestampsFromDatabase[i] = Long.parseLong(arr[i]);
+                for (int i = 0; i < arr.length; i++) {
+                    timestampsFromDatabase[i] = Long.parseLong(arr[i]);
 
-                        c.setTime(new Date(timestampsFromDatabase[i]));
+                    c.setTime(new Date(timestampsFromDatabase[i]));
 
-                        String monthYearName = new SimpleDateFormat("MMM yyyy").format(c.getTime());
+                    String monthYearName = new SimpleDateFormat("MMM yyyy").format(c.getTime());
 
-                        ContributionCalendarDate currentDate = new ContributionCalendarDate(timestampsFromDatabase[i]);
-                        availableMonths.put(monthYearName, new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
+                    ContributionCalendarDate currentDate = new ContributionCalendarDate(timestampsFromDatabase[i]);
+                    availableMonths.put(monthYearName, new MonthYearPair(c.get(Calendar.MONTH) + 1, c.get(Calendar.YEAR)));
 
-                        currentTreeMap = dateStringTreeMapHashMap.get(monthYearName);
+                    currentTreeMap = dateStringTreeMapHashMap.get(monthYearName);
 
-                        if (currentTreeMap == null) {
-                            if (i != 0) {
-                                Collections.sort(medianList);
-                                int intervalStart = medianList.size() / 3;
-                                int intervalEnd = intervalStart + intervalStart;
+                    if (currentTreeMap == null) {
+                        if (i != 0) {
+                            Collections.sort(medianList);
+                            int intervalStart = medianList.size() / 3;
+                            int intervalEnd = intervalStart + intervalStart;
 
-                                if (medianList.size()> 0 && intervalEnd >= medianList.size() - 1) {
-                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
-                                } else if(medianList.size()> 0)
-                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
-                                else{
-                                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(1,1,1));
-                                }
-
-                                medianList.clear();
+                            if (medianList.size() > 0 && intervalEnd >= medianList.size() - 1) {
+                                dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
+                            } else if (medianList.size() > 0)
+                                dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
+                            else {
+                                dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(1, 1, 1));
                             }
 
-                            currentTreeMap = new TreeMap<>();
+                            medianList.clear();
+                        }
+
+                        currentTreeMap = new TreeMap<>();
+                        currentTreeMap.put(currentDate, 1);
+                        dateStringTreeMapHashMap.put(monthYearName, currentTreeMap);
+                    } else {
+                        Integer current = currentTreeMap.get(currentDate);
+
+                        if (current == null) {
                             currentTreeMap.put(currentDate, 1);
-                            dateStringTreeMapHashMap.put(monthYearName, currentTreeMap);
-                        } else {
-                            Integer current = currentTreeMap.get(currentDate);
+                            medianList.add(currentTreeMap.get(prevDate));
+                        } else
+                            currentTreeMap.put(currentDate, current + 1);
 
-                            if (current == null) {
-                                currentTreeMap.put(currentDate, 1);
-                                medianList.add(currentTreeMap.get(prevDate));
-                            } else
-                                currentTreeMap.put(currentDate, current + 1);
-
-                        }
-                        prevMonthYearName = monthYearName;
-                        prevDate = currentDate;
                     }
-
-                    medianList.add(currentTreeMap.get(prevDate));
-                    Collections.sort(medianList);
-                    int intervalStart = medianList.size() / 3;
-                    int intervalEnd = intervalStart + intervalStart;
-
-                    if (intervalEnd >= medianList.size() - 1) {
-                        dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
-                    } else
-                        dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
-
-                    ArrayList<HashMap.Entry<String, MonthYearPair>> entries = new ArrayList<>(availableMonths.entrySet());
-
-                    Collections.sort(entries, new Comparator<HashMap.Entry<String, MonthYearPair>>() {
-                        @Override
-                        public int compare(HashMap.Entry<String, MonthYearPair> left, HashMap.Entry<String, MonthYearPair> right) {
-                            String thisDate = left.getValue().year + "/" + (Integer.toString(left.getValue().month).length() < 2 ? "0" + left.getValue().month : left.getValue().month);
-                            String otherDate = right.getValue().year + "/" + (Integer.toString(right.getValue().month).length() < 2 ? "0" + right.getValue().month : right.getValue().month);
-
-                            return thisDate.compareTo(otherDate);
-                        }
-                    });
-
-                    for (Map.Entry<String, MonthYearPair> entry : entries)
-                        spinnerData.add(entry.getKey());
-
-                    return timestampsFromDatabase;
+                    prevMonthYearName = monthYearName;
+                    prevDate = currentDate;
                 }
-                return null;
+
+                medianList.add(currentTreeMap.get(prevDate));
+                Collections.sort(medianList);
+                int intervalStart = medianList.size() / 3;
+                int intervalEnd = intervalStart + intervalStart;
+
+                if (intervalEnd >= medianList.size() - 1) {
+                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(medianList.size() - 1), medianList.get(medianList.size() - 1) + 1));
+                } else
+                    dateStringMedianPairHashMap.put(prevMonthYearName, new DistributionPair(medianList.get(intervalStart), medianList.get(intervalEnd), medianList.get(medianList.size() - 1)));
+
+                ArrayList<HashMap.Entry<String, MonthYearPair>> entries = new ArrayList<>(availableMonths.entrySet());
+
+                Collections.sort(entries, new Comparator<HashMap.Entry<String, MonthYearPair>>() {
+                    @Override
+                    public int compare(HashMap.Entry<String, MonthYearPair> left, HashMap.Entry<String, MonthYearPair> right) {
+                        String thisDate = left.getValue().year + "/" + (Integer.toString(left.getValue().month).length() < 2 ? "0" + left.getValue().month : left.getValue().month);
+                        String otherDate = right.getValue().year + "/" + (Integer.toString(right.getValue().month).length() < 2 ? "0" + right.getValue().month : right.getValue().month);
+
+                        return thisDate.compareTo(otherDate);
+                    }
+                });
+
+                for (Map.Entry<String, MonthYearPair> entry : entries)
+                    spinnerData.add(entry.getKey());
+
+                return timestampsFromDatabase;
             }
 
             @TargetApi(Build.VERSION_CODES.N)
             @Override
-            protected void onPostExecute(Long[] s) {
-                super.onPostExecute(s);
+            protected void onPostExecute(Object object) {
+                super.onPostExecute(object);
+
+                if (Utils.toastAndExitIfWaDbException(object, StatsActivity.this)) {
+                    return;
+                }
+
+                Long[] s = (Long[]) object;
+
                 if (s == null) {
                     return;
                 }
@@ -292,24 +329,33 @@ public class StatsActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void getMessagesCount(final TextView tvTo, TextView tvFrom, final TextView tvTotal, final String jid) {
         final TextView[] textViews = {tvTo, tvFrom};
 
-        (new AsyncTask<Void, Void, String[]>() {
+        (new AsyncTask<Void, Void, Object>() {
             @Override
-            protected String[] doInBackground(Void... voids) {
-                String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select count(*),key_from_me from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 group by key_from_me;");
-
-                if (arr != null) {
-                    return arr;
+            protected Object doInBackground(Void... voids) {
+                String[] arr = new String[0];
+                try {
+                    arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/msgstore.db", "select count(*),key_from_me from messages where key_remote_jid like " + '"' + jid + '"' + " and length(data) > 0 group by key_from_me;");
+                } catch (WhatsAppDBException e) {
+                    return e;
                 }
 
-                return null;
+                return arr;
+
             }
 
             @Override
-            protected void onPostExecute(String[] s) {
-                super.onPostExecute(s);
+            protected void onPostExecute(Object object) {
+                super.onPostExecute(object);
+
+                if(Utils.toastAndExitIfWaDbException(object, StatsActivity.this)){
+                    return;
+                }
+
+                String[] s = (String[]) object;
                 if (s == null) {
                     return;
                 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -22,7 +23,13 @@ public class ReminderActivity extends Activity {
         getWindow().setBackgroundDrawableResource(android.R.color.transparent);
 
         if (contactHashMap == null) {
-            contactHashMap = getContactsHashMap();
+            try {
+                contactHashMap = getContactsHashMap();
+            } catch (WhatsAppDBException e) {
+                Log.e(ExtModule.PACKAGE_NAME, e.getMessage());
+                finish();
+                return;
+            }
         }
 
         Bundle bundle = getIntent().getExtras();
@@ -62,7 +69,7 @@ public class ReminderActivity extends Activity {
     }
 
     private void setUpForOpen() {
-        ((TextView) (findViewById(R.id.tvreminderwhom))).setText(getString(R.string.reply_to,contactName));
+        ((TextView) (findViewById(R.id.tvreminderwhom))).setText(getString(R.string.reply_to, contactName));
 
         (findViewById(R.id.btnremindercancel)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,8 +158,8 @@ public class ReminderActivity extends Activity {
         return 0;
     }
 
-    public HashMap<String, Object> getContactsHashMap() {
-        return  new WhatsAppDatabaseHelper().getNumberToNameHashMap();
+    public HashMap<String, Object> getContactsHashMap() throws WhatsAppDBException {
+        return WhatsAppDatabaseHelper.getNumberToNameHashMap();
     }
 
 }

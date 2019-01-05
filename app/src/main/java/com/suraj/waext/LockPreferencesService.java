@@ -1,6 +1,7 @@
 package com.suraj.waext;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -12,6 +13,12 @@ import java.util.Set;
  * Created by suraj on 30/8/16.
  */
 public class LockPreferencesService extends IntentService {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startForeground(1,new Notification());
+    }
 
     public LockPreferencesService() {
         super("LockPreferencesService");
@@ -58,5 +65,6 @@ public class LockPreferencesService extends IntentService {
         } catch (Exception e) {
 
         }
+        stopSelf();
     }
 }

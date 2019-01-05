@@ -12,7 +12,7 @@ import java.util.HashSet;
  * Created by suraj on 4/1/17.
  */
 public class WhatsAppChatBackupManager {
-    public static final String WHATSAPP_MESSAGEDB_PATH = "/data/data/com.whatsapp/databases/msgstore.db";
+    /*public static final String WHATSAPP_MESSAGEDB_PATH = "/data/data/com.whatsapp/databases/msgstore.db";
     public static final String WAEXT_MESSAGEDB_PATH = "/sdcard/waext/databases/backup.db";
 
     public WhatsAppChatBackupManager(){
@@ -171,5 +171,5 @@ class BackupDatabaseHelper {
     public void execSQL(String query) {
         backupDatabase.execSQL(query);
     }
-
+*/
 }
