@@ -275,11 +275,31 @@
             android:layout_alignParentRight="true"
             android:background="@mipmap/ic_settings_black_24dp" />
 
+        <CheckBox
+            android:id="@+id/chkboxPreventDeletion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/tvhighlight"
+            android:layout_alignStart="@id/tvhighlight"
+            android:layout_below="@id/chkboxBlockContacts"
+            android:layout_marginBottom="3dp"
+            android:text="@string/prevent_delete" />
+
+        <CheckBox
+            android:id="@+id/chkboxPreventDeletionNotification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
+            android:layout_below="@id/chkboxPreventDeletion"
+            android:layout_marginBottom="5dp"
+            android:text="@string/prevent_delete_notification" />
+
         <TextView
             android:id="@+id/tvlayoutprefs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chkboxBlockContacts"
+            android:layout_below="@id/chkboxPreventDeletionNotification"
             android:layout_margin="10dp"
             android:text="@string/layout_prefs"
             android:textSize="22sp" />
@@ -324,8 +344,6 @@
             android:layout_below="@id/chkboxHideStatusTab"
             android:layout_marginTop="5dp"
             android:text="@string/hide_camera_btn" />
-
-
 
 
         <CheckBox

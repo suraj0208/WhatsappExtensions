@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         Utils.setUpCheckBox(this, checkBoxDeliveryReports, "hideDeliveryReports", false, "", false, "");
         Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxalwaysonline), "alwaysOnline", true, getApplicationContext().getString(R.string.last_seen_hidden), false, "");
         //Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxBlockContacts), "blockContacts", false, "", false, "");
-
+        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxPreventDeletion), "preventRemoteDeletion", false, "", false, "");
+        Utils.setUpCheckBox(this, (CheckBox) findViewById(R.id.chkboxPreventDeletionNotification), "remoteDeletionNotification", false, "", false, "");
 
         findViewById(R.id.imgbtnreceiptsetting).setOnClickListener(new View.OnClickListener() {
             @Override

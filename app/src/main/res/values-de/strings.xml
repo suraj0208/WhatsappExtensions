@@ -153,4 +153,11 @@
 
     <string name="hide_toast_message">Hide toasts</string>
 
+    <!-- needs to be translated -->
+    <string name="prevent_delete">Disable remote deletion</string>
+    <string name="message_deleted">%1$s tried to delete a message</string>
+    <string name="message_deleted_group">A message from group %1$s deleted</string>
+    <string name="message_deleted_unknown">Someone tried to delete a message, cannot determine who</string>
+    <string name="prevent_delete_notification">Notify about deletion</string>
+
 </resources>

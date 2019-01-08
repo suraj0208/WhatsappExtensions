@@ -57,7 +57,7 @@ public class Utils {
                 if (checkBox.isChecked() && onToast) {
                     Toast.makeText(context, onMessage, Toast.LENGTH_SHORT).show();
 
-                } else if (!checkBox.isChecked() && !offToast) {
+                } else if (!checkBox.isChecked() && offToast) {
                     Toast.makeText(context, offMessage, Toast.LENGTH_SHORT).show();
                 }
                 editor.apply();
@@ -67,7 +67,11 @@ public class Utils {
 
     public static String getContactNameFromDatabase(final String jid) throws WhatsAppDBException {
         String[] arr = WhatsAppDatabaseHelper.execSQL("/data/data/com.whatsapp/databases/wa.db", "select display_name from wa_contacts where jid like " + '"' + jid + '"');
-        return arr[0];
+        if (arr.length > 0) {
+            return arr[0];
+        } else {
+            throw new WhatsAppDBException("No contact found for given number");
+        }
     }
 
     public static void setPreferencesRW(Context context) {
@@ -111,8 +115,8 @@ public class Utils {
     }
 
     public static boolean toastAndExitIfWaDbException(Object object, Activity activity) {
-        if(object instanceof WhatsAppDBException) {
-            Toast.makeText(activity, ((WhatsAppDBException)object).getMessage(), Toast.LENGTH_SHORT).show();
+        if (object instanceof WhatsAppDBException) {
+            Toast.makeText(activity, ((WhatsAppDBException) object).getMessage(), Toast.LENGTH_SHORT).show();
             activity.finish();
             return true;
         }

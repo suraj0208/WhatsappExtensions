@@ -52,10 +52,13 @@ public class ReminderService extends Service {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
 
+        String CHANNEL_ID = "waext_channel_01";// The id of the channel.
+
         builder.setSmallIcon(R.drawable.ic_notification)
                 .setLargeIcon(BitmapFactory.decodeResource(getApplicationContext().getResources(),
                         R.mipmap.ic_launcher))
                 .setContentTitle("WhatsApp Reminder Service.")
+                .setChannelId(CHANNEL_ID)
                 .setContentText("Touch to configure.");
 
         Intent startIntent = new Intent(getApplicationContext(), MainActivity.class);
